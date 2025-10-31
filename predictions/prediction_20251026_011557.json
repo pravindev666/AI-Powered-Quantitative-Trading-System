@@ -1,0 +1,12 @@
+{
+  "timestamp": "20251026_011557",
+  "trend": "UPTREND",
+  "confidence": 80.45,
+  "current_price": 25795.150390625,
+  "expiry_date": "2025-11-04",
+  "option_strategy": "Bull Call Spread",
+  "strikes": {
+    "buy": 25800,
+    "sell": 25850
+  }
+}

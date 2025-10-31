@@ -1,0 +1,1485 @@
+2025-10-29 00:06:17,860 - nifty_predictor - ERROR - Error during prediction: TemporalFusionTransformerModel.__init__() got an unexpected keyword argument 'max_encoder_length'
+2025-10-29 00:17:20,311 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:17:20,319 - nifty_predictor - ERROR - Error during prediction: HARRVModel.__init__() got an unexpected keyword argument 'train_size'
+2025-10-29 00:17:31,662 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:17:31,662 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:17:31,670 - nifty_predictor - ERROR - Error during prediction: HARRVModel.__init__() got an unexpected keyword argument 'train_size'
+2025-10-29 00:17:31,670 - nifty_predictor - ERROR - Error during prediction: HARRVModel.__init__() got an unexpected keyword argument 'train_size'
+2025-10-29 00:20:17,236 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:20:17,245 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:20:17,245 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:17,245 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:17,253 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:20:17,253 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:20:20,661 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:20:20,661 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:20:20,661 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:20:20,745 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:20:20,745 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:20:20,745 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:20:20,845 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:20,845 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:20,845 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:20,845 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:20,862 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:20:20,862 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:20:20,862 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:20:20,862 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:43:04,480 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:43:04,480 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:43:04,480 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:43:04,480 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:43:04,480 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:43:04,480 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:53:59,593 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:00,819 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:00,833 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:00.833878 to 2025-10-29 05:54:00.833878
+2025-10-29 05:54:02,040 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:02,040 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:02,053 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:02,053 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:02,070 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:02,070 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:02,071 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:02.071277 to 2025-10-29 05:54:02.071277
+2025-10-29 05:54:02,071 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:02.071277 to 2025-10-29 05:54:02.071277
+2025-10-29 05:54:04,347 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:04,347 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:04,347 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:04,347 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:05,340 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:05,340 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:05,340 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:05,340 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:05,360 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:05,360 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:05,363 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:05,363 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:05,493 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:05,493 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:05,493 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:05,493 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:05,569 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:05,569 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:05,572 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:05,572 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:05,576 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:05,576 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:05,581 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:05,581 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:05,585 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:05,585 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:05,588 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:05,588 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:05,598 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:05,598 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:05,614 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:05,614 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:05,814 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:05,814 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:06,056 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:06,056 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:06,056 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:06,056 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:19,257 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:19,257 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:19,259 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:19.259744 to 2025-10-29 05:54:19.259744
+2025-10-29 05:54:19,259 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:19.259744 to 2025-10-29 05:54:19.259744
+2025-10-29 05:54:20,480 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:20,480 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:21,573 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:21,573 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:21,684 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:21,684 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:21,848 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:21,848 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:21,937 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:21,937 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:21,939 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:21,939 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:21,950 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:21,950 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:22,011 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:22,011 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:22,189 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:22,189 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:22,245 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:54:22,245 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:54:22,247 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:22,247 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:22,250 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:22,250 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:22,262 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:22,262 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:22,378 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:22,378 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:22,909 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:22,909 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:22,909 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:22,909 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:22,909 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:22,909 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:22,909 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:23,031 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:23,031 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:23,031 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:23,050 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:23.050047 to 2025-10-29 05:54:23.050047
+2025-10-29 05:54:23,050 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:23.050047 to 2025-10-29 05:54:23.050047
+2025-10-29 05:54:23,050 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:23.050047 to 2025-10-29 05:54:23.050047
+2025-10-29 05:54:24,120 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:24,120 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:24,120 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:25,076 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:25,076 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:25,076 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:25,076 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:25,076 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:25,076 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:25,128 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:25,128 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:25,128 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:25,186 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:25,186 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:25,186 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:25,188 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:25,188 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:25,188 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:25,197 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:25,197 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:25,197 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:25,214 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:25,214 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:25,214 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:25,328 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:25,328 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:25,328 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:25,331 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:25,331 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:25,331 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:36,825 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:36,825 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:36,825 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:36,825 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:36,825 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:36,825 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:36,841 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:36,841 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:36,841 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:36,841 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:36,852 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:54:36,852 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:54:36,852 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:54:36,852 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:54:44,581 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:44.581257 to 2025-10-29 05:54:44.581257
+2025-10-29 05:54:44,581 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:44.581257 to 2025-10-29 05:54:44.581257
+2025-10-29 05:54:44,581 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:44.581257 to 2025-10-29 05:54:44.581257
+2025-10-29 05:54:44,581 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:44.581257 to 2025-10-29 05:54:44.581257
+2025-10-29 05:54:45,561 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:45,561 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:45,561 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:45,561 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:46,480 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:46,512 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:46,512 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:46,512 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:46,512 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:46,541 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:46,567 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:46,567 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:46,567 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:46,567 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:47,003 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:47,003 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:47,003 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:47,003 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:47,097 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:54:47,097 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:54:47,097 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:54:47,097 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:54:47,101 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:47,101 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:47,101 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:47,101 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:47,120 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:47,120 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:47,120 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:47,120 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:47,168 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:47,168 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:47,168 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:47,168 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:47,354 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:47,354 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:47,354 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:47,354 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:48,280 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:54:48,286 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:48,286 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:48,286 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:48,286 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:48,286 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:48.303876 to 2025-10-29 05:54:48.303876
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:48.303876 to 2025-10-29 05:54:48.303876
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:48.303876 to 2025-10-29 05:54:48.303876
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:48.303876 to 2025-10-29 05:54:48.303876
+2025-10-29 05:54:48,303 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:54:48.303876 to 2025-10-29 05:54:48.303876
+2025-10-29 05:54:49,214 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:49,214 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:49,214 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:49,214 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:49,214 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:50,154 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:54:50,190 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:50,190 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:50,190 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:50,190 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:50,190 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:54:50,227 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:50,227 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:50,227 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:50,227 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:50,227 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:54:50,228 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:50,228 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:50,228 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:50,228 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:50,228 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:54:50,234 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:50,234 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:50,234 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:50,234 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:50,234 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:54:50,240 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:50,240 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:50,240 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:50,240 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:50,240 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:54:50,369 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:50,369 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:50,369 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:50,369 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:50,369 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:54:50,371 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:50,371 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:50,371 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:50,371 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:54:50,371 - nifty_predictor - ERROR - Error loading initial data: st.session_state has no attribute "timing_info". Did you forget to initialize it? More info: https://docs.streamlit.io/develop/concepts/architecture/session-state#initialization
+2025-10-29 05:55:01,215 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:01,215 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:01,215 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:01,215 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:01,215 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:01,218 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:01,218 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:01,218 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:01,218 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:01,218 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:01,220 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 05:55:01,220 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 05:55:01,220 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 05:55:01,220 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 05:55:01,220 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 05:55:01,221 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 05:55:01,221 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 05:55:01,221 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 05:55:01,221 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 05:55:01,221 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 05:55:01,247 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:01,247 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:01,247 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:01,247 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:01,247 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:33,317 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:55:33,317 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:55:33,317 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:55:33,317 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:55:33,317 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 05:55:33,318 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:55:33.318602 to 2025-10-29 05:55:33.318602
+2025-10-29 05:55:33,318 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:55:33.318602 to 2025-10-29 05:55:33.318602
+2025-10-29 05:55:33,318 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:55:33.318602 to 2025-10-29 05:55:33.318602
+2025-10-29 05:55:33,318 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:55:33.318602 to 2025-10-29 05:55:33.318602
+2025-10-29 05:55:33,318 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 05:55:33.318602 to 2025-10-29 05:55:33.318602
+2025-10-29 05:55:34,697 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:55:34,697 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:55:34,697 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:55:34,697 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:55:34,697 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:55:35,885 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:55:35,918 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:55:35,918 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:55:35,918 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:55:35,918 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:55:35,918 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 05:55:35,951 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:55:35,951 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:55:35,951 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:55:35,951 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:55:35,951 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:55:35,952 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:35,952 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:35,952 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:35,952 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:35,952 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:35,959 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:35,959 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:35,959 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:35,959 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:35,959 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:35,968 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:35,968 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:35,968 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:35,968 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:35,968 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:36,076 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,076 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,076 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,076 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,076 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,110 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:36,110 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:36,110 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:36,110 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:36,110 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:55:36,112 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:36,112 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:36,112 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:36,112 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:36,112 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:55:36,116 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:36,116 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:36,116 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:36,116 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:36,116 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 05:55:36,130 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:36,130 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:36,130 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:36,130 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:36,130 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:55:36,227 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,227 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,227 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,227 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:36,227 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:55:38,438 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:38,438 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:38,438 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:38,438 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:55:38,438 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:56:30,152 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:30,152 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:30,152 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:30,152 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:30,152 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:30,161 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:30,161 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:30,161 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:30,161 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:30,161 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:30,164 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:30,164 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:30,164 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:30,164 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:30,164 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:30,164 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:30,166 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:30,166 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:30,166 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:30,166 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:30,166 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:30,166 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:33,223 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:33.223001 to 2025-10-29 05:56:33.223001
+2025-10-29 05:56:33,223 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:33.223001 to 2025-10-29 05:56:33.223001
+2025-10-29 05:56:33,223 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:33.223001 to 2025-10-29 05:56:33.223001
+2025-10-29 05:56:33,223 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:33.223001 to 2025-10-29 05:56:33.223001
+2025-10-29 05:56:33,223 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:33.223001 to 2025-10-29 05:56:33.223001
+2025-10-29 05:56:33,223 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:33.223001 to 2025-10-29 05:56:33.223001
+2025-10-29 05:56:34,423 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:34,423 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:34,423 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:34,423 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:34,423 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:34,423 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:35,644 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:35,674 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:35,674 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:35,674 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:35,674 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:35,674 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:35,674 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:35,697 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:35,697 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:35,697 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:35,697 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:35,697 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:35,697 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:35,699 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,699 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,699 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,699 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,699 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,699 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,702 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,796 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,796 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,796 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,796 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,796 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,796 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,819 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:35,839 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,839 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,839 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,839 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,839 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,839 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:35,912 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,912 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,912 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,912 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,912 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:35,912 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:37,530 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:56:37,530 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:56:37,530 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:56:37,530 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:56:37,530 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:56:37,530 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 05:56:52,576 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:52.576403 to 2025-10-29 05:56:52.576403
+2025-10-29 05:56:52,576 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:52.576403 to 2025-10-29 05:56:52.576403
+2025-10-29 05:56:52,576 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:52.576403 to 2025-10-29 05:56:52.576403
+2025-10-29 05:56:52,576 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:52.576403 to 2025-10-29 05:56:52.576403
+2025-10-29 05:56:52,576 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:52.576403 to 2025-10-29 05:56:52.576403
+2025-10-29 05:56:52,576 - nifty_predictor - INFO - Fetching Nifty data from 2025-02-24 05:56:52.576403 to 2025-10-29 05:56:52.576403
+2025-10-29 05:56:53,844 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:53,844 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:53,844 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:53,844 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:53,844 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:53,844 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:55,040 - nifty_predictor - INFO - Processing market data
+2025-10-29 05:56:55,079 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:55,079 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:55,079 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:55,079 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:55,079 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:55,079 - nifty_predictor - INFO - Fetched and cached fresh data for 247 days
+2025-10-29 05:56:55,114 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:55,114 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:55,114 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:55,114 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:55,114 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:55,114 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,120 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,131 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,131 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,131 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,131 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,131 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,131 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,231 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,231 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,231 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,231 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,231 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,231 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,258 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:55,258 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:55,258 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:55,258 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:55,258 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:55,258 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 05:56:55,260 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,260 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,260 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,260 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,260 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,260 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 05:56:55,263 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,263 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,263 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,263 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,263 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,263 - nifty_predictor - INFO - Training with 166 clean data points after NaN handling
+2025-10-29 05:56:55,288 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,288 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,288 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,288 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,288 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,288 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 05:56:55,361 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,361 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,361 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,361 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,361 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:55,361 - nifty_predictor - WARNING - HAR-RV model training failed: Cannot save untrained model
+2025-10-29 05:56:56,666 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:56,666 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:56,666 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:56,666 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:56,666 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:56,666 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 05:56:56,668 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:56,668 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:56,668 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:56,668 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:56,668 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:56,668 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 05:56:56,681 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:56,681 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:56,681 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:56,681 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:56,681 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:56,681 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:56,681 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 05:56:56,689 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:56,689 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:56,689 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:56,689 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:56,689 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:56,689 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 05:56:56,689 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:02:38,177 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:02:39,048 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 06:02:39,069 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:02:39.069311 to 2025-10-29 06:02:39.069311
+2025-10-29 06:02:43,106 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:02:44,092 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:02:44,223 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:02:44,513 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:02:44,699 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:02:44,764 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:02:44,869 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:02:45,174 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:02:45,375 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:02:45,427 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:02:45,430 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:02:45,431 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:02:45,439 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:02:45,445 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:03:07,554 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:03:07,714 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 06:03:07,715 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:03:07.715748 to 2025-10-29 06:03:07.715748
+2025-10-29 06:03:10,489 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:03:11,609 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:03:11,625 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:03:11,744 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:03:11,778 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:03:11,787 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:11,790 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:11,796 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:11,904 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:38,335 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:03:38,337 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:03:38,342 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:03:38,342 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:03:38,345 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:03:38,345 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:03:47,744 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:03:47.743688 to 2025-10-29 06:03:47.743688
+2025-10-29 06:03:47,744 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:03:47.743688 to 2025-10-29 06:03:47.743688
+2025-10-29 06:03:48,854 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:03:48,854 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:03:49,271 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:03:49,271 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:03:49,271 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:49,271 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:49,285 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:03:49,285 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:03:49,291 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:03:49,291 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:03:49,296 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:03:49,296 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:03:49,874 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:03:49,874 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:03:49,891 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:03:49,891 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:03:50,011 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:03:50,011 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:03:50,051 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:03:50,051 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:03:50,051 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:50,051 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:50,051 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:50,051 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:50,096 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:50,096 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:50,257 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:50,257 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:50,302 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:03:50,302 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:03:50,308 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:50,308 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:50,310 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:50,310 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:50,327 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:50,327 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:50,440 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:50,440 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:50,791 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:03:50.791804 to 2025-10-29 06:03:50.791804
+2025-10-29 06:03:50,791 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:03:50.791804 to 2025-10-29 06:03:50.791804
+2025-10-29 06:03:51,739 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:03:51,739 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:03:52,572 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:03:52,572 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:03:52,572 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:03:52,572 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:03:52,620 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:03:52,620 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:03:52,669 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:03:52,669 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:03:52,671 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:52,671 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:52,676 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:52,676 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:52,705 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:52,705 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:52,805 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:52,805 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:52,853 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:03:52,853 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:03:52,855 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:52,855 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:03:52,858 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:52,858 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:03:52,888 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:52,888 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:03:53,019 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:53,019 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:03:55,064 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:03:55,064 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:04:55,446 - nifty_predictor - INFO - Fetching Nifty data from 2024-10-29 06:04:55.446568 to 2025-10-29 06:04:55.446568
+2025-10-29 06:04:55,446 - nifty_predictor - INFO - Fetching Nifty data from 2024-10-29 06:04:55.446568 to 2025-10-29 06:04:55.446568
+2025-10-29 06:04:56,434 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:04:56,434 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:04:57,359 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:04:57,359 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:04:57,359 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:04:57,359 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:04:57,415 - nifty_predictor - INFO - Fetched and cached fresh data for 365 days
+2025-10-29 06:04:57,415 - nifty_predictor - INFO - Fetched and cached fresh data for 365 days
+2025-10-29 06:04:57,446 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:04:57,446 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:04:57,446 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:04:57,446 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:04:57,461 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 06:04:57,461 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 06:04:57,504 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:04:57,504 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:04:57,614 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:04:57,614 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:04:57,665 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:04:57,665 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:04:57,671 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:04:57,671 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:04:57,675 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 06:04:57,675 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 06:04:57,701 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:04:57,701 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:04:57,814 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:04:57,814 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:04:59,061 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:04:59,061 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:13,539 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:05:13,539 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:05:13,541 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:05:13,541 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:05:13,556 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:05:13,556 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:05:13,556 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:05:13,589 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:05:13,589 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:05:13,589 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:05:16,240 - nifty_predictor - INFO - Fetching Nifty data from 2025-03-16 06:05:16.240319 to 2025-10-29 06:05:16.240319
+2025-10-29 06:05:16,240 - nifty_predictor - INFO - Fetching Nifty data from 2025-03-16 06:05:16.240319 to 2025-10-29 06:05:16.240319
+2025-10-29 06:05:16,240 - nifty_predictor - INFO - Fetching Nifty data from 2025-03-16 06:05:16.240319 to 2025-10-29 06:05:16.240319
+2025-10-29 06:05:17,151 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:17,151 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:17,151 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:17,533 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:17,533 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:17,533 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:18,104 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:18,104 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:18,104 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:18,107 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:18,107 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:18,107 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:18,156 - nifty_predictor - INFO - Fetched and cached fresh data for 227 days
+2025-10-29 06:05:18,156 - nifty_predictor - INFO - Fetched and cached fresh data for 227 days
+2025-10-29 06:05:18,156 - nifty_predictor - INFO - Fetched and cached fresh data for 227 days
+2025-10-29 06:05:18,201 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:18,201 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:18,201 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:18,202 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:18,202 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:18,202 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:18,206 - nifty_predictor - INFO - Training with 153 clean data points after NaN handling
+2025-10-29 06:05:18,206 - nifty_predictor - INFO - Training with 153 clean data points after NaN handling
+2025-10-29 06:05:18,206 - nifty_predictor - INFO - Training with 153 clean data points after NaN handling
+2025-10-29 06:05:18,239 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:05:18,239 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:05:18,239 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:05:18,361 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:05:18,361 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:05:18,361 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:05:18,389 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:05:18,389 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:05:18,389 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:05:18,398 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:18,398 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:18,398 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:18,403 - nifty_predictor - INFO - Training with 153 clean data points after NaN handling
+2025-10-29 06:05:18,403 - nifty_predictor - INFO - Training with 153 clean data points after NaN handling
+2025-10-29 06:05:18,403 - nifty_predictor - INFO - Training with 153 clean data points after NaN handling
+2025-10-29 06:05:18,417 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:05:18,417 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:05:18,417 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:05:18,514 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:05:18,514 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:05:18,514 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:05:30,702 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:05:30.702023 to 2025-10-29 06:05:30.702023
+2025-10-29 06:05:30,702 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:05:30.702023 to 2025-10-29 06:05:30.702023
+2025-10-29 06:05:30,702 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:05:30.702023 to 2025-10-29 06:05:30.702023
+2025-10-29 06:05:31,901 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:31,901 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:31,901 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:32,137 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:32,137 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:32,137 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:32,813 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:32,813 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:32,813 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:32,813 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:32,813 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:32,813 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:33,123 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:05:33,123 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:05:33,123 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:05:33,149 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:33,149 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:33,149 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:33,163 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:33,163 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:33,163 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:33,163 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:42,571 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:05:42.571636 to 2025-10-29 06:05:42.571636
+2025-10-29 06:05:42,571 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:05:42.571636 to 2025-10-29 06:05:42.571636
+2025-10-29 06:05:42,571 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:05:42.571636 to 2025-10-29 06:05:42.571636
+2025-10-29 06:05:43,379 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:43,379 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:43,379 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:05:44,481 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:44,481 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:44,481 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:05:44,534 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:44,534 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:44,534 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:05:44,576 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:05:44,576 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:05:44,576 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:05:44,610 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:44,610 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:44,610 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:05:44,610 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:44,610 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:44,610 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,627 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,648 - nifty_predictor - ERROR - Training error: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,648 - nifty_predictor - ERROR - Training error: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:44,648 - nifty_predictor - ERROR - Training error: Insufficient clean data for training after NaN handling
+2025-10-29 06:05:49,289 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:49,289 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:49,289 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:05:55,706 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:05:55,706 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:05:55,706 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:05:55,708 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:05:55,708 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:05:55,708 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:05:55,715 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:05:55,715 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:05:55,715 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:05:55,715 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:05:55,716 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:05:55,716 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:05:55,716 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:05:55,716 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 06:06:04,601 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:06:04,601 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:06:04,601 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:06:04,601 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.0% confidence
+2025-10-29 06:06:07,092 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:06:07.092399 to 2025-10-29 06:06:07.092399
+2025-10-29 06:06:07,092 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:06:07.092399 to 2025-10-29 06:06:07.092399
+2025-10-29 06:06:07,092 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:06:07.092399 to 2025-10-29 06:06:07.092399
+2025-10-29 06:06:07,092 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-31 06:06:07.092399 to 2025-10-29 06:06:07.092399
+2025-10-29 06:06:08,529 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:06:08,529 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:06:08,529 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:06:08,529 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:06:09,711 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:06:09,734 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:06:09,734 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:06:09,734 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:06:09,734 - nifty_predictor - INFO - Fetched and cached fresh data for 59 days
+2025-10-29 06:06:09,763 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:06:09,763 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:06:09,763 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:06:09,763 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:06:09,764 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:06:09,764 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:06:09,764 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:06:09,764 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,764 - nifty_predictor - ERROR - Error during data preparation and training: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,771 - nifty_predictor - ERROR - Training error: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,771 - nifty_predictor - ERROR - Training error: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,771 - nifty_predictor - ERROR - Training error: Insufficient clean data for training after NaN handling
+2025-10-29 06:06:09,771 - nifty_predictor - ERROR - Training error: Insufficient clean data for training after NaN handling
+2025-10-29 06:11:38,650 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:11:38,821 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_30d.parquet
+2025-10-29 06:11:38,821 - nifty_predictor - INFO - Fetching Nifty data from 2025-09-29 06:11:38.821587 to 2025-10-29 06:11:38.821587
+2025-10-29 06:11:41,907 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:11:42,962 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:11:42,962 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:11:43,003 - nifty_predictor - INFO - Fetched and cached fresh data for 30 days
+2025-10-29 06:11:43,047 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:11:43,047 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:43,047 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 06:11:43,047 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 06:11:43,057 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:11:43,063 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:11:43,067 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:11:43,067 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:11:43,076 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 06:11:43,076 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 06:11:43,079 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:11:43.079647 to 2025-10-29 06:11:43.079647
+2025-10-29 06:11:43,079 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:11:43.079647 to 2025-10-29 06:11:43.079647
+2025-10-29 06:11:44,157 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:11:44,157 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:11:45,062 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:11:45,062 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:11:45,062 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:11:45,062 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:11:45,284 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:11:45,284 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:11:45,457 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:11:45,457 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:11:45,472 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:45,472 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:45,472 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:11:45,472 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:11:45,488 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:11:45,488 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:11:45,748 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:11:45,748 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:11:45,779 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:11:45,813 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 6.4% confidence
+2025-10-29 06:11:45,813 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 6.4% confidence
+2025-10-29 06:11:45,832 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 4.7% confidence
+2025-10-29 06:11:45,832 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 4.7% confidence
+2025-10-29 06:11:45,838 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 5.9% confidence
+2025-10-29 06:11:45,838 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 5.9% confidence
+2025-10-29 06:11:45,851 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:11:45,851 - nifty_predictor - INFO - TFT model loaded securely
+2025-10-29 06:11:45,852 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:11:45,852 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 06:11:45,855 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:11:45,855 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:11:45,855 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:11:45,856 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-02 06:11:45.856477 to 2025-10-29 06:11:45.856477
+2025-10-29 06:11:45,856 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-02 06:11:45.856477 to 2025-10-29 06:11:45.856477
+2025-10-29 06:11:45,856 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-02 06:11:45.856477 to 2025-10-29 06:11:45.856477
+2025-10-29 06:11:46,754 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:11:46,754 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:11:46,754 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:11:47,690 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:11:47,690 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:11:47,690 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:11:47,690 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:11:47,690 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:11:47,690 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:11:47,713 - nifty_predictor - INFO - Fetched and cached fresh data for 180 days
+2025-10-29 06:11:47,713 - nifty_predictor - INFO - Fetched and cached fresh data for 180 days
+2025-10-29 06:11:47,713 - nifty_predictor - INFO - Fetched and cached fresh data for 180 days
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:11:47,746 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:11:47,766 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:11:47,766 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:11:47,766 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:11:47,861 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:11:47,861 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:11:47,861 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:11:47,892 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:11:47,892 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:11:47,892 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:11:47,898 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:47,898 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:47,898 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:11:47,900 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:11:47,900 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:11:47,900 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:11:47,901 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:11:47,901 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:11:47,901 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:11:47,913 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 7.4% confidence
+2025-10-29 06:11:47,913 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 7.4% confidence
+2025-10-29 06:11:47,913 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 7.4% confidence
+2025-10-29 06:11:47,920 - nifty_predictor - INFO - Generated prediction: BULLISH with 13.7% confidence
+2025-10-29 06:11:47,920 - nifty_predictor - INFO - Generated prediction: BULLISH with 13.7% confidence
+2025-10-29 06:11:47,920 - nifty_predictor - INFO - Generated prediction: BULLISH with 13.7% confidence
+2025-10-29 06:11:47,936 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 11.1% confidence
+2025-10-29 06:11:47,936 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 11.1% confidence
+2025-10-29 06:11:47,936 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 11.1% confidence
+2025-10-29 06:12:46,446 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:13:28,250 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:13:28.250480 to 2025-10-29 06:13:28.250480
+2025-10-29 06:13:33,954 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:13:36,238 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:13:36,238 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:13:36,487 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:13:36,533 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:13:36,539 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:13:36,543 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:13:36,548 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:13:36,638 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:13:36,659 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:13:36,672 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:13:36,674 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:13:36,681 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:13:46,585 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 7.7% confidence
+2025-10-29 06:14:01,386 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:14:01,481 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:14:01,660 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:14:51,398 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 4.6% confidence
+2025-10-29 06:15:00,806 - nifty_predictor - INFO - Fetching Nifty data from 2024-10-29 06:15:00.806912 to 2025-10-29 06:15:00.806912
+2025-10-29 06:15:03,812 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:15:06,053 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:15:06,056 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:15:06,074 - nifty_predictor - INFO - Fetched and cached fresh data for 365 days
+2025-10-29 06:15:06,108 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:15:06,110 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:15:06,114 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 06:15:06,126 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:15:06,221 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:15:06,259 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:15:06,261 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:15:06,264 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:15:06,269 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:15:16,670 - nifty_predictor - INFO - Generated prediction: BULLISH with 22.9% confidence
+2025-10-29 06:15:28,766 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 06:15:28,788 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:15:28,922 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:19:07,469 - nifty_predictor - INFO - Generated prediction: BULLISH with 22.2% confidence
+2025-10-29 06:22:44,316 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:22:44,937 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_180d.parquet
+2025-10-29 06:22:44,937 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-02 06:22:44.937033 to 2025-10-29 06:22:44.937033
+2025-10-29 06:22:50,377 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:22:53,693 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:22:53,715 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:22:53,759 - nifty_predictor - INFO - Fetched and cached fresh data for 180 days
+2025-10-29 06:22:53,798 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:22:53,798 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:22:53,813 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:22:53,823 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:22:53,841 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:22:53,873 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:22:53,873 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:22:53,873 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:22:53,880 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:22:53,889 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:22:53,898 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:22:53,919 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:23:54,358 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:23:55,184 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_180d.parquet
+2025-10-29 06:23:55,184 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-02 06:23:55.184695 to 2025-10-29 06:23:55.184695
+2025-10-29 06:23:58,430 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:23:59,644 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:23:59,701 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:23:59,774 - nifty_predictor - INFO - Fetched and cached fresh data for 180 days
+2025-10-29 06:23:59,831 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:23:59,833 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:23:59,838 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:23:59,841 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:23:59,867 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:24:53,374 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:24:53,491 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_180d.parquet
+2025-10-29 06:24:53,507 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-02 06:24:53.507367 to 2025-10-29 06:24:53.507367
+2025-10-29 06:24:56,215 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:24:57,286 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:24:57,289 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:24:57,309 - nifty_predictor - INFO - Fetched and cached fresh data for 180 days
+2025-10-29 06:24:57,368 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:24:57,370 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:24:57,384 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:24:57,401 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:24:58,355 - nifty_predictor - WARNING - HAR-RV model training failed: 'HARRVModel' object has no attribute 'outlier_detector'
+2025-10-29 06:26:07,686 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:26:07,834 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_180d.parquet
+2025-10-29 06:26:07,834 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-02 06:26:07.834337 to 2025-10-29 06:26:07.834337
+2025-10-29 06:26:10,416 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:26:12,057 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:26:12,057 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:26:12,078 - nifty_predictor - INFO - Fetched and cached fresh data for 180 days
+2025-10-29 06:26:12,109 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:26:12,114 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:26:12,116 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:26:12,121 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:26:13,441 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 06:26:13,463 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:26:13,463 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:26:13,468 - nifty_predictor - WARNING - Volatility forecast failed: 'HARRVModel' object has no attribute 'forecast'
+2025-10-29 06:26:13,469 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:26:13,478 - nifty_predictor - INFO - Training with 124 clean data points after NaN handling
+2025-10-29 06:26:13,489 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:26:14,047 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 06:29:34,764 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:29:59,209 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 06:29:59,209 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:29:59.209276 to 2025-10-29 06:29:59.209276
+2025-10-29 06:30:01,977 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:30:02,913 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:30:02,913 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:30:02,963 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:30:02,995 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:30:02,995 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:30:03,011 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:30:03,017 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:30:03,072 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:30:03,102 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:30:03,103 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:30:03,103 - nifty_predictor - INFO - HAR-RV model not trained yet, using default volatility
+2025-10-29 06:30:03,103 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:30:10,922 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 4.8% confidence
+2025-10-29 06:30:51,232 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:30:51,244 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:30:51,350 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:32:06,215 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 8.7% confidence
+2025-10-29 06:32:12,883 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:32:12,900 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:32:12,981 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:35:30,321 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:35:30.321729 to 2025-10-29 06:35:30.321729
+2025-10-29 06:35:31,435 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 0.4% confidence
+2025-10-29 06:35:32,140 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:35:33,413 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:35:33,413 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:35:33,435 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:35:33,456 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:35:33,457 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:35:33,460 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:35:33,467 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:35:33,511 - nifty_predictor - WARNING - HAR-RV model training failed: Insufficient data for HAR-RV training
+2025-10-29 06:49:39,724 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 06:50:00,519 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 06:50:00,531 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 06:50:00.531253 to 2025-10-29 06:50:00.531253
+2025-10-29 06:50:04,178 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 06:50:05,009 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 06:50:05,205 - nifty_predictor - INFO - Processing market data
+2025-10-29 06:50:05,331 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 06:50:05,424 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 06:50:05,430 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:50:05,436 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:50:05,455 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:50:07,747 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 06:50:07,796 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 06:50:07,806 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 06:50:07,812 - nifty_predictor - WARNING - Volatility forecast failed: 'HARRVModel' object has no attribute 'forecast'
+2025-10-29 06:50:07,813 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 06:50:28,895 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:50:29,032 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:50:30,034 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 06:50:36,962 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 2.4% confidence
+2025-10-29 06:50:37,026 - nifty_predictor - ERROR - Prediction error: unsupported format string passed to dict.__format__
+2025-10-29 06:50:54,555 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 06:50:54,572 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 06:50:55,496 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 06:50:58,147 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 5.4% confidence
+2025-10-29 06:50:58,175 - nifty_predictor - ERROR - Prediction error: unsupported format string passed to dict.__format__
+2025-10-29 06:51:16,099 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 2.3% confidence
+2025-10-29 06:51:16,127 - nifty_predictor - ERROR - Prediction error: unsupported format string passed to dict.__format__
+2025-10-29 07:17:18,373 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 07:30:40,651 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 07:31:16,799 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 07:31:16,800 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 07:31:16.800013 to 2025-10-29 07:31:16.800013
+2025-10-29 07:31:20,132 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 07:31:21,410 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 07:31:21,410 - nifty_predictor - INFO - Processing market data
+2025-10-29 07:31:21,469 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 07:31:21,516 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 07:31:21,517 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 07:31:21,525 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 07:31:21,531 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 07:31:22,972 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 07:31:23,024 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 07:31:23,027 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 07:31:23,029 - nifty_predictor - WARNING - Volatility forecast failed: 'HARRVModel' object has no attribute 'forecast'
+2025-10-29 07:31:23,040 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 07:31:24,211 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 2.0% confidence
+2025-10-29 07:31:50,342 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 07:31:50,435 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 07:31:51,502 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 07:32:10,781 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 07:32:10,793 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 07:32:11,267 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 07:32:14,224 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 5.8% confidence
+2025-10-29 07:32:30,888 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 3.6% confidence
+2025-10-29 07:32:42,003 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 1.2% confidence
+2025-10-29 07:51:09,191 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 07:51:24,572 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 07:51:24,572 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 07:51:24.572224 to 2025-10-29 07:51:24.572224
+2025-10-29 07:51:27,896 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 07:51:29,163 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 07:51:29,163 - nifty_predictor - INFO - Processing market data
+2025-10-29 07:51:29,220 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 07:51:29,254 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 07:51:29,254 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 07:51:29,265 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 07:51:29,271 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 07:51:30,346 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 07:51:30,368 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 07:51:30,370 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 07:51:30,371 - nifty_predictor - WARNING - Volatility forecast failed: 'HARRVModel' object has no attribute 'forecast'
+2025-10-29 07:51:30,371 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 07:51:38,064 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 07:51:38,072 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 07:51:38,507 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 07:51:41,670 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 2.1% confidence
+2025-10-29 07:52:09,480 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 9.0% confidence
+2025-10-29 07:52:38,947 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-31 07:52:38.947688 to 2025-10-29 07:52:38.947688
+2025-10-29 07:52:40,442 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 07:52:41,911 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 07:52:41,911 - nifty_predictor - INFO - Processing market data
+2025-10-29 07:52:41,931 - nifty_predictor - INFO - Fetched and cached fresh data for 151 days
+2025-10-29 07:52:41,956 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 07:52:41,962 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 07:52:41,967 - nifty_predictor - INFO - Training with 103 clean data points after NaN handling
+2025-10-29 07:52:41,985 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 07:52:42,409 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 07:52:42,435 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 07:52:42,444 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 07:52:42,446 - nifty_predictor - WARNING - Volatility forecast failed: 'HARRVModel' object has no attribute 'forecast'
+2025-10-29 07:52:42,447 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 07:52:46,880 - nifty_predictor - INFO - Training with 103 clean data points after NaN handling
+2025-10-29 07:52:46,889 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 07:52:47,310 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 07:52:55,190 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 9.4% confidence
+2025-10-29 07:54:11,209 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 11.3% confidence
+2025-10-29 09:03:28,577 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 09:03:38,130 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 09:03:38,131 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 09:03:38.131546 to 2025-10-29 09:03:38.131546
+2025-10-29 09:03:52,143 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 09:03:52,168 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:03:53,429 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:03:55,591 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:03:55,594 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:03:55,595 - nifty_predictor - WARNING - Volatility forecast failed: 'HARRVModel' object has no attribute 'forecast'
+2025-10-29 09:03:55,596 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 09:03:55,616 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 2.5% confidence
+2025-10-29 09:04:02,327 - nifty_predictor - INFO - Completed backtest - Sharpe: -12.03, Max DD: -17.49%
+2025-10-29 09:04:03,058 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:04:07,999 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:04:07,999 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:04:08,073 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 09:04:08,100 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:04:08,103 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:04:08,108 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 09:04:08,119 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:04:08,583 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:04:24,771 - nifty_predictor - INFO - Fetching Nifty data from 2024-10-29 09:04:24.770181 to 2025-10-29 09:04:24.770181
+2025-10-29 09:04:29,303 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:04:37,853 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:04:37,853 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:04:37,877 - nifty_predictor - INFO - Fetched and cached fresh data for 365 days
+2025-10-29 09:04:37,900 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:04:37,907 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:04:37,909 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 09:04:37,917 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:04:38,268 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:04:38,298 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 09:04:38,299 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:04:38,299 - nifty_predictor - WARNING - Volatility forecast failed: 'HARRVModel' object has no attribute 'forecast'
+2025-10-29 09:04:38,308 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 09:04:48,359 - nifty_predictor - INFO - Training with 248 clean data points after NaN handling
+2025-10-29 09:04:48,366 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:04:48,945 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:04:57,159 - nifty_predictor - INFO - Generated prediction: BULLISH with 27.4% confidence
+2025-10-29 09:05:06,571 - nifty_predictor - INFO - Completed backtest - Sharpe: -14.12, Max DD: -85.52%
+2025-10-29 09:20:06,217 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 09:20:06,217 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 09:20:06,217 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 09:20:06,217 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 09:21:36,330 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 09:21:36,330 - nifty_predictor - INFO - Loaded cached data from data_cache\nifty_data_90d.parquet
+2025-10-29 09:21:36,330 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 09:21:36.330875 to 2025-10-29 09:21:36.330875
+2025-10-29 09:21:36,330 - nifty_predictor - INFO - Fetching Nifty data from 2025-07-31 09:21:36.330875 to 2025-10-29 09:21:36.330875
+2025-10-29 09:21:39,527 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:21:39,527 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:21:40,577 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:21:40,577 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:21:40,577 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:21:40,577 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:21:40,627 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 09:21:40,627 - nifty_predictor - INFO - Fetched and cached fresh data for 90 days
+2025-10-29 09:21:40,677 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:21:40,677 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:21:40,677 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:21:40,677 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:21:40,677 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 09:21:40,677 - nifty_predictor - INFO - Training with 60 clean data points after NaN handling
+2025-10-29 09:21:40,694 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:21:40,694 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:21:45,424 - nifty_predictor - INFO - Fetching Nifty data from 2025-09-29 09:21:45.424076 to 2025-10-29 09:21:45.424076
+2025-10-29 09:21:45,424 - nifty_predictor - INFO - Fetching Nifty data from 2025-09-29 09:21:45.424076 to 2025-10-29 09:21:45.424076
+2025-10-29 09:21:46,483 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:21:46,483 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:21:47,262 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:21:47,262 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:21:47,678 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:21:47,678 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:21:47,700 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:21:47,700 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:21:47,806 - nifty_predictor - INFO - Fetched and cached fresh data for 30 days
+2025-10-29 09:21:47,806 - nifty_predictor - INFO - Fetched and cached fresh data for 30 days
+2025-10-29 09:21:47,846 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:21:47,846 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:21:47,846 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:21:47,846 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:21:47,846 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:47,846 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:47,865 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:47,865 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:47,867 - nifty_predictor - ERROR - Data loading error: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:47,867 - nifty_predictor - ERROR - Data loading error: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:55,973 - nifty_predictor - INFO - Fetching Nifty data from 2025-09-29 09:21:55.973829 to 2025-10-29 09:21:55.973829
+2025-10-29 09:21:55,973 - nifty_predictor - INFO - Fetching Nifty data from 2025-09-29 09:21:55.973829 to 2025-10-29 09:21:55.973829
+2025-10-29 09:21:56,909 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:21:56,909 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:21:57,829 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:21:57,829 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:21:57,829 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:21:57,829 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:21:57,859 - nifty_predictor - INFO - Fetched and cached fresh data for 30 days
+2025-10-29 09:21:57,859 - nifty_predictor - INFO - Fetched and cached fresh data for 30 days
+2025-10-29 09:21:57,893 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:21:57,893 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:21:57,893 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:21:57,893 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:21:57,893 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:57,893 - nifty_predictor - ERROR - Error training models: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:57,893 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:57,893 - nifty_predictor - ERROR - Error loading data: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:57,893 - nifty_predictor - ERROR - Data loading error: Insufficient clean data for training after NaN handling
+2025-10-29 09:21:57,893 - nifty_predictor - ERROR - Data loading error: Insufficient clean data for training after NaN handling
+2025-10-29 09:22:10,146 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-09 09:22:10.146495 to 2025-10-29 09:22:10.146495
+2025-10-29 09:22:10,146 - nifty_predictor - INFO - Fetching Nifty data from 2025-08-09 09:22:10.146495 to 2025-10-29 09:22:10.146495
+2025-10-29 09:22:11,096 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:22:11,096 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:22:12,036 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:22:12,036 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:22:12,062 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:22:12,062 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:22:12,154 - nifty_predictor - INFO - Fetched and cached fresh data for 81 days
+2025-10-29 09:22:12,154 - nifty_predictor - INFO - Fetched and cached fresh data for 81 days
+2025-10-29 09:22:12,188 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:22:12,188 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:22:12,205 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:22:12,205 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:22:12,253 - nifty_predictor - INFO - Training with 53 clean data points after NaN handling
+2025-10-29 09:22:12,253 - nifty_predictor - INFO - Training with 53 clean data points after NaN handling
+2025-10-29 09:22:12,297 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:22:12,297 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:22:12,764 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:22:12,764 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:22:12,803 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 09:22:12,803 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 09:22:12,811 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:22:12,811 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:22:12,864 - nifty_predictor - WARNING - Volatility forecast failed: Input X contains NaN.
+GaussianMixture does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-10-29 09:22:12,864 - nifty_predictor - WARNING - Volatility forecast failed: Input X contains NaN.
+GaussianMixture does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-10-29 09:22:12,866 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 09:22:12,866 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 09:22:42,554 - nifty_predictor - INFO - Training with 53 clean data points after NaN handling
+2025-10-29 09:22:42,554 - nifty_predictor - INFO - Training with 53 clean data points after NaN handling
+2025-10-29 09:22:42,596 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:22:42,596 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:22:43,379 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:22:43,379 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:22:51,302 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 5.5% confidence
+2025-10-29 09:22:51,302 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 5.5% confidence
+2025-10-29 09:23:00,954 - nifty_predictor - INFO - Completed backtest - Sharpe: -12.05, Max DD: -15.10%
+2025-10-29 09:23:00,954 - nifty_predictor - INFO - Completed backtest - Sharpe: -12.05, Max DD: -15.10%
+2025-10-29 09:47:26,673 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 09:48:28,340 - nifty_predictor - INFO - Fetching Nifty data from 2025-05-16 09:48:28.340279 to 2025-10-29 09:48:28.340279
+2025-10-29 09:48:32,163 - nifty_predictor - INFO - Fetching VIX data
+2025-10-29 09:48:33,548 - nifty_predictor - INFO - Preprocessing data...
+2025-10-29 09:48:33,548 - nifty_predictor - INFO - Processing market data
+2025-10-29 09:48:33,764 - nifty_predictor - INFO - Fetched and cached fresh data for 166 days
+2025-10-29 09:48:33,806 - nifty_predictor - INFO - Added 11 technical indicators
+2025-10-29 09:48:33,807 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:48:33,810 - nifty_predictor - INFO - Training with 114 clean data points after NaN handling
+2025-10-29 09:48:33,818 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:48:35,098 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:48:35,130 - nifty_predictor - INFO - No new indicators to add
+2025-10-29 09:48:35,131 - nifty_predictor - INFO - Calculated technical indicators
+2025-10-29 09:48:35,172 - nifty_predictor - WARNING - Volatility forecast failed: Input X contains NaN.
+GaussianMixture does not accept missing values encoded as NaN natively. For supervised learning, you might want to consider sklearn.ensemble.HistGradientBoostingClassifier and Regressor which accept missing values encoded as NaNs natively. Alternatively, it is possible to preprocess the data, for instance by using an imputer transformer in a pipeline or drop samples with missing values. See https://scikit-learn.org/stable/modules/impute.html You can find a list of all estimators that handle NaN values at the following page: https://scikit-learn.org/stable/modules/impute.html#estimators-that-handle-nan-values
+2025-10-29 09:48:35,174 - nifty_predictor - INFO - Generated signals: {'technical': {'MACD': 1, 'RSI': -1, 'MA_Cross': 1, 'combined': 0.4}, 'sentiment': {'score': 0.5, 'confidence': 0.5, 'source': 'news'}, 'volatility': {'forecast': 0.0}}
+2025-10-29 09:48:43,072 - nifty_predictor - INFO - Training with 114 clean data points after NaN handling
+2025-10-29 09:48:43,088 - nifty_predictor - INFO - Trained and saved TFT model
+2025-10-29 09:48:43,509 - nifty_predictor - INFO - Trained and saved HAR-RV model
+2025-10-29 09:48:46,561 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 4.0% confidence
+2025-10-29 09:49:06,133 - nifty_predictor - INFO - Completed backtest - Sharpe: -11.93, Max DD: -27.12%
+2025-10-29 09:49:25,380 - nifty_predictor - INFO - Generated prediction: SIDEWAYS with 3.4% confidence
+2025-10-29 09:49:31,016 - nifty_predictor - INFO - Completed backtest - Sharpe: -11.93, Max DD: -27.12%

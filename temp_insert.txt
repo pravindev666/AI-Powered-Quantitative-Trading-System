@@ -1,0 +1,15 @@
+    def _save_data_to_csv(self, df, data_type='nifty'):
+        """Save fetched data to CSV for record-keeping"""
+        try:
+            csv_dir = Path('historical_data')
+            csv_dir.mkdir(parents=True, exist_ok=True)
+            
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = csv_dir / f"{data_type}_data_{timestamp}.csv"
+            
+            df.to_csv(filename)
+            print(f"   💾 Saved {data_type.upper()} data to: {filename}")
+            return filename
+        except Exception as e:
+            print(f"   ⚠️ Failed to save CSV: {e}")
+            return None

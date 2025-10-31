@@ -1,0 +1,14 @@
+{
+  "timestamp": "20251025_210707",
+  "trend": "DOWNTREND",
+  "confidence": 46.5,
+  "current_price": 25795.150390625,
+  "expiry_date": "2025-11-04",
+  "option_strategy": "Iron Butterfly",
+  "strikes": {
+    "call_sell": 25800,
+    "call_buy": 25900,
+    "put_sell": 25800,
+    "put_buy": 25700
+  }
+}

@@ -1,0 +1,406 @@
+import numpy as np
+import pandas as pd
+from typing import Dict, List, Optional, Tuple
+from dataclasses import dataclass
+from collections import deque
+import logging
+
+logger = logging.getLogger(__name__)
+
+@dataclass
+class OrderBookLevel:
+    price: float
+    size: float
+    order_count: int
+    
+@dataclass
+class OrderBookUpdate:
+    timestamp: float
+    book_type: str  # 'bid' or 'ask'
+    action: str    # 'add', 'modify', 'delete'
+    price: float
+    size: float
+    order_id: Optional[str] = None
+
+class OrderBook:
+    """Level 2 order book implementation with advanced analytics."""
+    
+    def __init__(self, max_levels: int = 10):
+        self.bids = {}  # price -> OrderBookLevel
+        self.asks = {}  # price -> OrderBookLevel
+        self.max_levels = max_levels
+        self.last_update = None
+        self.updates_queue = deque(maxlen=1000)  # Store recent updates for analysis
+        
+    def update(self, book_update: OrderBookUpdate):
+        """Process an order book update."""
+        self.last_update = book_update.timestamp
+        self.updates_queue.append(book_update)
+        
+        book = self.bids if book_update.book_type == 'bid' else self.asks
+        
+        if book_update.action == 'add':
+            if book_update.price not in book:
+                book[book_update.price] = OrderBookLevel(
+                    price=book_update.price,
+                    size=book_update.size,
+                    order_count=1
+                )
+            else:
+                book[book_update.price].size += book_update.size
+                book[book_update.price].order_count += 1
+                
+        elif book_update.action == 'modify':
+            if book_update.price in book:
+                book[book_update.price].size = book_update.size
+                
+        elif book_update.action == 'delete':
+            if book_update.price in book:
+                book[book_update.price].size -= book_update.size
+                book[book_update.price].order_count -= 1
+                if book[book_update.price].size <= 0 or book[book_update.price].order_count <= 0:
+                    del book[book_update.price]
+                    
+        # Maintain max levels
+        self._maintain_levels()
+        
+    def _maintain_levels(self):
+        """Maintain maximum number of price levels."""
+        if len(self.bids) > self.max_levels:
+            sorted_bids = sorted(self.bids.items(), reverse=True)
+            self.bids = dict(sorted_bids[:self.max_levels])
+            
+        if len(self.asks) > self.max_levels:
+            sorted_asks = sorted(self.asks.items())
+            self.asks = dict(sorted_asks[:self.max_levels])
+            
+    def get_spread(self) -> float:
+        """Calculate the current bid-ask spread."""
+        if not self.bids or not self.asks:
+            return float('inf')
+            
+        best_bid = max(self.bids.keys())
+        best_ask = min(self.asks.keys())
+        return best_ask - best_bid
+        
+    def get_mid_price(self) -> float:
+        """Calculate the current mid price."""
+        if not self.bids or not self.asks:
+            return None
+            
+        best_bid = max(self.bids.keys())
+        best_ask = min(self.asks.keys())
+        return (best_bid + best_ask) / 2
+        
+    def get_market_depth(self, levels: int = 5) -> Dict:
+        """Get market depth statistics."""
+        bid_depth = sum(level.size for level in list(self.bids.values())[:levels])
+        ask_depth = sum(level.size for level in list(self.asks.values())[:levels])
+        
+        return {
+            'bid_depth': bid_depth,
+            'ask_depth': ask_depth,
+            'total_depth': bid_depth + ask_depth,
+            'depth_imbalance': (bid_depth - ask_depth) / (bid_depth + ask_depth) if (bid_depth + ask_depth) > 0 else 0
+        }
+        
+    def calculate_vwap(self, quantity: float, side: str) -> Optional[float]:
+        """Calculate Volume-Weighted Average Price for a given quantity."""
+        if side not in ['bid', 'ask']:
+            raise ValueError("Side must be 'bid' or 'ask'")
+            
+        book = self.asks if side == 'bid' else self.bids
+        remaining_qty = quantity
+        vwap = 0.0
+        
+        for price, level in sorted(book.items()):
+            fill_qty = min(remaining_qty, level.size)
+            vwap += price * fill_qty
+            remaining_qty -= fill_qty
+            
+            if remaining_qty <= 0:
+                break
+                
+        if remaining_qty > 0:
+            return None
+            
+        return vwap / quantity
+
+class MarketMicrostructureAnalyzer:
+    """Advanced market microstructure analysis tools."""
+    
+    def __init__(self, window_size: int = 100):
+        self.window_size = window_size
+        self.order_book = OrderBook()
+        self.metrics_history = deque(maxlen=window_size)
+        self.trade_history = deque(maxlen=window_size)
+        
+    def process_order_book_update(self, update: OrderBookUpdate) -> Dict:
+        """Process an order book update and calculate metrics."""
+        self.order_book.update(update)
+        
+        metrics = self._calculate_microstructure_metrics()
+        self.metrics_history.append(metrics)
+        
+        return metrics
+    
+    def process_trade(self, trade: Dict):
+        """Process a trade and update relevant metrics."""
+        self.trade_history.append(trade)
+        
+    def _calculate_microstructure_metrics(self) -> Dict:
+        """Calculate comprehensive market microstructure metrics."""
+        spread = self.order_book.get_spread()
+        mid_price = self.order_book.get_mid_price()
+        depth = self.order_book.get_market_depth()
+        
+        metrics = {
+            'spread': spread,
+            'relative_spread': spread / mid_price if mid_price else None,
+            'mid_price': mid_price,
+            'depth': depth,
+            'order_flow_imbalance': self._calculate_order_flow_imbalance(),
+            'tick_size': self._estimate_tick_size(),
+            'market_resiliency': self._calculate_market_resiliency(),
+            'price_impact': self._estimate_price_impact(),
+            'liquidity_score': self._calculate_liquidity_score()
+        }
+        
+        return metrics
+    
+    def _calculate_order_flow_imbalance(self) -> float:
+        """Calculate order flow imbalance."""
+        if not self.order_book.updates_queue:
+            return 0.0
+            
+        recent_updates = list(self.order_book.updates_queue)[-100:]  # Last 100 updates
+        
+        buy_volume = sum(update.size for update in recent_updates 
+                        if update.book_type == 'bid' and update.action == 'add')
+        sell_volume = sum(update.size for update in recent_updates 
+                         if update.book_type == 'ask' and update.action == 'add')
+        
+        total_volume = buy_volume + sell_volume
+        return (buy_volume - sell_volume) / total_volume if total_volume > 0 else 0
+    
+    def _estimate_tick_size(self) -> float:
+        """Estimate the effective tick size."""
+        all_prices = (list(self.order_book.bids.keys()) + 
+                     list(self.order_book.asks.keys()))
+        
+        if len(all_prices) < 2:
+            return None
+            
+        price_diffs = np.diff(sorted(all_prices))
+        return np.min(price_diffs[price_diffs > 0]) if len(price_diffs) > 0 else None
+    
+    def _calculate_market_resiliency(self) -> float:
+        """Calculate market resiliency metric."""
+        if len(self.metrics_history) < 2:
+            return None
+            
+        # Calculate how quickly spread returns to normal after widening
+        spreads = [m['spread'] for m in self.metrics_history]
+        spread_changes = np.diff(spreads)
+        
+        # Calculate mean reversion speed
+        if len(spread_changes) < 2:
+            return None
+            
+        return -np.corrcoef(spread_changes[:-1], spread_changes[1:])[0,1]
+    
+    def _estimate_price_impact(self) -> Dict:
+        """Estimate price impact coefficients."""
+        if not self.trade_history:
+            return None
+            
+        # Calculate temporary and permanent impact
+        trades = list(self.trade_history)
+        volumes = [t['volume'] for t in trades]
+        price_changes = np.diff([t['price'] for t in trades])
+        
+        if len(price_changes) < 2:
+            return {'temporary': None, 'permanent': None}
+            
+        # Simple linear regression for impact coefficients
+        temp_impact = np.mean(np.abs(price_changes[::2])) / np.mean(volumes[::2])
+        perm_impact = np.mean(price_changes) / np.mean(volumes)
+        
+        return {
+            'temporary': temp_impact,
+            'permanent': perm_impact
+        }
+    
+    def _calculate_liquidity_score(self) -> float:
+        """Calculate composite liquidity score."""
+        metrics = self._calculate_microstructure_metrics()
+        
+        if not metrics['spread'] or not metrics['depth']['total_depth']:
+            return None
+            
+        # Combine multiple factors into a single score
+        spread_score = 1 / (1 + metrics['relative_spread'])
+        depth_score = np.log1p(metrics['depth']['total_depth'])
+        resilience_score = metrics['market_resiliency'] if metrics['market_resiliency'] else 0.5
+        
+        # Weighted average of components
+        weights = [0.4, 0.3, 0.3]  # Spread, depth, resilience weights
+        liquidity_score = (
+            weights[0] * spread_score +
+            weights[1] * depth_score +
+            weights[2] * resilience_score
+        )
+        
+        return liquidity_score
+    
+    def get_liquidity_forecast(self, horizon_minutes: int = 30) -> Dict:
+        """Forecast liquidity conditions for the specified horizon."""
+        if len(self.metrics_history) < self.window_size:
+            return None
+            
+        # Extract relevant features
+        spreads = [m['spread'] for m in self.metrics_history]
+        depths = [m['depth']['total_depth'] for m in self.metrics_history]
+        
+        # Calculate trend indicators
+        spread_trend = np.polyfit(range(len(spreads)), spreads, 1)[0]
+        depth_trend = np.polyfit(range(len(depths)), depths, 1)[0]
+        
+        # Volatility indicators
+        spread_vol = np.std(spreads)
+        depth_vol = np.std(depths)
+        
+        # Current market state
+        current_metrics = self._calculate_microstructure_metrics()
+        
+        return {
+            'expected_spread': current_metrics['spread'] + spread_trend * horizon_minutes,
+            'expected_depth': current_metrics['depth']['total_depth'] + depth_trend * horizon_minutes,
+            'spread_volatility': spread_vol,
+            'depth_volatility': depth_vol,
+            'market_state': self._classify_market_state(current_metrics)
+        }
+    
+    def _classify_market_state(self, metrics: Dict) -> str:
+        """Classify the current market state based on microstructure metrics."""
+        if not metrics['spread'] or not metrics['depth']['total_depth']:
+            return 'UNKNOWN'
+            
+        # Define thresholds
+        high_spread = np.percentile([m['spread'] for m in self.metrics_history], 75)
+        low_depth = np.percentile([m['depth']['total_depth'] for m in self.metrics_history], 25)
+        
+        if metrics['spread'] > high_spread and metrics['depth']['total_depth'] < low_depth:
+            return 'STRESSED'
+        elif metrics['spread'] > high_spread:
+            return 'WIDE'
+        elif metrics['depth']['total_depth'] < low_depth:
+            return 'SHALLOW'
+        else:
+            return 'NORMAL'
+
+class VolumeProfileAnalyzer:
+    """Analyzes volume profiles and order book dynamics."""
+    
+    def __init__(self, price_levels: int = 50):
+        self.price_levels = price_levels
+        self.volume_profile = {}
+        self.time_and_sales = deque(maxlen=10000)
+        
+    def update_volume_profile(self, price: float, volume: float, timestamp: float):
+        """Update volume profile with new trade."""
+        price_level = round(price, 2)  # Round to reasonable precision
+        
+        if price_level not in self.volume_profile:
+            self.volume_profile[price_level] = {
+                'volume': 0,
+                'trades': 0,
+                'last_trade': None,
+                'vwap': 0
+            }
+            
+        profile = self.volume_profile[price_level]
+        profile['volume'] += volume
+        profile['trades'] += 1
+        profile['last_trade'] = timestamp
+        profile['vwap'] = ((profile['vwap'] * (profile['trades'] - 1) + price) / 
+                          profile['trades'])
+        
+        # Add to time & sales
+        self.time_and_sales.append({
+            'timestamp': timestamp,
+            'price': price,
+            'volume': volume
+        })
+        
+    def get_volume_profile_metrics(self) -> Dict:
+        """Calculate volume profile metrics."""
+        if not self.volume_profile:
+            return None
+            
+        prices = np.array(list(self.volume_profile.keys()))
+        volumes = np.array([v['volume'] for v in self.volume_profile.values()])
+        
+        total_volume = np.sum(volumes)
+        volume_weighted_price = np.sum(prices * volumes) / total_volume
+        
+        # Calculate POC (Point of Control)
+        poc_price = prices[np.argmax(volumes)]
+        
+        # Value Area calculation (70% of volume)
+        value_area_volume = 0.7 * total_volume
+        sorted_idx = np.argsort(volumes)[::-1]
+        cumsum_vol = np.cumsum(volumes[sorted_idx])
+        value_area_idx = sorted_idx[cumsum_vol <= value_area_volume]
+        
+        value_area_high = np.max(prices[value_area_idx])
+        value_area_low = np.min(prices[value_area_idx])
+        
+        return {
+            'poc': poc_price,
+            'vah': value_area_high,
+            'val': value_area_low,
+            'volume_weighted_price': volume_weighted_price,
+            'total_volume': total_volume,
+            'price_range': {
+                'min': np.min(prices),
+                'max': np.max(prices)
+            }
+        }
+    
+    def analyze_trade_size_distribution(self) -> Dict:
+        """Analyze distribution of trade sizes."""
+        if not self.time_and_sales:
+            return None
+            
+        volumes = [t['volume'] for t in self.time_and_sales]
+        
+        return {
+            'mean_size': np.mean(volumes),
+            'median_size': np.median(volumes),
+            'std_size': np.std(volumes),
+            'size_percentiles': {
+                '25': np.percentile(volumes, 25),
+                '75': np.percentile(volumes, 75),
+                '90': np.percentile(volumes, 90)
+            }
+        }
+    
+    def calculate_volume_momentum(self, window_minutes: int = 5) -> float:
+        """Calculate volume momentum indicator."""
+        if not self.time_and_sales:
+            return 0.0
+            
+        current_time = self.time_and_sales[-1]['timestamp']
+        window_start = current_time - (window_minutes * 60)
+        
+        recent_trades = [t for t in self.time_and_sales 
+                        if t['timestamp'] >= window_start]
+        
+        if not recent_trades:
+            return 0.0
+            
+        recent_volume = sum(t['volume'] for t in recent_trades)
+        avg_volume = sum(t['volume'] for t in self.time_and_sales) / len(self.time_and_sales)
+        
+        return (recent_volume / window_minutes) / (avg_volume / len(self.time_and_sales))

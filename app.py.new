@@ -1,0 +1,293 @@
+import yfinance as yf
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+import warnings
+from scipy.stats import norm
+import sqlite3
+import os
+import json
+from pathlib import Path
+from market_sentiment import MarketSentimentAnalyzer, NewsTradingSignalGenerator
+import joblib
+from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import accuracy_score
+
+warnings.filterwarnings('ignore')
+
+class TradingSystem:
+    def __init__(self, config=None):
+        """Initialize trading system components"""
+        self.config = config or {}
+        self.sentiment_analyzer = MarketSentimentAnalyzer()
+        self.signal_generator = NewsTradingSignalGenerator()
+        
+    def calculate_garch_volatility(self, returns, days_ahead=1):
+        """Calculate GARCH(1,1) volatility forecast"""
+        try:
+            from scipy.optimize import minimize
+            
+            r = np.asarray(returns.dropna())
+            T = len(r)
+            
+            if T < 50:
+                return None
+                
+            # Initial parameters
+            var = np.var(r)
+            p0 = np.array([1e-6, 0.05, 0.9])  # omega, alpha, beta
+            bounds = [(1e-12, None), (1e-6, 0.999), (1e-6, 0.999)]
+            
+            def negloglik(p):
+                omega, alpha, beta = p
+                sigma2 = np.empty(T)
+                eps2 = r**2
+                sigma2[0] = omega / (1 - alpha - beta) if (alpha+beta)<0.999 else var
+                
+                for t in range(1, T):
+                    sigma2[t] = omega + alpha * eps2[t-1] + beta * sigma2[t-1]
+                    if sigma2[t] <= 0:
+                        return 1e10
+                        
+                ll = -0.5 * (np.log(2*np.pi) + np.log(sigma2) + eps2 / sigma2)
+                return -np.sum(ll)
+            
+            res = minimize(negloglik, p0, bounds=bounds, method='L-BFGS-B', options={'maxiter':5000})
+            
+            if res.success:
+                omega, alpha, beta = res.x
+                sigma2 = np.empty(T)
+                eps2 = r**2
+                sigma2[0] = omega / (1 - alpha - beta) if (alpha+beta)<0.999 else var
+                
+                for t in range(1, T):
+                    sigma2[t] = omega + alpha * eps2[t-1] + beta * sigma2[t-1]
+                    
+                # Forecast volatility for next days_ahead periods
+                sigma2_ahead = omega + alpha * eps2[-1] + beta * sigma2[-1]
+                for i in range(days_ahead-1):
+                    sigma2_ahead = omega + (alpha + beta) * sigma2_ahead
+                    
+                return np.sqrt(sigma2_ahead)
+                
+            return None
+            
+        except Exception as e:
+            print(f"Error in GARCH calculation: {str(e)}")
+            return None
+            
+    def analyze_sentiment_impact(self, symbol, lookback_days=30):
+        """Analyze sentiment impact on market movements"""
+        # Get sentiment data
+        sentiment_data = self.sentiment_analyzer.analyze_news_sentiment(symbol, lookback_days)
+        if not sentiment_data:
+            return None
+            
+        # Get price data
+        try:
+            ticker = yf.Ticker(symbol)
+            hist = ticker.history(period=f"{lookback_days+1}d")
+            returns = hist['Close'].pct_change().dropna()
+        except Exception as e:
+            print(f"Error fetching price data: {str(e)}")
+            return None
+            
+        # Combine sentiment and returns
+        sentiment_df = pd.DataFrame(sentiment_data['detailed_sentiments'])
+        sentiment_df['date'] = pd.to_datetime(sentiment_df['timestamp']).dt.date
+        returns_df = pd.DataFrame({'date': returns.index.date, 'return': returns.values})
+        
+        # Calculate correlations
+        combined = pd.merge(sentiment_df, returns_df, on='date', how='inner')
+        if len(combined) < 2:
+            return None
+            
+        correlation = combined['compound'].corr(combined['return'])
+        
+        # Calculate predictive power
+        next_day_returns = returns.shift(-1)
+        predictive_correlation = combined['compound'].corr(next_day_returns[combined.index])
+        
+        # Analyze sentiment regimes
+        high_sentiment = combined[combined['compound'] > combined['compound'].mean()]
+        low_sentiment = combined[combined['compound'] <= combined['compound'].mean()]
+        
+        return {
+            'correlation': correlation,
+            'predictive_correlation': predictive_correlation,
+            'regime_analysis': {
+                'high_sentiment': {
+                    'avg_return': high_sentiment['return'].mean(),
+                    'volatility': high_sentiment['return'].std()
+                },
+                'low_sentiment': {
+                    'avg_return': low_sentiment['return'].mean(),
+                    'volatility': low_sentiment['return'].std()
+                }
+            },
+            'metrics': sentiment_data['metrics']
+        }
+        
+    def generate_trading_signal(self, symbol, include_sentiment=True):
+        """Generate trading signal incorporating sentiment analysis"""
+        current_price = None
+        try:
+            ticker = yf.Ticker(symbol)
+            current_price = ticker.history(period='1d')['Close'].iloc[-1]
+        except Exception as e:
+            print(f"Error fetching current price: {str(e)}")
+            return None
+            
+        # Get sentiment signal
+        sentiment_signal = self.signal_generator.generate_signal(symbol, current_price)
+        
+        # Get technical signals (from existing system)
+        technical_signal = self.generate_technical_signal(symbol)
+        
+        # Combine signals
+        if include_sentiment and sentiment_signal:
+            combined_signal = 0.6 * technical_signal['signal'] + 0.4 * sentiment_signal['signal']
+            confidence = 0.6 * technical_signal['confidence'] + 0.4 * sentiment_signal['confidence']
+        else:
+            combined_signal = technical_signal['signal']
+            confidence = technical_signal['confidence']
+            
+        return {
+            'signal': combined_signal,
+            'confidence': confidence,
+            'components': {
+                'technical': technical_signal,
+                'sentiment': sentiment_signal if include_sentiment else None
+            }
+        }
+        
+    def adjust_position_sizes(self, portfolio, sentiment_data):
+        """Adjust position sizes based on sentiment"""
+        adjusted_positions = {}
+        
+        for symbol, position in portfolio.items():
+            sentiment = sentiment_data.get(symbol, {'overall_sentiment': 0})
+            
+            # Adjust size based on sentiment strength
+            sentiment_factor = 1 + (sentiment['overall_sentiment'] * 0.2)  # ±20% adjustment
+            
+            # Apply adjustment with constraints
+            new_size = position * sentiment_factor
+            adjusted_positions[symbol] = min(max(new_size, position * 0.5), position * 1.5)
+            
+        return adjusted_positions
+        
+    def update_risk_limits(self, base_limits, sentiment_data):
+        """Update risk limits based on market sentiment"""
+        updated_limits = base_limits.copy()
+        
+        # Adjust based on overall market sentiment
+        sentiment_scores = [data['overall_sentiment'] for data in sentiment_data.values()]
+        avg_sentiment = np.mean(sentiment_scores) if sentiment_scores else 0
+        
+        # Modify risk limits
+        sentiment_factor = 1 - (avg_sentiment * 0.15)  # ±15% adjustment
+        
+        for limit_type in updated_limits:
+            updated_limits[limit_type] *= sentiment_factor
+            
+        return updated_limits
+        
+    def generate_technical_signal(self, symbol):
+        """Generate technical trading signal"""
+        try:
+            # Fetch historical data
+            ticker = yf.Ticker(symbol)
+            hist = ticker.history(period='60d')
+            
+            if len(hist) < 20:
+                return {'signal': 0, 'confidence': 0}
+                
+            # Calculate technical indicators
+            close = hist['Close']
+            high = hist['High']
+            low = hist['Low']
+            volume = hist['Volume']
+            
+            # Moving averages
+            ma20 = close.rolling(window=20).mean()
+            ma50 = close.rolling(window=50).mean()
+            
+            # RSI
+            delta = close.diff()
+            gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+            loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+            rs = gain / loss
+            rsi = 100 - (100 / (1 + rs))
+            
+            # MACD
+            exp1 = close.ewm(span=12, adjust=False).mean()
+            exp2 = close.ewm(span=26, adjust=False).mean()
+            macd = exp1 - exp2
+            signal = macd.ewm(span=9, adjust=False).mean()
+            
+            # Bollinger Bands
+            std = close.rolling(window=20).std()
+            upper_band = ma20 + (std * 2)
+            lower_band = ma20 - (std * 2)
+            
+            # Generate signals
+            signals = []
+            confidences = []
+            
+            # Moving average signals
+            ma_signal = 1 if ma20.iloc[-1] > ma50.iloc[-1] else -1
+            ma_conf = abs(ma20.iloc[-1] - ma50.iloc[-1]) / close.iloc[-1]
+            signals.append(ma_signal)
+            confidences.append(ma_conf)
+            
+            # RSI signals
+            rsi_signal = -1 if rsi.iloc[-1] > 70 else 1 if rsi.iloc[-1] < 30 else 0
+            rsi_conf = abs(rsi.iloc[-1] - 50) / 50
+            signals.append(rsi_signal)
+            confidences.append(rsi_conf)
+            
+            # MACD signals
+            macd_signal = 1 if macd.iloc[-1] > signal.iloc[-1] else -1
+            macd_conf = abs(macd.iloc[-1] - signal.iloc[-1]) / abs(signal.iloc[-1])
+            signals.append(macd_signal)
+            confidences.append(macd_conf)
+            
+            # Bollinger Band signals
+            bb_signal = -1 if close.iloc[-1] > upper_band.iloc[-1] else 1 if close.iloc[-1] < lower_band.iloc[-1] else 0
+            bb_conf = abs(close.iloc[-1] - ma20.iloc[-1]) / (upper_band.iloc[-1] - lower_band.iloc[-1])
+            signals.append(bb_signal)
+            confidences.append(bb_conf)
+            
+            # Combine signals
+            final_signal = np.mean(signals)
+            final_confidence = np.mean(confidences)
+            
+            return {
+                'signal': final_signal,
+                'confidence': final_confidence,
+                'components': {
+                    'ma': {'signal': ma_signal, 'confidence': ma_conf},
+                    'rsi': {'signal': rsi_signal, 'confidence': rsi_conf},
+                    'macd': {'signal': macd_signal, 'confidence': macd_conf},
+                    'bb': {'signal': bb_signal, 'confidence': bb_conf}
+                }
+            }
+            
+        except Exception as e:
+            print(f"Error generating technical signal: {str(e)}")
+            return {'signal': 0, 'confidence': 0}
+            
+    def save_sentiment_data(self, symbol, data, base_path='sentiment_data'):
+        """Save sentiment analysis results"""
+        path = Path(base_path)
+        path.mkdir(exist_ok=True)
+        
+        filename = path / f"{symbol}_sentiment_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        with open(filename, 'w') as f:
+            json.dump(data, f)

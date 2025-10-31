@@ -1,0 +1,107 @@
+2025-10-28 15:06:29,087 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 15:38:01,229 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 15:51:35,745 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 15:51:35,745 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 15:58:05,638 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 16:12:46,602 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 16:31:00,639 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 18:50:03,450 - app - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 18:50:03,462 - app - INFO - Fetching Nifty data from 2025-09-28 18:50:03.462933 to 2025-10-28 18:50:03.462933
+2025-10-28 18:50:12,162 - app - INFO - Fetching VIX data
+2025-10-28 18:50:14,274 - app - INFO - Processing market data
+2025-10-28 18:50:14,274 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 18:57:09,459 - app - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 18:57:09,489 - app - INFO - Fetching Nifty data from 2025-07-30 18:57:09.489678 to 2025-10-28 18:57:09.489678
+2025-10-28 18:57:09,816 - app - INFO - TFT model not available
+2025-10-28 18:57:09,819 - app - INFO - No pre-trained HAR-RV model found
+2025-10-28 18:57:09,822 - app - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 18:57:09,822 - app - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 18:57:09,894 - app - INFO - Fetching Nifty data from 2025-07-30 18:57:09.894938 to 2025-10-28 18:57:09.894938
+2025-10-28 18:57:09,894 - app - INFO - Fetching Nifty data from 2025-07-30 18:57:09.894938 to 2025-10-28 18:57:09.894938
+2025-10-28 18:57:13,286 - app - INFO - Fetching VIX data
+2025-10-28 18:57:13,286 - app - INFO - Fetching VIX data
+2025-10-28 18:57:13,286 - app - INFO - Fetching VIX data
+2025-10-28 18:57:13,286 - app - INFO - Fetching VIX data
+2025-10-28 18:57:14,668 - app - INFO - Processing market data
+2025-10-28 18:57:14,668 - app - INFO - Processing market data
+2025-10-28 18:57:14,668 - app - INFO - Processing market data
+2025-10-28 18:57:14,668 - app - INFO - Processing market data
+2025-10-28 18:57:15,164 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 18:57:15,164 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 18:57:15,225 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 18:57:15,225 - app - ERROR - Error loading data: If using all scalar values, you must pass an index
+2025-10-28 23:10:47,624 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:13,300 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:11:13,300 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:11:13,300 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:13,300 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:23,371 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:11:23,371 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:11:23,386 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:11:23,386 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:11:23,402 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:23,402 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:23,402 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:37,367 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:11:37,367 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:11:37,367 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:11:37,541 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:11:37,541 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:11:37,541 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:11:37,546 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:37,546 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:37,546 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:11:37,546 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:45,300 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:45,300 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:45,300 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:45,300 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:45,304 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:45,304 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:45,304 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:45,304 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:45,305 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:45,305 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:45,305 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:45,305 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:45,305 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:12:47,962 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:47,962 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:47,962 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:47,962 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:47,962 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:12:47,962 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:15:53,215 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:02,126 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:17:03,618 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:17:04,123 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:04,123 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:34,946 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:17:34,946 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:17:34,993 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:17:34,993 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:17:35,038 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:35,038 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:35,038 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:42,744 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:17:42,744 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:17:42,744 - niftypred.core - INFO - No pre-trained TFT model found
+2025-10-28 23:17:42,744 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:17:42,744 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:17:42,744 - niftypred.core - INFO - No pre-trained HAR-RV model found
+2025-10-28 23:17:42,744 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:42,744 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:42,744 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:17:42,744 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:23:29,121 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-28 23:33:40,894 - niftypred.core - INFO - EnhancedNiftyPredictionSystem initialized

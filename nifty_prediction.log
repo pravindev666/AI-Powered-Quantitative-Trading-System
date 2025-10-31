@@ -1,0 +1,17 @@
+2025-10-29 00:06:17,860 - nifty_predictor - ERROR - Error during prediction: TemporalFusionTransformerModel.__init__() got an unexpected keyword argument 'max_encoder_length'
+2025-10-29 00:17:20,311 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:17:20,319 - nifty_predictor - ERROR - Error during prediction: HARRVModel.__init__() got an unexpected keyword argument 'train_size'
+2025-10-29 00:17:31,662 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:17:31,670 - nifty_predictor - ERROR - Error during prediction: HARRVModel.__init__() got an unexpected keyword argument 'train_size'
+2025-10-29 00:20:17,236 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:20:17,245 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:20:17,245 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:17,253 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:20:20,661 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:20:20,745 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:20:20,845 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:20:20,862 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'
+2025-10-29 00:43:04,480 - nifty_predictor - INFO - No pre-trained TFT model found
+2025-10-29 00:43:04,480 - nifty_predictor - INFO - No pre-trained HAR-RV model found
+2025-10-29 00:43:04,480 - nifty_predictor - INFO - EnhancedNiftyPredictionSystem initialized
+2025-10-29 00:43:04,480 - nifty_predictor - ERROR - Error during prediction: unsupported operand type(s) for -: 'float' and 'NoneType'

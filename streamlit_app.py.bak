@@ -1,0 +1,466 @@
+"""
+Streamlit Web UI for Enhanced Nifty Prediction System
+Run with: streamlit run streamlit_app.py
+"""
+
+import streamlit as st
+from app import EnhancedNiftyPredictionSystem, SENTIMENT_AVAILABLE
+from visualizer import Visualizer
+import pandas as pd
+from datetime import datetime, timedelta
+from utils import Timer, logger
+import time
+
+# Page config
+st.set_page_config(
+    page_title="Nifty Prediction System",
+    page_icon="📈",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Initialize session state for metrics
+if 'metrics' not in st.session_state:
+    st.session_state.metrics = []
+
+# Title and loading state
+st.title("🚀 Enhanced Nifty Option Prediction System v4.5")
+
+# Initialize session state
+if 'process_start_time' not in st.session_state:
+    st.session_state.process_start_time = None
+if 'current_phase' not in st.session_state:
+    st.session_state.current_phase = None
+if 'phase_start_time' not in st.session_state:
+    st.session_state.phase_start_time = None
+if 'timing_info' not in st.session_state:
+    st.session_state.timing_info = {}
+
+# Create layout
+st.title("🚀 Enhanced Nifty Option Prediction System v4.5")
+
+# Main progress section
+st.markdown("### Overall Progress")
+overall_progress = st.progress(0)
+overall_status = st.empty()
+
+# Detailed progress section
+st.markdown("### 📊 Detailed Progress")
+col1, col2 = st.columns(2)
+
+with col1:
+    phase_info = st.empty()
+    step_info = st.empty()
+
+with col2:
+    time_info = st.empty()
+    est_info = st.empty()
+
+# Divider
+st.markdown("---")
+
+# Progress tracking setup
+PHASES = {
+    'data_loading': {
+        'name': 'Data Loading',
+        'steps': ['Downloading historical data', 'Preprocessing data'],
+        'est_time': '2-3 minutes'
+    },
+    'indicators': {
+        'name': 'Technical Analysis',
+        'steps': ['Computing technical indicators', 'Calculating volatility', 'Generating signals'],
+        'est_time': '2-3 minutes'
+    },
+    'training': {
+        'name': 'Model Training',
+        'steps': ['Training HAR-RV model', 'Training TFT model', 'Processing sentiment data'],
+        'est_time': '5-8 minutes'
+    },
+    'prediction': {
+        'name': 'Final Prediction',
+        'steps': ['Running model inference', 'Calculating final results'],
+        'est_time': '1 minute'
+    }
+}
+
+with status_container:
+    main_status = st.empty()
+    main_progress = st.progress(0)
+    est_time_area = st.empty()
+
+with detail_container:
+    st.markdown("### 📊 Detailed Progress")
+    phase_status = st.empty()
+    phase_progress = st.empty()
+    phase_time = st.empty()
+    step_status = st.empty()
+
+def update_status(message, progress=None, show_spinner=True, phase=None, step=None):
+    current_time = time.time()
+    
+    # Initialize start time if this is the first update
+    if not st.session_state.process_start_time:
+        st.session_state.process_start_time = current_time
+    
+    # Update main progress
+    if progress is not None:
+        overall_progress.progress(progress)
+        overall_status.info(message)
+    
+    # Update phase information
+    if phase and phase in PHASES:
+        if phase != st.session_state.current_phase:
+            st.session_state.current_phase = phase
+            st.session_state.phase_start_time = current_time
+        
+        phase_info = PHASES[phase]
+        elapsed_total = current_time - st.session_state.process_start_time
+        elapsed_phase = current_time - st.session_state.phase_start_time
+        
+        # Update phase information
+        phase_info_text = f"""
+        **Current Phase:** {phase_info['name']}
+        **Step:** {step if step else 'Initializing...'}
+        """
+        phase_info.markdown(phase_info_text)
+        
+        # Update timing information
+        timing_text = f"""
+        ⏱️ **Phase Time:** {elapsed_phase:.1f}s
+        ⏳ **Total Time:** {elapsed_total:.1f}s
+        """
+        time_info.markdown(timing_text)
+        
+        # Update estimates
+        est_text = f"""
+        **Estimated Phase Time:** {phase_info['est_time']}
+        **Estimated Total:** 10-15 minutes
+        """
+        est_info.markdown(est_text)
+    
+    # Log the update (without emojis)
+    try:
+        logger.info(message.encode('ascii', 'ignore').decode())
+    except Exception as e:
+        pass  # Ignore logging errors
+
+update_status("🔄 Initializing system...", 0)
+st.markdown("---")
+
+# Sidebar
+st.sidebar.header("⚙️ Configuration")
+
+# Input fields
+spot_price = st.sidebar.number_input(
+    "Spot Price (0 = auto-fetch)",
+    min_value=0.0,
+    max_value=50000.0,
+    value=0.0,
+    step=50.0
+)
+
+# Default to next Friday
+next_friday = datetime.now() + timedelta(days=(4 - datetime.now().weekday()) % 7)
+expiry_date = st.sidebar.date_input(
+    "Expiry Date",
+    value=next_friday,
+    min_value=datetime.now().date()
+)
+
+historical_days = st.sidebar.slider(
+    "Historical Days",
+    min_value=150,
+    max_value=500,
+    value=300,
+    step=50
+)
+
+force_refresh = st.sidebar.checkbox("Force Refresh Data", value=False)
+
+# Advanced options
+with st.sidebar.expander("🔧 Advanced Options"):
+    enable_tft = st.checkbox("Enable TFT", value=True)
+    enable_sentiment = st.checkbox("Enable Sentiment", value=True)
+    enable_ml_override = st.checkbox("Enable ML Override", value=True)
+
+# Main button
+if st.sidebar.button("🎯 Generate Prediction", type="primary"):
+    
+    # Reset progress tracking
+    progress_bar.progress(0)
+    update_status("🔄 Starting analysis...", 0)
+    
+    try:
+        # Reset session state
+        st.session_state.process_start_time = None
+        st.session_state.current_phase = None
+        st.session_state.phase_start_time = None
+        
+        # Initialize
+        update_status("Initializing system...", 5, 
+                     phase="data_loading", step="System initialization")
+        
+        system = EnhancedNiftyPredictionSystem(
+            spot_price=spot_price if spot_price > 0 else None,
+            expiry_date=str(expiry_date)
+        )
+        system.enable_tft = enable_tft
+        
+        # Data Loading Phase (0-25%)
+        update_status("Downloading historical data...", 10, 
+                     phase="data_loading", step="Downloading historical data")
+        system.load_data(days=historical_days, force_refresh=force_refresh)
+        
+        update_status("Preprocessing market data...", 25, 
+                     phase="data_loading", step="Preprocessing data")
+        
+        # Technical Analysis Phase (25-50%)
+        update_status("Computing technical indicators...", 35, 
+                     phase="indicators", step="Computing technical indicators")
+        system.calculate_indicators()
+        
+        update_status("Calculating volatility metrics...", 40, 
+                     phase="indicators", step="Calculating volatility")
+        
+        update_status("Generating trading signals...", 50, 
+                     phase="indicators", step="Generating signals")
+        system.generate_signals()
+        
+        # Model Training Phase (50-75%)
+        update_status("Training HAR-RV model...", 60, 
+                     phase="training", step="Training HAR-RV model")
+        
+        if enable_tft:
+            update_status("Training TFT model...", 65, 
+                         phase="training", step="Training TFT model")
+        
+        if SENTIMENT_AVAILABLE:
+            update_status("Processing sentiment data...", 70, 
+                         phase="training", step="Processing sentiment data")
+        
+        system.train_ml_models()
+        
+        # Prediction Phase (75-100%)
+        update_status("Running model inference...", 85, 
+                     phase="prediction", step="Running model inference")
+        prediction = system.predict_next_day()
+        
+        update_status("Calculating final results...", 95, 
+                     phase="prediction", step="Calculating final results")
+        
+        update_status("Analysis complete!", 100, 
+                     phase="prediction", step="Complete")
+        
+        # Display final summary
+        st.success("✅ Prediction generated successfully!")
+        
+        # Show execution summary
+        st.subheader("📊 Execution Summary")
+        total_time = time.time() - st.session_state.process_start_time
+        st.markdown(f"**Total execution time:** {total_time:.1f} seconds")
+        
+        # Display phase-wise timing
+        st.markdown("### ⏱️ Phase-wise Timing")
+        for phase, info in PHASES.items():
+            if phase in st.session_state.timing_info:
+                st.markdown(f"- **{info['name']}:** {st.session_state.timing_info[phase]:.1f}s")
+        
+        # Store in session state
+        st.session_state['prediction'] = prediction
+        st.session_state['system'] = system
+        
+    except Exception as e:
+        st.error(f"❌ Error: {e}")
+        st.stop()
+
+# Display results if prediction exists
+if 'prediction' in st.session_state:
+    prediction = st.session_state['prediction']
+    
+    # Main metrics
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric(
+            "Trend",
+            prediction['trend'],
+            delta=None,
+            delta_color="normal"
+        )
+        st.markdown(f"<h1 style='text-align: center;'>{prediction['trend_emoji']}</h1>", 
+                   unsafe_allow_html=True)
+    
+    with col2:
+        st.metric(
+            "Confidence",
+            f"{prediction['confidence']:.1f}%"
+        )
+    
+    with col3:
+        st.metric(
+            "Current Price",
+            f"₹{prediction['current_price']:.2f}"
+        )
+    
+    with col4:
+        st.metric(
+            "India VIX",
+            f"{prediction['market_conditions'].get('india_vix', 0):.2f}"
+        )
+    
+    st.markdown("---")
+    
+    # Tabs for different views
+    tab1, tab2, tab3, tab4, tab5 = st.tabs([
+        "📊 Signals", 
+        "🤖 ML Models", 
+        "💡 Strategy", 
+        "📈 Backtest",
+        "🔮 Advanced"
+    ])
+    
+    with tab1:
+        st.subheader("Technical Signals")
+        
+        signals_data = []
+        for indicator, signal in prediction['signals'].items():
+            direction = "🟢 Bullish" if signal > 0 else "🔴 Bearish" if signal < 0 else "⚪ Neutral"
+            signals_data.append({
+                'Indicator': indicator,
+                'Signal': direction,
+                'Value': signal
+            })
+        
+        signals_df = pd.DataFrame(signals_data)
+        st.dataframe(signals_df, use_container_width=True, hide_index=True)
+        
+        # Technical score
+        st.metric("Technical Score", f"{prediction.get('technical_score', 0):.3f}")
+    
+    with tab2:
+        if 'ml_predictions' in prediction:
+            st.subheader("Machine Learning Predictions")
+            
+            ml_pred = prediction['ml_predictions']
+            
+            # Individual models
+            ml_data = []
+            for model_name, pred in ml_pred.get('individual', {}).items():
+                direction = "🟢 Bullish" if pred > 0 else "🔴 Bearish"
+                conf = ml_pred.get('confidences', {}).get(model_name, 0)
+                ml_data.append({
+                    'Model': model_name,
+                    'Prediction': direction,
+                    'Confidence': f"{conf*100:.1f}%"
+                })
+            
+            ml_df = pd.DataFrame(ml_data)
+            st.dataframe(ml_df, use_container_width=True, hide_index=True)
+            
+            # Ensemble
+            ensemble_dir = "🟢 Bullish" if ml_pred.get('ensemble_prediction', 0) > 0 else "🔴 Bearish"
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Ensemble Prediction", ensemble_dir)
+            with col2:
+                st.metric("Ensemble Confidence", f"{ml_pred.get('ensemble_confidence', 0)*100:.1f}%")
+        else:
+            st.info("ML predictions not available")
+    
+    with tab3:
+        st.subheader("Option Strategy Recommendation")
+        
+        strategy = prediction.get('option_strategy', {})
+        
+        st.markdown(f"### {strategy.get('name', 'N/A')}")
+        
+        if strategy.get('strikes'):
+            st.json(strategy['strikes'])
+        
+        # Risk metrics
+        if 'risk' in strategy:
+            st.markdown("#### Risk Metrics")
+            risk_cols = st.columns(3)
+            
+            risk = strategy['risk']
+            with risk_cols[0]:
+                if 'max_loss' in risk:
+                    st.metric("Max Loss", f"₹{risk['max_loss']}")
+            with risk_cols[1]:
+                if 'max_profit' in risk:
+                    st.metric("Max Profit", f"₹{risk['max_profit']}")
+            with risk_cols[2]:
+                if 'stop_loss' in risk:
+                    st.metric("Stop Loss", f"₹{risk['stop_loss']}")
+        
+        # Position sizing
+        pos_size = prediction.get('position_size', {})
+        st.markdown("#### Position Sizing")
+        st.metric("Recommended Size", f"{pos_size.get('recommended_size', 0)*100:.2f}% of capital")
+    
+    with tab4:
+        st.subheader("Strategy Backtest")
+        
+        if st.button("Run Backtest"):
+            with st.spinner("Running backtest..."):
+                system = st.session_state['system']
+                backtest_results = system.run_backtest()
+                
+                # Plot
+                st.line_chart(backtest_results[['cum_strategy', 'cum_buyhold']])
+                
+                # Metrics
+                total_return = (backtest_results['cum_strategy'].iloc[-1] - 1) * 100
+                buyhold_return = (backtest_results['cum_buyhold'].iloc[-1] - 1) * 100
+                alpha = total_return - buyhold_return
+                
+                metric_cols = st.columns(4)
+                with metric_cols[0]:
+                    st.metric("Strategy Return", f"{total_return:.2f}%")
+                with metric_cols[1]:
+                    st.metric("Buy & Hold Return", f"{buyhold_return:.2f}%")
+                with metric_cols[2]:
+                    st.metric("Alpha", f"{alpha:.2f}%")
+                with metric_cols[3]:
+                    if 'sharpe' in backtest_results.columns:
+                        st.metric("Sharpe Ratio", f"{backtest_results['sharpe'].iloc[-1]:.2f}")
+    
+    with tab5:
+        st.subheader("Advanced Analysis")
+        
+        # Multi-modal fusion
+        if 'multi_modal_fusion' in prediction:
+            fusion = prediction['multi_modal_fusion']
+            
+            st.markdown("#### Multi-Modal Fusion")
+            st.metric("Fusion Probability", f"{fusion.get('fusion_prob', 0)*100:.1f}%")
+            
+            # Components
+            st.markdown("##### Component Contributions")
+            for component, score in fusion.get('components', {}).items():
+                st.progress(
+                    (score + 1) / 2,  # Normalize -1 to 1 → 0 to 1
+                    text=f"{component}: {score:+.3f}"
+                )
+        
+        # Probability breakdown
+        if 'probability_breakdown' in prediction:
+            prob = prediction['probability_breakdown']
+            
+            st.markdown("#### Probability Breakdown")
+            st.json(prob)
+
+else:
+    st.info("👈 Configure parameters and click 'Generate Prediction' to start")
+
+# Footer
+st.markdown("---")
+st.markdown(
+    """
+    <div style='text-align: center'>
+        <p>⚠️ <strong>Disclaimer:</strong> For educational purposes only. 
+        Options trading involves substantial risk.</p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)

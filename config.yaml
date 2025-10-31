@@ -1,0 +1,66 @@
+# Enhanced Nifty Prediction System Configuration
+
+data:
+  default_days: 300
+  cache_dir: "data_cache"
+  historical_data_dir: "historical_data"
+
+models:
+  enable_lstm: false
+  enable_tft: true
+  enable_shap: true
+  
+  tft:
+    max_encoder_length: 30
+    max_prediction_length: 1
+    hidden_size: 64
+    attention_heads: 4
+    dropout: 0.1
+    learning_rate: 0.03
+    epochs: 20
+  
+  ensemble:
+    walk_forward_cv: true
+    n_splits: 5
+    test_size: 0.2
+    calibration_method: "isotonic"
+    stacking_enabled: true
+
+sentiment:
+  enabled: true
+  source: "gnews"
+  update_interval_minutes: 15
+  cache_file: "sentiment_cache.json"
+  max_articles: 20
+
+options:
+  use_real_chain: true
+  nse_fetch_interval: 5  # minutes
+
+fusion:
+  weights:
+    technical: 0.25
+    ml_ensemble: 0.35
+    tft: 0.25
+    sentiment: 0.15
+
+strategy:
+  probability_threshold: 0.65
+  ml_override_threshold: 0.90
+  trailing_stop_pct: 0.05
+  
+monitoring:
+  drift_threshold: 0.1
+  calibration_check_interval: 1000  # trades
+  performance_history_days: 90
+  
+visualization:
+  save_plots: true
+  output_dir: "plots"
+  metrics:
+    - "accuracy"
+    - "auc"
+    - "logloss"
+    - "sharpe"
+    - "sortino"
+    - "calmar"

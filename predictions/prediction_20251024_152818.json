@@ -1,0 +1,14 @@
+{
+  "timestamp": "20251024_152818",
+  "trend": "DOWNTREND",
+  "confidence": 55.49999999999999,
+  "current_price": 25797.6,
+  "expiry_date": "2025-11-04",
+  "option_strategy": "Iron Condor",
+  "strikes": {
+    "call_sell": 26000,
+    "call_buy": 26100,
+    "put_sell": 25600,
+    "put_buy": 25500
+  }
+}

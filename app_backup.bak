@@ -1,0 +1,4650 @@
+import yfinance as yf
+import pandas as pd
+import numpy as np
+from datetime import datetime, timedelta
+import warnings
+from scipy.stats import norm
+import sqlite3
+import os
+import json
+from pathlib import Path
+from market_sentiment import MarketSentimentAnalyzer, NewsTradingSignalGenerator
+warnings.filterwarnings('ignore')
+
+class TradingSystem:
+    def __init__(self, config=None):
+        """Initialize trading system components"""
+        self.config = config or {}
+        self.sentiment_analyzer = MarketSentimentAnalyzer()
+        self.signal_generator = NewsTradingSignalGenerator()
+        
+    def calculate_garch_volatility(self, returns, days_ahead=1):
+        """
+        Calculate GARCH(1,1) volatility forecast using externalized GARCH calculation
+        
+        Args:
+            returns (pd.Series): Historical returns series
+            days_ahead (int): Number of days to forecast ahead
+            
+        Returns:
+            dict: Dictionary containing GARCH calculation results
+                (see garch.py for detailed return format)
+        """
+        from garch import calculate_garch_volatility as garch_calc
+        return garch_calc(returns, days_ahead)
+    def check_market_conditions(self, returns, prices):
+        """Check current market conditions for trading signals"""
+        pass  # TODO: Implement market condition checking
+                    
+                # Extract parameters
+                omega, alpha, beta = res.x
+                
+                # Validate final parameters
+                if omega <= 0 or alpha <= 0 or beta <= 0:
+                    return {
+                        'error': 'Invalid optimal parameters',
+                        'convergence': False
+                    }
+                    
+                if alpha + beta >= 1:
+                    return {
+
+        except Exception as e:
+            return {
+                'error': f'Unexpected error: {str(e)}',
+                'convergence': False
+            }
+# ML & persistence imports
+try:
+    import joblib
+    JOBLIB_AVAILABLE = True
+except Exception:
+    JOBLIB_AVAILABLE = False
+
+try:
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier, VotingClassifier
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.neural_network import MLPClassifier
+    from sklearn.svm import SVC
+    from sklearn.model_selection import GridSearchCV
+    from sklearn.metrics import accuracy_score
+except Exception:
+    # If sklearn not available, let runtime show clearer errors when training is attempted
+    StandardScaler = None
+    RandomForestClassifier = None
+    GradientBoostingClassifier = None
+    AdaBoostClassifier = None
+    VotingClassifier = None
+    LogisticRegression = None
+    MLPClassifier = None
+    SVC = None
+    GridSearchCV = None
+    accuracy_score = None
+
+import pickle
+
+# Optional advanced libraries
+try:
+    import lightgbm as lgb
+    LIGHTGBM_AVAILABLE = True
+except Exception:
+    LIGHTGBM_AVAILABLE = False
+
+try:
+    import xgboost as xgb
+    XGBOOST_AVAILABLE = True
+except Exception:
+    XGBOOST_AVAILABLE = False
+class DataLoader:
+    """Simple data loader using yfinance with optional simple caching."""
+    def __init__(self, cache_dir='cache'):
+        self.cache_dir = Path(cache_dir)
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+
+    def _get_vix_yfinance(self, start_date, end_date):
+        """Method 1: yfinance (existing)"""
+        try:
+            vix = yf.download('^INDIAVIX', start=start_date, end=end_date, progress=False)
+            if not vix.empty:
+                if isinstance(vix.columns, pd.MultiIndex):
+                    vix.columns = vix.columns.get_level_values(0)
+                vix_series = vix['Close'] if 'Close' in vix.columns else vix.iloc[:, 3]
+                vix_result = vix_series.rename('IndiaVIX')
+                
+                # 🆕 Save raw VIX to CSV
+                try:
+                    csv_dir = Path('historical_data')
+                    csv_dir.mkdir(parents=True, exist_ok=True)
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    vix_csv = csv_dir / f"raw_vix_yfinance_{timestamp}.csv"
+                    vix_result.to_csv(vix_csv)
+                    print(f"   💾 Saved raw VIX to: {vix_csv}")
+                except Exception:
+                    pass
+                
+                return vix_result
+        except Exception as e:
+            print(f"   ⚠️ yfinance VIX failed: {e}")
+        return None
+
+    def _get_vix_nsepy(self, start_date, end_date):
+        """Method 2: NSEpy"""
+        try:
+            from nsepy import get_history
+            vix_data = get_history(
+                symbol='INDIAVIX',
+                start=start_date.date() if hasattr(start_date, 'date') else start_date,
+                end=end_date.date() if hasattr(end_date, 'date') else end_date,
+                index=True
+            )
+            if not vix_data.empty:
+                vix_result = vix_data['Close'].rename('IndiaVIX')
+                
+                # 🆕 Save raw VIX to CSV
+                try:
+                    csv_dir = Path('historical_data')
+                    csv_dir.mkdir(parents=True, exist_ok=True)
+                    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                    vix_csv = csv_dir / f"raw_vix_nsepy_{timestamp}.csv"
+                    vix_data.to_csv(vix_csv)
+                    print(f"   💾 Saved NSEpy VIX to: {vix_csv}")
+                except Exception:
+                    pass
+                
+                return vix_result
+        except ImportError:
+            print("   ⚠️ NSEpy not installed. Install: pip install nsepy")
+        except Exception as e:
+            print(f"   ⚠️ NSEpy VIX failed: {e}")
+        return None
+
+    def _get_vix_nse_csv(self, start_date, end_date):
+        """Method 3: NSE CSV download"""
+        try:
+            import requests
+            from io import StringIO
+            
+            csv_url = (
+                f"https://www.nseindia.com/api/historical/vix/download?"
+                f"from={start_date.strftime('%d-%m-%Y')}&"
+                f"to={end_date.strftime('%d-%m-%Y')}"
+            )
+            
+            headers = {
+                "User-Agent": "Mozilla/5.0",
+                "Accept": "text/csv",
+                "Referer": "https://www.nseindia.com/reports-indices-historical-vix",
+            }
+            
+            session = requests.Session()
+            session.get("https://www.nseindia.com", headers=headers)
+            resp = session.get(csv_url, headers=headers, timeout=10)
+            resp.raise_for_status()
+            
+            df = pd.read_csv(StringIO(resp.text))
+            df['Date'] = pd.to_datetime(df['VIXDate'], format='%d-%b-%Y', errors='coerce')
+            df = df.dropna(subset=['Date'])
+            df = df[['Date', 'VIXClose']].rename(columns={'VIXClose': 'IndiaVIX'})
+            df.set_index('Date', inplace=True)
+            return df['IndiaVIX'].sort_index()
+            
+        except Exception as e:
+            print(f"   ⚠️ NSE CSV VIX failed: {e}")
+        return None
+
+    def _get_vix_user_input(self):
+        """Method 4: Ask user for current VIX"""
+        print("\n" + "=" * 60)
+        print("⚠️  ALL AUTOMATIC VIX FETCHING METHODS FAILED")
+        print("=" * 60)
+        print("\n🔍 Please check current India VIX at:")
+        print("   → https://www.nseindia.com/")
+        print("   → Look for 'INDIA VIX' on homepage\n")
+        
+        while True:
+            vix_input = input("Enter current India VIX value (e.g., 15.5): ").strip()
+            try:
+                vix_value = float(vix_input)
+                if 5.0 <= vix_value <= 50.0:
+                    print(f"   ✅ Using VIX = {vix_value}")
+                    return vix_value
+                print("   ⚠️ VIX should be between 5-50. Try again.")
+            except ValueError:
+                print("   ⚠️ Invalid number. Try again.")
+                    
+    def _save_data_to_csv(self, df, data_type='nifty'):
+        """Save fetched data to CSV for record-keeping"""
+        try:
+            csv_dir = Path('historical_data')
+            csv_dir.mkdir(parents=True, exist_ok=True)
+            
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = csv_dir / f"{data_type}_data_{timestamp}.csv"
+            
+            df.to_csv(filename)
+            print(f"   💾 Saved {data_type.upper()} data to: {filename}")
+            return filename
+        except Exception as e:
+            print(f"   ⚠️ Failed to save CSV: {e}")
+            return None
+        except Exception:
+            return 15.0
+
+    def get_data(self, days=365, force_refresh=False):
+        """Download NIFTY and India VIX data with cascading fallback"""
+        days = int(days)
+        nifty_ticker = '^NSEI'
+        
+        try:
+            # Calculate date range
+            end_date = datetime.now()
+            start_date = end_date - timedelta(days=days + 60)
+            
+            # Fetch NIFTY data with date range
+            df = yf.download(nifty_ticker, start=start_date, end=end_date, progress=False)
+            
+            if df.empty:
+                raise RuntimeError('No data returned for NIFTY')
+
+            # Flatten MultiIndex columns
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
+            
+            df = df.rename(columns={'Adj Close': 'Adj_Close'})
+            df = df.dropna(subset=['Close'])
+            
+            # Ensure essential columns exist
+            for c in ['Open', 'High', 'Low', 'Close', 'Volume']:
+                if c not in df.columns:
+                    raise RuntimeError(f"Missing essential column: {c}")
+            
+            # ═══════════════════════════════════════════════════════════
+            # 🔥 NEW VIX FETCHING WITH CASCADING FALLBACK
+            # ═══════════════════════════════════════════════════════════
+            
+            vix_methods = [
+                ('yfinance', lambda: self._get_vix_yfinance(start_date, end_date)),
+                ('NSEpy', lambda: self._get_vix_nsepy(start_date, end_date)),
+                ('NSE CSV', lambda: self._get_vix_nse_csv(start_date, end_date))
+            ]
+            
+            vix_data = None
+            for method_name, method_func in vix_methods:
+                print(f"   🔄 Trying VIX fetch: {method_name}...")
+                vix_data = method_func()
+                
+                if vix_data is not None and not vix_data.empty:
+                    print(f"   ✅ VIX fetched via {method_name}")
+                    # Align with main dataframe
+                    vix_data.index = pd.to_datetime(vix_data.index)
+                    df = df.join(vix_data, how='left')
+                    df['IndiaVIX'] = df['IndiaVIX'].fillna(method='ffill').fillna(method='bfill')
+                    break
+            
+            # If all automated methods failed, ask user
+            if vix_data is None or df['IndiaVIX'].isna().all():
+                current_vix = self._get_vix_user_input()
+                df['IndiaVIX'] = current_vix
+                print(f"   ✅ Using constant VIX = {current_vix} for all {len(df)} rows")
+            
+            # Final fallback validation
+            if 'IndiaVIX' not in df.columns or df['IndiaVIX'].isna().all():
+                print("   ⚠️ Final fallback: VIX = 15.0")
+                df['IndiaVIX'] = 15.0
+            
+            # Fill any remaining NaN values
+            df['IndiaVIX'] = df['IndiaVIX'].fillna(method='ffill').fillna(15.0)
+            
+            # Drop rows where Close is NaN (critical!)
+            df = df.dropna(subset=['Close'])
+            
+            # Ensure essential columns exist
+            for c in ['Open', 'High', 'Low', 'Close', 'Volume']:
+                if c not in df.columns:
+                    raise RuntimeError(f"Missing essential column: {c}")
+            
+            # Fill IndiaVIX if missing
+            if 'IndiaVIX' not in df.columns:
+                df['IndiaVIX'] = 15.0
+            else:
+                df['IndiaVIX'] = df['IndiaVIX'].fillna(method='ffill').fillna(15.0)
+            
+            # Take only requested days
+            df = df.tail(days)
+            
+            print(f"   ✅ Loaded {len(df)} rows with valid Close prices")
+            
+            # 🆕 SAVE TO CSV
+            try:
+                nifty_csv = self._save_data_to_csv(df[['Open', 'High', 'Low', 'Close', 'Volume']], 'nifty')
+                
+                # Save VIX separately if it's real data
+                if 'IndiaVIX' in df.columns and df['IndiaVIX'].nunique() > 1:
+                    vix_csv = self._save_data_to_csv(df[['IndiaVIX']], 'india_vix')
+                    print(f"   📊 Historical data saved for analysis")
+                else:
+                    print(f"   ⚠️ VIX data is constant, not saving separately")
+            except Exception as e:
+                print(f"   ⚠️ CSV save failed: {e}")
+            
+            return df
+        except Exception as e:
+            print(f"DataLoader error: {e}")
+            raise
+
+class FeatureBuilder:
+    """Generates trading signals and ML features"""
+
+    def __init__(self, df):
+        self.df = df.copy()
+
+    def build_signals(self):
+        """Generate trading signals (keeps modifications on self.df)."""
+        df = self.df.copy()
+
+        # Bollinger Band signals (example)
+        df.loc[df['Close'] < df.get('BB_Lower', pd.Series(np.nan, index=df.index)), 'BB_Signal'] = 1
+        df.loc[df['Close'] > df.get('BB_Upper', pd.Series(np.nan, index=df.index)), 'BB_Signal'] = -1
+
+        # Volume Signal
+        df['Volume_Signal'] = 0
+        df.loc[df.get('Volume_Ratio', pd.Series(0, index=df.index)) > 1.2, 'Volume_Signal'] = 1
+
+        # Stochastic Signal
+        df['Stoch_Signal'] = 0
+        if all(col in df.columns for col in ['Stoch_K', 'Stoch_D']):
+            df.loc[(df['Stoch_K'] < 20) & (df['Stoch_D'] < 20), 'Stoch_Signal'] = 1
+            df.loc[(df['Stoch_K'] > 80) & (df['Stoch_D'] > 80), 'Stoch_Signal'] = -1
+
+        # MFI Signal
+        df['MFI_Signal'] = 0
+        if 'MFI' in df.columns:
+            df.loc[df['MFI'] < 20, 'MFI_Signal'] = 1
+            df.loc[df['MFI'] > 80, 'MFI_Signal'] = -1
+
+        # Williams Signal
+        df['Williams_Signal'] = 0
+        if 'Williams_R' in df.columns:
+            df.loc[df['Williams_R'] < -80, 'Williams_Signal'] = 1
+            df.loc[df['Williams_R'] > -20, 'Williams_Signal'] = -1
+
+        # CCI Signal
+        df['CCI_Signal'] = 0
+        if 'CCI' in df.columns:
+            df.loc[df['CCI'] < -100, 'CCI_Signal'] = 1
+            df.loc[df['CCI'] > 100, 'CCI_Signal'] = -1
+
+        # RVI Signal
+        if 'RVI_SMA' in df.columns and 'RVI_Signal' in df.columns:
+            df['RVI_Flag'] = np.where(df['RVI_SMA'] > df['RVI_Signal'], 1,
+                                       np.where(df['RVI_SMA'] < df['RVI_Signal'], -1, 0))
+
+        # CMF Signal
+        if 'CMF' in df.columns:
+            df['CMF_Signal'] = np.where(df['CMF'] > 0.05, 1, np.where(df['CMF'] < -0.05, -1, 0))
+
+        # Trend Strength
+        df['Trend_Strength'] = 'Weak'
+        if 'ADX' in df.columns:
+            df.loc[df['ADX'] > 25, 'Trend_Strength'] = 'Strong'
+            df.loc[df['ADX'] > 50, 'Trend_Strength'] = 'Very Strong'
+
+        self.df = df
+        print("✅ Signals calculated\n")
+        return self
+
+    def build_ml_features(self):
+        """Prepare features for machine learning using advanced feature engineering."""
+        from feature_engineering import AdvancedFeatureEngineer
+        
+        df = self.df.copy()
+        
+        # Target: Next day direction with validation that prevents single-class errors 
+        df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
+        
+        # Base feature list
+        base_features = [
+            'EMA_Signal', 'RSI', 'RSI_Signal', 'MACD_Signal_Flag',
+            'CPR_Signal', 'BB_Signal', 'BB_Width', 'Volume_Signal',
+            'Stoch_Signal', 'MFI_Signal', 'Williams_Signal', 'CCI_Signal',
+            'ATR', 'ADX', 'Momentum', 'ROC', 'Volume_Ratio', 'HV_20',
+            'Higher_High', 'Lower_Low', 'OBV',
+            'Ichimoku_Signal', 'RVI_Flag', 'CMF_Signal', 'Supertrend_Signal',
+            'VIX_Signal', 'Z_Score_20', 'Body_Size', 'IndiaVIX'
+        ]
+
+        # Validate target distribution before proceeding
+        target_pct = df['Target'].value_counts(normalize=True)
+        if len(target_pct) < 2:
+            # No variation in prices - all up or all down
+            print("\n   🛑 Error: Target values show no price changes (all constant)") 
+            print(f"      Target class {target_pct.index[0]}: {target_pct.iloc[0]:.1%}")
+            raise ValueError("Target has only 1 class (no price changes). Check input data.")
+
+        # Print target distribution
+        print("\n   Target Distribution:")
+        for label, pct in target_pct.items():
+            print(f"      Class {label}: {pct:.1%}")
+
+        if target_pct.min() < 0.05:
+            print(f"\n   ⚠️  Warning: Minority class is only {target_pct.min():.1%} of samples")
+
+        # Base feature list
+        features = [
+            'EMA_Signal', 'RSI', 'RSI_Signal', 'MACD_Signal_Flag',
+            'CPR_Signal', 'BB_Signal', 'BB_Width', 'Volume_Signal',
+            'Stoch_Signal', 'MFI_Signal', 'Williams_Signal', 'CCI_Signal',
+            'ATR', 'ADX', 'Momentum', 'ROC', 'Volume_Ratio', 'HV_20',
+            'Higher_High', 'Lower_Low', 'OBV',
+            'Ichimoku_Signal', 'RVI_Flag', 'CMF_Signal', 'Supertrend_Signal',
+            'VIX_Signal', 'Z_Score_20', 'Body_Size', 'IndiaVIX'
+        ]
+
+        # Only keep features that were actually calculated
+        available_features = [f for f in features if f in df.columns]
+
+        # Feature Interaction Terms (Nonlinear combinations) - guard with columns
+        if 'RSI' in df.columns and 'MACD' in df.columns:
+            df['RSI_MACD'] = df['RSI'] * df['MACD']
+            available_features.append('RSI_MACD')
+        if 'EMA_20' in df.columns and 'EMA_50' in df.columns:
+            df['EMA_Ratio'] = df['EMA_20'] / df['EMA_50']
+            available_features.append('EMA_Ratio')
+        if 'ATR' in df.columns and 'IndiaVIX' in df.columns:
+            df['ATR_VIX'] = df['ATR'] * df['IndiaVIX']
+            available_features.append('ATR_VIX')
+        if 'Volume_Ratio' in df.columns and 'CMF' in df.columns:
+            df['Volume_CMF'] = df['Volume_Ratio'] * df['CMF']
+            available_features.append('Volume_CMF')
+
+        # Lagged Features (Temporal memory)
+        if 'Target' in df.columns:
+            df['Target_Lag1'] = df['Target'].shift(1)
+            df['Target_Lag2'] = df['Target'].shift(2)
+            available_features.extend([f for f in ['Target_Lag1', 'Target_Lag2'] if f in df.columns])
+        if 'RSI' in df.columns:
+            df['RSI_Lag1'] = df['RSI'].shift(1)
+            available_features.append('RSI_Lag1')
+
+        # Rolling Statistics
+        if 'Returns' in df.columns:
+            df['Returns_MA5'] = df['Returns'].rolling(5).mean()
+            df['Returns_Std5'] = df['Returns'].rolling(5).std()
+            available_features.extend([f for f in ['Returns_MA5', 'Returns_Std5'] if f in df.columns])
+        if 'RSI' in df.columns:
+            df['RSI_ZScore'] = (df['RSI'] - df['RSI'].rolling(20).mean()) / df['RSI'].rolling(20).std()
+            available_features.append('RSI_ZScore')
+
+        # Ensure uniqueness and preserve order
+        available_features = [*dict.fromkeys(available_features)]
+
+        # Working copy + fill
+        df_clean = df[available_features + ['Target']].copy()
+        df_clean = df_clean.fillna(method='ffill').fillna(method='bfill')
+
+        # Drop only if Target is missing
+        df_clean = df_clean.dropna(subset=['Target'])
+
+        X = df_clean[available_features]
+        y = df_clean['Target']
+
+        # Persist engineered features back to the object's dataframe so prediction can access them
+        try:
+            self.df.loc[df_clean.index, available_features] = df_clean[available_features]
+        except Exception:
+            self.df[available_features] = df[available_features]
+
+        print(f"   ML Features: {len(available_features)}")
+        print(f"   Training samples: {len(X)}")
+
+        if len(X) < 50:
+            print(f"   ⚠️  Warning: Only {len(X)} samples available (need 50+)")
+
+        return X, y
+# MODULE 2: INDICATOR ENGINE
+# =============================================================================
+            
+
+# =============================================================================
+# MODULE 5: OPTIONS TOOLKIT
+# =============================================================================
+class NSEOptionChainFetcher:
+    """Fetch real option chain from NSE"""
+    
+    def __init__(self):
+        self.base_url = "https://www.nseindia.com/api/option-chain-indices"
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            "Accept": "application/json",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://www.nseindia.com/option-chain"
+        }
+        self.session = None
+    
+    def _init_session(self):
+        """Initialize session with cookies"""
+        import requests
+        self.session = requests.Session()
+        self.session.headers.update(self.headers)
+        # Get cookies
+        self.session.get("https://www.nseindia.com", timeout=10)
+    
+    def fetch_nifty_option_chain(self, symbol="NIFTY"):
+        """Fetch live NIFTY option chain"""
+        if not self.session:
+            self._init_session()
+        
+        try:
+            url = f"{self.base_url}?symbol={symbol}"
+            response = self.session.get(url, timeout=10)
+            response.raise_for_status()
+            
+            data = response.json()
+            records = data['records']['data']
+            
+            # Extract call/put data
+            strikes = []
+            call_prices = []
+            put_prices = []
+            call_ivs = []
+            put_ivs = []
+            
+            for record in records:
+                strike = record['strikePrice']
+                
+                # Call data
+                if 'CE' in record:
+                    ce = record['CE']
+                    call_bid = ce.get('bidprice', 0)
+                    call_ask = ce.get('askprice', 0)
+                    call_mid = (call_bid + call_ask) / 2 if (call_bid and call_ask) else ce.get('lastPrice', 0)
+                    call_iv = ce.get('impliedVolatility', 0)
+                    
+                    if call_mid > 0:
+                        strikes.append(strike)
+                        call_prices.append(call_mid)
+                        call_ivs.append(call_iv)
+                
+                # Put data
+                if 'PE' in record:
+                    pe = record['PE']
+                    put_bid = pe.get('bidprice', 0)
+                    put_ask = pe.get('askprice', 0)
+                    put_mid = (put_bid + put_ask) / 2 if (put_bid and put_ask) else pe.get('lastPrice', 0)
+                    put_iv = pe.get('impliedVolatility', 0)
+                    
+                    if put_mid > 0:
+                        put_prices.append(put_mid)
+                        put_ivs.append(put_iv)
+            
+            spot_price = data['records']['underlyingValue']
+            
+            return {
+                'spot': spot_price,
+                'strikes': np.array(strikes),
+                'call_prices': np.array(call_prices),
+                'put_prices': np.array(put_prices),
+                'call_ivs': np.array(call_ivs),
+                'put_ivs': np.array(put_ivs),
+                'timestamp': datetime.now()
+            }
+            
+        except Exception as e:
+            print(f"   ⚠️ NSE option chain fetch failed: {e}")
+            return None
+
+class BreedenRNDensity:
+    """Calculate risk-neutral density from option prices"""
+    
+    @staticmethod
+    def calculate_rn_density(strikes, call_prices, spot, r=0.065, T=0.027):
+        """
+        Calculate risk-neutral density using Breeden-Litzenberger
+        strikes: array of strike prices
+        call_prices: array of call option prices
+        spot: current spot price
+        r: risk-free rate
+        T: time to expiry in years
+        """
+        try:
+            from scipy.interpolate import UnivariateSpline
+            
+            K = np.asarray(strikes)
+            C = np.asarray(call_prices)
+            
+            # Sort by strikes
+            order = np.argsort(K)
+            K = K[order]
+            C = C[order]
+            
+            # Fit smoothing spline
+            s = max(1e-6, 0.5 * np.var(C) * len(C))
+            spline = UnivariateSpline(K, C, s=s, k=3)
+            
+            # Dense grid
+            K_dense = np.linspace(K[0], K[-1], max(200, len(K)*5))
+            
+            # Second derivative (risk-neutral density)
+            C_pp = spline.derivative(n=2)(K_dense)
+            q_raw = np.exp(r*T) * C_pp
+            q_raw = np.maximum(q_raw, 0.0)
+            
+            # Normalize
+            integral = np.trapz(q_raw, K_dense)
+            if integral > 0:
+                rn = q_raw / integral
+            else:
+                rn = q_raw
+                
+            # Calculate percentiles
+            cdf = np.cumsum(rn) * (K_dense[1] - K_dense[0])
+            
+            percentiles = {}
+            for p in [0.05, 0.25, 0.5, 0.75, 0.95]:
+                idx = np.searchsorted(cdf, p)
+                idx = min(max(idx, 0), len(K_dense)-1)
+                percentiles[p] = K_dense[idx]
+            
+            return {
+                'K_dense': K_dense,
+                'rn_density': rn,
+                'cdf': cdf,
+                'percentiles': percentiles,
+                'mean': np.trapz(K_dense * rn, K_dense)
+            }
+            
+        except Exception as e:
+            print(f"   ⚠️ Breeden RND calculation failed: {e}")
+            return None
+    
+    @staticmethod
+    def generate_synthetic_option_chain(spot, vol, T, r=0.065, num_strikes=21):
+        """Generate synthetic option chain for demonstration"""
+        from scipy.stats import norm
+        
+        strikes = np.linspace(spot * 0.85, spot * 1.15, num_strikes)
+        call_prices = []
+        
+        for K in strikes:
+            d1 = (np.log(spot/K) + (r + 0.5*vol**2)*T) / (vol*np.sqrt(T))
+            d2 = d1 - vol*np.sqrt(T)
+            call = spot * norm.cdf(d1) - K * np.exp(-r*T) * norm.cdf(d2)
+            call_prices.append(call)
+        
+        return strikes, np.array(call_prices)
+
+class OptionsToolkit:
+    """Option Greeks and strike selection"""
+    
+    @staticmethod
+    def calculate_greeks(current_price, strike_price, days_to_expiry, volatility, risk_free=0.065, option_type='put'):
+        """Calculate Black-Scholes Greeks"""
+        if days_to_expiry <= 0:
+            return {'delta': 0, 'gamma': 0, 'theta': 0, 'vega': 0, 'rho': 0}
+        
+        S = current_price
+        K = strike_price
+        T = days_to_expiry / 365.0
+        r = risk_free
+        sigma = volatility / 100
+        
+        if sigma <= 0 or T <= 0:
+            return {'delta': 0, 'gamma': 0, 'theta': 0, 'vega': 0, 'rho': 0}
+        
+        d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * T) / (sigma * np.sqrt(T))
+        d2 = d1 - sigma * np.sqrt(T)
+        
+        if option_type == 'call':
+            delta = norm.cdf(d1)
+            theta = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T)) - 
+                     r * K * np.exp(-r * T) * norm.cdf(d2)) / 365
+            rho = K * T * np.exp(-r * T) * norm.cdf(d2) / 100
+        else:  # put
+            delta = norm.cdf(d1) - 1
+            theta = (-S * norm.pdf(d1) * sigma / (2 * np.sqrt(T)) + 
+                     r * K * np.exp(-r * T) * norm.cdf(-d2)) / 365
+            rho = -K * T * np.exp(-r * T) * norm.cdf(-d2) / 100
+        
+        gamma = norm.pdf(d1) / (S * sigma * np.sqrt(T))
+        vega = S * norm.pdf(d1) * np.sqrt(T) / 100
+        
+        return {
+            'delta': round(delta, 3),
+            'gamma': round(gamma, 5),
+            'theta': round(theta, 2),
+            'vega': round(vega, 2),
+            'rho': round(rho, 2)
+        }
+    
+    @staticmethod
+    def select_strikes(current_price, atr, strike_interval=50):
+        """Select appropriate strike prices"""
+        atm_strike = int(round(current_price / strike_interval) * strike_interval)
+        
+        strikes = {
+            'ATM': atm_strike,
+            'OTM_1': atm_strike - strike_interval,
+            'OTM_2': atm_strike - (strike_interval * 2),
+            'ITM_1': atm_strike + strike_interval,
+            'ITM_2': atm_strike + (strike_interval * 2)
+        }
+        
+        # For spreads (includes additional popular strategies)
+        spreads = {
+            'bull_put': {
+                'sell': int(round((current_price - atr) / strike_interval) * strike_interval),
+                'buy': int(round((current_price - atr * 2) / strike_interval) * strike_interval)
+            },
+            'bear_call': {
+                'sell': int(round((current_price + atr) / strike_interval) * strike_interval),
+                'buy': int(round((current_price + atr * 2) / strike_interval) * strike_interval)
+            },
+            'iron_condor': {
+                'call_sell': int(round((current_price + atr) / strike_interval) * strike_interval),
+                'call_buy': int(round((current_price + atr * 1.5) / strike_interval) * strike_interval),
+                'put_sell': int(round((current_price - atr) / strike_interval) * strike_interval),
+                'put_buy': int(round((current_price - atr * 1.5) / strike_interval) * strike_interval)
+            },
+            # NEW STRATEGIES
+            'bull_call': {
+                'buy': atm_strike,
+                'sell': atm_strike + strike_interval
+            },
+            'bear_put': {
+                'buy': atm_strike,
+                'sell': atm_strike - strike_interval
+            },
+            'short_straddle': {
+                'call_sell': atm_strike,
+                'put_sell': atm_strike
+            },
+            'iron_butterfly': {
+                'call_sell': atm_strike,
+                'call_buy': atm_strike + (strike_interval * 2),
+                'put_sell': atm_strike,
+                'put_buy': atm_strike - (strike_interval * 2)
+            },
+            'long_strangle': {
+                'call_buy': atm_strike + strike_interval,
+                'put_buy': atm_strike - strike_interval
+            },
+            'short_strangle': {
+                'call_sell': atm_strike + strike_interval,
+                'put_sell': atm_strike - strike_interval
+            }
+        }
+
+        return strikes, spreads
+
+# =============================================================================
+# MODULE 5.5: TRAILING STOP MANAGER
+# =============================================================================
+class TrailingStopManager:
+    """Manage trailing stops to lock in bull market gains"""
+    
+    def __init__(self, trailing_pct=0.05):
+        self.entry_price = None
+        self.highest_price = None
+        self.trailing_pct = trailing_pct  # 5% default trailing stop
+        self.in_position = False
+    
+    def enter_position(self, price):
+        """Record entry"""
+        self.entry_price = float(price)
+        self.highest_price = float(price)
+        self.in_position = True
+    
+    def update(self, current_price):
+        """Update trailing stop and check if triggered"""
+        if not self.in_position or self.highest_price is None:
+            return {'action': 'NO_POSITION', 'stop': None}
+        
+        current_price = float(current_price)
+        
+        # Update highest price seen
+        if current_price > self.highest_price:
+            self.highest_price = current_price
+        
+        # Calculate stop level
+        stop_price = self.highest_price * (1 - self.trailing_pct)
+        
+        # Check if stop hit
+        if current_price < stop_price:
+            profit_pct = ((current_price - self.entry_price) / self.entry_price) * 100
+            return {
+                'action': 'EXIT',
+                'reason': 'Trailing stop hit',
+                'entry': self.entry_price,
+                'exit': current_price,
+                'highest': self.highest_price,
+                'profit': profit_pct,
+                'stop': stop_price
+            }
+        
+        # Still holding
+        unrealized_profit = ((current_price - self.entry_price) / self.entry_price) * 100
+        peak_profit = ((self.highest_price - self.entry_price) / self.entry_price) * 100
+        
+        return {
+            'action': 'HOLD',
+            'entry': self.entry_price,
+            'current': current_price,
+            'highest': self.highest_price,
+            'stop': stop_price,
+            'unrealized_profit': unrealized_profit,
+            'peak_profit': peak_profit,
+            'cushion': ((current_price - stop_price) / current_price) * 100
+        }
+    
+    def reset(self):
+        """Clear position"""
+        self.entry_price = None
+        self.highest_price = None
+        self.in_position = False
+    
+    def is_in_position(self):
+        return self.in_position
+
+# =============================================================================
+# MODULE 6: STRATEGY ENGINE
+# =============================================================================
+class StrategyEngine:
+    """Generate trade and option recommendations"""
+    
+    def __init__(self, df, spot_price=None, expiry_date=None):
+        self.df = df
+        self.spot_price = spot_price if spot_price else df['Close'].iloc[-1]
+        self.expiry_date = expiry_date
+        self.days_to_expiry = self._calculate_days_to_expiry()
+    
+    def _calculate_days_to_expiry(self):
+        if not self.expiry_date:
+            return 0
+        try:
+            expiry = datetime.strptime(self.expiry_date, "%Y-%m-%d")
+            return (expiry - datetime.now()).days
+        except:
+            return 0
+    
+    def _is_strong_bull_trend(self, latest):
+        """Detect if we're in a strong bull trend worth riding"""
+        # Check multiple conditions
+        ema_20 = latest.get('EMA_20', 0)
+        ema_50 = latest.get('EMA_50', 0)
+        ema_200 = latest.get('EMA_200', 0)
+        close = latest.get('Close', 0)
+        adx = latest.get('ADX', 0)
+        rsi = latest.get('RSI', 50)
+        
+        # Bull trend criteria (ALL must be true)
+        conditions = {
+            'close_above_ema20': close > ema_20,
+            'close_above_ema200': close > ema_200,
+            'ema_stack': ema_20 > ema_50 > ema_200,
+            'strong_trend': adx > 25,
+            'not_overbought': rsi < 75,
+            'low_fear': latest.get('IndiaVIX', 15) < 18
+        }
+        
+        score = sum(conditions.values())
+        
+        return {
+            'is_strong_bull': score >= 5,  # 5 out of 6 conditions
+            'score': score,
+            'conditions': conditions
+        }
+
+    def recommend(self):
+        """Generate comprehensive recommendation"""
+        latest = self.df.iloc[-1]
+        
+        # 🆕 ENHANCED SCORING WITH PROBABILITY CALIBRATION
+        signals = {
+            'EMA': latest.get('EMA_Signal', 0),
+            'RSI': latest.get('RSI_Signal', 0),
+            'MACD': latest.get('MACD_Signal', 0),
+            'CPR': latest.get('CPR_Signal', 0),
+            'BB': latest.get('BB_Signal', 0),
+            'Stochastic': latest.get('Stoch_Signal', 0),
+            'MFI': latest.get('MFI_Signal', 0),
+            'Williams %R': latest.get('Williams_Signal', 0),
+            'CCI': latest.get('CCI_Signal', 0),
+            'Volume': latest.get('Volume_Signal', 0),
+            'Ichimoku': latest.get('Ichimoku_Signal', 0),
+            'RVI': latest.get('RVI_Flag', 0),
+            'CMF': latest.get('CMF_Signal', 0),
+            'Supertrend': latest.get('Supertrend_Signal', 0),
+            'VIX': latest.get('VIX_Signal', 0)
+        }
+        
+        weights = {
+            'EMA': 0.12, 'RSI': 0.10, 'MACD': 0.10, 'CPR': 0.08,
+            'BB': 0.08, 'Stochastic': 0.08, 'MFI': 0.08,
+            'Williams %R': 0.06, 'CCI': 0.06, 'Volume': 0.04,
+            'Ichimoku': 0.10, 'RVI': 0.04, 'CMF': 0.03, 
+            'Supertrend': 0.02, 'VIX': 0.01
+        }
+        
+        # Base technical score
+        technical_score = sum(signals[k] * weights[k] for k in signals.keys())
+        
+        # GARCH-adjusted volatility regime (using annualized vol)
+        garch_vol = latest.get('GARCH_Vol_Annual', latest.get('HV_20', 15))
+        vol_regime_factor = 1.0
+        if garch_vol > 25:  # High vol
+            vol_regime_factor = 0.8  # Reduce confidence
+        elif garch_vol < 12:  # Low vol
+            vol_regime_factor = 1.2  # Increase confidence
+        
+        # —————— FIXED PROBABILITY CALCULATION ——————
+        def calibrate_score_to_prob(score, volatility):
+            """Sigmoid calibration with proper bounding"""
+            z = score * 5.0 / (1 + volatility/20)
+            prob = 1 / (1 + np.exp(-z))
+            return np.clip(prob, 0.05, 0.95)  # Hard bounds
+
+        tech_prob = calibrate_score_to_prob(technical_score, garch_vol)
+
+        # ML probability (if available)
+        ml_prob = 0.5
+        ml_direction = 0
+        ml_conf = 0.5
+        if 'ml_predictions' in locals():
+            ml_pred = prediction['ml_predictions']
+            ml_direction = ml_pred['ensemble_prediction']
+            ml_conf = ml_pred['ensemble_confidence']
+            # FIX: Properly convert -1/+1 direction to probability
+            ml_prob = ml_conf if ml_direction > 0 else (1 - ml_conf)
+        
+        # Combined probability
+        w_tech = 0.35
+        w_ml = 0.45
+        w_persist = 0.20
+
+        persist_prob = 0.5  # Default neutral
+        if 'regime_info' in locals():
+            regime = regime_info['regime']
+            if regime == "BULL_MARKET":
+                persist_prob = 0.65
+            elif regime == "BEAR_MARKET":
+                persist_prob = 0.35
+
+        final_prob = (w_tech * tech_prob + w_ml * ml_prob + w_persist * persist_prob)
+        final_prob = final_prob * vol_regime_factor
+        final_prob = np.clip(final_prob, 0.0, 1.0)  # CRITICAL: Hard clip to [0,1]
+
+        # —————— FIXED ML OVERRIDE LOGIC ——————
+        ml_override_applied = False
+        if ml_conf > 0.9:  # High confidence ML prediction
+            # FORCE override - use ML direction
+            final_prob = ml_prob
+            ml_override_applied = True
+            print(f"   ⚠️ ML Override: {ml_conf*100:.1f}% confidence overrides technical signals")
+
+        # —————— FIXED TREND DETERMINATION ——————
+        vol_adjusted_threshold = 0.20 * (1 + garch_vol/30)  # Higher vol = higher threshold
+        
+        if final_prob > (0.5 + vol_adjusted_threshold):
+            trend = "UPTREND"
+            trend_emoji = "📈"
+            confidence = (final_prob - 0.5) * 200  # Scale to 0-100%
+        elif final_prob < (0.5 - vol_adjusted_threshold):
+            trend = "DOWNTREND"
+            trend_emoji = "�"
+            confidence = (0.5 - final_prob) * 200
+        else:
+            trend = "SIDEWAYS"
+            trend_emoji = "↔️"
+            confidence = (1 - abs(final_prob - 0.5)*2) * 100
+        
+        # Store probability breakdown for transparency
+        recommendation = {}
+        recommendation['probability_breakdown'] = {
+            'final_prob': final_prob,
+            'technical_prob': tech_prob,
+            'ml_prob': ml_prob,
+            'persistence_prob': persist_prob,
+            'vol_regime_factor': vol_regime_factor,
+            'garch_vol': garch_vol
+        }
+        
+        # Check for bull trend override
+        bull_check = self._is_strong_bull_trend(latest)
+        if bull_check['is_strong_bull']:
+            trend = "UPTREND"
+            trend_emoji = "📈"
+            confidence = max(confidence, 70)  # Minimum 70% confidence
+            bull_mode_active = True
+        elif final_prob > 0.5 + vol_adjusted_threshold:
+            trend = "UPTREND"
+            trend_emoji = "�"
+            confidence = abs(technical_score) * 100
+            bull_mode_active = False
+        elif technical_score < -0.2:
+            trend = "DOWNTREND"
+            trend_emoji = "📉"
+            confidence = abs(technical_score) * 100
+            bull_mode_active = False
+        else:
+            trend = "SIDEWAYS"
+            trend_emoji = "↔️"
+            confidence = (1 - abs(technical_score)) * 100
+            bull_mode_active = False
+        
+        # Detect market regime (now includes bull mode info)
+        try:
+            regime_info = RegimeDetector.detect_regime(self.df)
+            regime_info['bull_mode_active'] = bull_mode_active
+            regime_info['bull_check'] = bull_check
+        except Exception:
+            regime_info = None
+        
+        # 🆕 ASYMMETRIC RANGE WITH GARCH + BREEDEN
+        
+        # GARCH-based volatility forecast
+        garch_vol_decimal = garch_vol / 100  # Convert to decimal
+        
+        try:
+            # ══════════ USE REAL OPTION CHAIN ══════════
+            nse_fetcher = NSEOptionChainFetcher()
+            option_data = nse_fetcher.fetch_nifty_option_chain()
+            
+            if option_data:
+                print(f"   ✅ Using REAL option chain (spot: {option_data['spot']:.2f})")
+                
+                breeden = BreedenRNDensity()
+                rn_result = breeden.calculate_rn_density(
+                    option_data['strikes'],
+                    option_data['call_prices'],
+                    option_data['spot'],
+                    T=self.days_to_expiry/365.0
+                )
+                
+                if rn_result:
+                    # Use market-implied RN percentiles
+                    uptrend_range = {
+                        'target_1': rn_result['percentiles'][0.75],
+                        'target_2': rn_result['percentiles'][0.95],
+                        'target_3': rn_result['mean'] * 1.05
+                    }
+                    
+                    downtrend_range = {
+                        'support_1': rn_result['percentiles'][0.25],
+                        'support_2': rn_result['percentiles'][0.05],
+                        'support_3': rn_result['mean'] * 0.95
+                    }
+                    
+                    recommendation['rn_density'] = {
+                        'percentiles': rn_result['percentiles'],
+                        'mean': rn_result['mean'],
+                        'method': 'Breeden-Litzenberger (Market-Implied)',
+                        'iv_skew': np.mean(option_data['put_ivs']) - np.mean(option_data['call_ivs'])
+                    }
+                else:
+                    raise ValueError("RN calculation failed")
+            else:
+                raise ValueError("Option chain fetch failed")
+                
+        except Exception as e:
+            # Fallback to synthetic chain
+            print(f"   ℹ️ Falling back to synthetic chain: {e}")
+            breeden = BreedenRNDensity()
+            strikes, call_prices = breeden.generate_synthetic_option_chain(
+                spot=self.spot_price,
+                vol=garch_vol_decimal * np.sqrt(252),  # Annualized
+                T=self.days_to_expiry/365.0,
+                r=0.065
+            )
+            
+            rn_result = breeden.calculate_rn_density(
+                strikes, call_prices, 
+                self.spot_price,
+                T=self.days_to_expiry/365.0
+            )
+            
+            if rn_result:
+                # Use synthetic RN percentiles
+                uptrend_range = {
+                    'target_1': rn_result['percentiles'][0.75],
+                    'target_2': rn_result['percentiles'][0.95],
+                    'target_3': rn_result['mean'] * 1.05
+                }
+                
+                downtrend_range = {
+                    'support_1': rn_result['percentiles'][0.25],
+                    'support_2': rn_result['percentiles'][0.05],
+                    'support_3': rn_result['mean'] * 0.95
+                }
+                
+                recommendation['rn_density'] = {
+                    'percentiles': rn_result['percentiles'],
+                    'mean': rn_result['mean'],
+                    'method': 'Breeden-Litzenberger (Synthetic)'
+                }
+                
+                print(f"   ✅ Using RN density for asymmetric ranges")
+            else:
+                raise ValueError("RN calculation failed, using GARCH")
+                
+        except Exception as e:
+            # Fallback to GARCH-based symmetric ranges
+            print(f"   ℹ️ Using GARCH volatility for ranges")
+            
+            # Convert daily GARCH vol to price movement
+            daily_move = self.spot_price * garch_vol_decimal
+            
+            uptrend_range = {
+                'target_1': self.spot_price + (daily_move * 1.0),
+                'target_2': self.spot_price + (daily_move * 1.65),  # ~90% CI
+                'target_3': self.spot_price + (daily_move * 2.33)   # ~99% CI
+            }
+            
+            downtrend_range = {
+                'support_1': self.spot_price - (daily_move * 1.0),
+                'support_2': self.spot_price - (daily_move * 1.65),
+                'support_3': self.spot_price - (daily_move * 2.33)
+            }
+        
+        # Calculate ATR before using it
+        atr = latest.get('ATR', self.spot_price * 0.01)  # Default to 1% of spot if ATR missing
+        
+        # Option strategy (guard if spot_price is NaN)
+        spreads = {}
+        if pd.notna(self.spot_price) and pd.notna(atr):
+            try:
+                _, spreads = OptionsToolkit.select_strikes(self.spot_price, atr)
+            except Exception as e:
+                print(f"   ⚠️ Strike selection failed: {e}")
+                spreads = {}
+        option_strategy = self._generate_option_strategy(trend, spreads, latest, atr)
+        
+        # Position sizing
+        position_size = self._calculate_position_size(confidence, latest, atr)
+        
+        return {
+            'trend': trend,
+            'trend_emoji': trend_emoji,
+            'confidence': confidence,
+            'technical_score': technical_score,
+            'signals': signals,
+            'current_price': self.spot_price,
+            'atr': atr,
+            'uptrend_targets': uptrend_range,
+            'downtrend_supports': downtrend_range,
+            'option_strategy': option_strategy,
+            'position_size': position_size,
+            'market_conditions': {
+                'rsi': latest.get('RSI', 50),
+                'adx': latest.get('ADX', 20),
+                'india_vix': latest.get('IndiaVIX', 15),
+                'volatility': latest.get('HV_20', 15)
+            },
+            'regime_detection': regime_info,
+            'bull_mode': {  # New bull mode info section
+                'active': bull_mode_active,
+                'check_results': bull_check
+            }
+        }
+    
+    def _generate_option_strategy(self, trend, spreads, latest, atr):
+        """Generate option strategy recommendation"""
+        # If spreads are empty (missing spot/atr), return a placeholder strategy
+        if not spreads:
+            return {
+                'type': 'NO_STRATEGY',
+                'reason': 'Insufficient price data to select strikes',
+                'strikes': {},
+                'greeks': {},
+                'risk': {}
+            }
+
+        strategy = {'type': trend, 'strikes': {}, 'greeks': {}, 'risk': {}}
+        
+        volatility = latest.get('HV_20', 15)
+        india_vix = latest.get('IndiaVIX', 15)
+        adx = latest.get('ADX', 20)
+
+        if trend == "UPTREND":
+            # Strong uptrend + high conviction = Long Call / Bull Call Spread
+            if adx > 30 and india_vix < 15:
+                strategy['name'] = "Bull Call Spread"
+                strategy['strikes'] = {
+                    'buy': spreads.get('bull_call', {}).get('buy', int(round(self.spot_price / 50) * 50)),
+                    'sell': spreads.get('bull_call', {}).get('sell', int(round(self.spot_price / 50) * 50) + 100)
+                }
+                strategy['risk']['max_loss'] = 100
+                strategy['risk']['max_profit'] = 100
+            else:
+                # Default: Bull Put Spread
+                strategy['name'] = "Bull Put Spread"
+                strategy['strikes'] = spreads['bull_put']
+                
+                sell_greeks = OptionsToolkit.calculate_greeks(
+                    self.spot_price, spreads['bull_put']['sell'], 
+                    self.days_to_expiry, volatility, option_type='put'
+                )
+                buy_greeks = OptionsToolkit.calculate_greeks(
+                    self.spot_price, spreads['bull_put']['buy'], 
+                    self.days_to_expiry, volatility, option_type='put'
+                )
+                
+                strategy['greeks'] = {'sell': sell_greeks, 'buy': buy_greeks}
+                strategy['risk']['max_loss'] = spreads['bull_put']['sell'] - spreads['bull_put']['buy']
+                strategy['risk']['stop_loss'] = int(self.spot_price - atr * 0.5)
+
+        elif trend == "DOWNTREND":
+            # Strong downtrend + high conviction = Long Put / Bear Put Spread
+            if adx > 30 and india_vix < 15:
+                strategy['name'] = "Bear Put Spread"
+                strategy['strikes'] = {
+                    'buy': spreads.get('bear_put', {}).get('buy', int(round(self.spot_price / 50) * 50)),
+                    'sell': spreads.get('bear_put', {}).get('sell', int(round(self.spot_price / 50) * 50) - 100)
+                }
+                strategy['risk']['max_loss'] = 100
+                strategy['risk']['max_profit'] = 100
+            else:
+                # Default: Bear Call Spread
+                strategy['name'] = "Bear Call Spread"
+                strategy['strikes'] = spreads['bear_call']
+                
+                sell_greeks = OptionsToolkit.calculate_greeks(
+                    self.spot_price, spreads['bear_call']['sell'], 
+                    self.days_to_expiry, volatility, option_type='call'
+                )
+                buy_greeks = OptionsToolkit.calculate_greeks(
+                    self.spot_price, spreads['bear_call']['buy'], 
+                    self.days_to_expiry, volatility, option_type='call'
+                )
+                
+                strategy['greeks'] = {'sell': sell_greeks, 'buy': buy_greeks}
+                strategy['risk']['max_loss'] = spreads['bear_call']['buy'] - spreads['bear_call']['sell']
+                strategy['risk']['stop_loss'] = int(self.spot_price + atr * 0.5)
+
+        else:  # SIDEWAYS
+            # High volatility = Short Straddle, Low volatility = Iron Butterfly
+            if india_vix > 20:
+                strategy['name'] = "Short Straddle (High Risk)"
+                atm_strike = int(round(self.spot_price / 50) * 50)
+                strategy['strikes'] = {
+                    'call_sell': atm_strike,
+                    'put_sell': atm_strike
+                }
+                strategy['risk']['profit_zone'] = [
+                    int(atm_strike - atr),
+                    int(atm_strike + atr)
+                ]
+                strategy['risk']['warning'] = "UNLIMITED RISK - Use with extreme caution!"
+            elif india_vix < 12:
+                strategy['name'] = "Iron Butterfly"
+                atm_strike = int(round(self.spot_price / 50) * 50)
+                strategy['strikes'] = {
+                    'call_sell': atm_strike,
+                    'call_buy': atm_strike + 100,
+                    'put_sell': atm_strike,
+                    'put_buy': atm_strike - 100
+                }
+                strategy['risk']['max_loss'] = 100
+                strategy['risk']['profit_zone'] = [atm_strike - 100, atm_strike + 100]
+            else:
+                # Default: Iron Condor
+                strategy['name'] = "Iron Condor"
+                strategy['strikes'] = spreads['iron_condor']
+                strategy['risk']['profit_zone'] = [
+                    spreads['iron_condor']['put_sell'],
+                    spreads['iron_condor']['call_sell']
+                ]
+
+        return strategy
+
+    def _generate_layered_strategy(self, trend, confidence, latest):
+        """Generate multi-level position strategy"""
+        
+        # Base position (always take if any signal)
+        base_position = 0.01  # 1% core position
+        
+        # Layer 1: Moderate confidence (>50%)
+        if confidence > 50:
+            tranche_1 = 0.005  # Add 0.5%
+        else:
+            tranche_1 = 0
+        
+        # Layer 2: Good confidence (>60%)
+        if confidence > 60:
+            tranche_2 = 0.005  # Add another 0.5%
+        else:
+            tranche_2 = 0
+        
+        # Layer 3: High confidence (>75%)
+        if confidence > 75:
+            tranche_3 = 0.01  # Add 1%
+        else:
+            tranche_3 = 0
+        
+        # Trend strength multiplier
+        adx = latest.get('ADX', 20)
+        if adx > 30:
+            strength_add = 0.005  # Add 0.5% for strong trends
+        elif adx > 40:
+            strength_add = 0.01  # Add 1% for very strong trends
+        else:
+            strength_add = 0
+        
+        total_position = base_position + tranche_1 + tranche_2 + tranche_3 + strength_add
+        
+        return {
+            'total': total_position,
+            'layers': {
+                'base': base_position,
+                'confidence_50': tranche_1,
+                'confidence_60': tranche_2,
+                'confidence_75': tranche_3,
+                'trend_strength': strength_add
+            }
+        }
+    
+    def _calculate_position_size(self, confidence, latest, atr):
+        """Calculate PROBABILITY-BASED position size"""
+        
+        # Get calibrated probability if available
+        if hasattr(self, 'final_probability'):
+            prob_up = self.final_probability
+        else:
+            prob_up = 0.5 + (confidence / 200)  # Approximate from confidence
+        
+        # Kelly Criterion adjustment
+        edge = abs(prob_up - 0.5)  # Distance from neutral
+        kelly_fraction = 2 * edge  # Simplified Kelly for binary outcome
+        kelly_fraction = min(kelly_fraction, 0.25)  # Cap at 25%
+        
+        # Detect current regime
+        regime_info = RegimeDetector.detect_regime(self.df)
+        regime = regime_info['regime']
+        
+        # Regime-based base size with edge-based adjustment
+        if regime == "BULL_MARKET":
+            base_size = 0.03 * (1 + edge)  # Increase in bull with edge
+        elif regime == "VOLATILE_MARKET":
+            base_size = 0.015 * (1 - edge/2)  # Decrease in volatile
+        elif regime == "BEAR_MARKET":
+            base_size = 0.01 * (1 - edge/2)  # Decrease in bear
+        else:
+            base_size = 0.02
+        
+        # GARCH volatility adjustment
+        # Use daily vol for position sizing
+        garch_vol_daily = latest.get('GARCH_Vol_Daily', latest.get('HV_20', 15)/np.sqrt(252))
+        vol_scale = (1.5 / garch_vol_daily)  # Target 1.5% daily vol
+        vol_scale = np.clip(vol_scale, 0.5, 2.0)
+        
+        # Time and trend adjustments
+        days_left = self.days_to_expiry
+        time_adjustment = np.clip(1 - (days_left / 30), 0.5, 1.2)  # Reduce size as expiry approaches
+        trend_multiplier = 1.0  # Default neutral
+        
+        # Combine all factors
+        final_size = base_size * kelly_fraction * vol_scale * time_adjustment * trend_multiplier
+        final_size = np.clip(final_size, 0.005, 0.05)
+        
+        return {
+            'base_size': base_size,
+            'kelly_fraction': kelly_fraction,
+            'edge': edge,
+            'prob_up': prob_up,
+            'regime': regime,
+            'vol_scale': vol_scale,
+            'time_adjustment': time_adjustment,
+            'trend_multiplier': trend_multiplier,
+            'recommended_size': final_size
+        }
+        
+        # VIX adjustment
+        vix_adjustment = 1.0 / (1 + (vix / 20))
+        
+        # Time adjustment
+        if self.days_to_expiry < 7:
+            time_adjustment = 0.5
+        elif self.days_to_expiry < 15:
+            time_adjustment = 0.7
+        else:
+            time_adjustment = 1.0
+        
+        # TREND STRENGTH MULTIPLIER (NEW!)
+        if adx > 30:  # Strong trend
+            trend_multiplier = 1.2  # Increase size 20%
+        elif adx < 20:  # Weak trend
+            trend_multiplier = 0.8  # Decrease size 20%
+        else:
+            trend_multiplier = 1.0
+        
+        final_size = base_size * conf_multiplier * vix_adjustment * time_adjustment * trend_multiplier
+        final_size = max(0.005, min(final_size, 0.05))  # 0.5% to 5%
+        
+        return {
+            'base_size': base_size,
+            'regime': regime,  # Add this for display
+            'confidence_multiplier': conf_multiplier,
+            'vix_adjustment': vix_adjustment,
+            'time_adjustment': time_adjustment,
+            'trend_multiplier': trend_multiplier,  # NEW
+            'recommended_size': final_size
+        }
+
+# =============================================================================
+# MODULE 6.5: REGIME DETECTOR (Bull/Bear/Volatile/Calm)
+# =============================================================================
+class RegimeDetector:
+    """Detect market regimes using multiple indicators"""
+    
+    @staticmethod
+    def detect_regime(df):
+        """Classify current market regime with enhanced logic"""
+        latest = df.iloc[-1]
+        
+        # Regime indicators
+        adx = latest.get('ADX', 20)
+        vix = latest.get('IndiaVIX', 15)
+        rsi = latest.get('RSI', 50)
+        ema_20 = latest.get('EMA_20', 0)
+        ema_50 = latest.get('EMA_50', 0)
+        ema_200 = latest.get('EMA_200', 0)
+        close = latest.get('Close', 0)
+        
+        # EMA trend direction
+        ema_trend = 1 if ema_20 > ema_50 else -1
+        
+        # Volatility regime
+        if vix > 20:
+            vol_regime = "HIGH_VOL"
+        elif vix < 12:
+            vol_regime = "LOW_VOL"
+        else:
+            vol_regime = "NORMAL_VOL"
+        
+        # Trend regime
+        if adx > 25 and ema_trend == 1:
+            trend_regime = "BULL_TREND"
+        elif adx > 25 and ema_trend == -1:
+            trend_regime = "BEAR_TREND"
+        elif adx < 20:
+            trend_regime = "RANGE_BOUND"
+        else:
+            trend_regime = "WEAK_TREND"
+        
+        # Bull strength score (0-6)
+        bull_score = 0
+        if close > ema_20: bull_score += 1
+        if close > ema_50: bull_score += 1
+        if close > ema_200: bull_score += 2  # Double weight
+        if ema_20 > ema_50: bull_score += 1
+        if ema_50 > ema_200: bull_score += 1
+        
+        # Combined regime with bull strength
+        if trend_regime == "BULL_TREND" and vol_regime == "LOW_VOL" and bull_score >= 5:
+            regime = "BULL_MARKET"  # Strong bull
+        elif trend_regime == "BULL_TREND" and vol_regime == "LOW_VOL":
+            regime = "BULL_MARKET"
+        elif trend_regime == "BEAR_TREND" and vol_regime == "HIGH_VOL":
+            regime = "BEAR_MARKET"
+        elif vol_regime == "HIGH_VOL":
+            regime = "VOLATILE_MARKET"
+        elif trend_regime == "RANGE_BOUND":
+            regime = "SIDEWAYS_MARKET"
+        else:
+            regime = "UNCERTAIN"
+        
+        return {
+            'regime': regime,
+            'trend': trend_regime,
+            'volatility': vol_regime,
+            'adx': adx,
+            'vix': vix,
+            'bull_score': bull_score,
+            'confidence': min(adx / 50, 1.0) * 100
+        }
+        """Classify current market regime"""
+        latest = df.iloc[-1]
+        
+        # Regime indicators
+        adx = latest.get('ADX', 20)
+        vix = latest.get('IndiaVIX', 15)
+        rsi = latest.get('RSI', 50)
+        ema_trend = 1 if latest['EMA_20'] > latest['EMA_50'] else -1
+        
+        # Volatility regime
+        if vix > 20:
+            vol_regime = "HIGH_VOL"
+        elif vix < 12:
+            vol_regime = "LOW_VOL"
+        else:
+            vol_regime = "NORMAL_VOL"
+        
+        # Trend regime
+        if adx > 25 and ema_trend == 1:
+            trend_regime = "BULL_TREND"
+        elif adx > 25 and ema_trend == -1:
+            trend_regime = "BEAR_TREND"
+        elif adx < 20:
+            trend_regime = "RANGE_BOUND"
+        else:
+            trend_regime = "WEAK_TREND"
+        
+        # Combined regime
+        if trend_regime == "BULL_TREND" and vol_regime == "LOW_VOL":
+            regime = "BULL_MARKET"
+        elif trend_regime == "BEAR_TREND" and vol_regime == "HIGH_VOL":
+            regime = "BEAR_MARKET"
+        elif vol_regime == "HIGH_VOL":
+            regime = "VOLATILE_MARKET"
+        elif trend_regime == "RANGE_BOUND":
+            regime = "SIDEWAYS_MARKET"
+        else:
+            regime = "UNCERTAIN"
+        
+        return {
+            'regime': regime,
+            'trend': trend_regime,
+            'volatility': vol_regime,
+            'adx': adx,
+            'vix': vix,
+            'confidence': min(adx / 50, 1.0) * 100
+        }
+
+# =============================================================================
+# MODULE 7: ENHANCED VECTOR BACKTEST
+# =============================================================================
+class VectorBacktest:
+    """Vectorized backtesting engine with advanced risk management, portfolio optimization, smart order execution, market microstructure analysis, and ML-based signal enhancement"""
+    
+    def __init__(self, df, risk_profile='moderate'):
+        self.df = df.copy()
+        from risk_management import RiskManager, AdvancedStopManager
+        from order_execution import ExecutionOptimizer, ExecutionAnalytics, OrderRequest, OrderType, OrderSide, MarketData
+        from market_microstructure import MarketMicrostructureAnalyzer, VolumeProfileAnalyzer, OrderBook, OrderBookUpdate
+        from signal_enhancement import SignalOptimizer, AlphaFactorProcessor
+        
+        # Initialize risk management components
+        self.risk_manager = RiskManager(
+            max_pos_size=0.02,
+            max_drawdown=0.15,
+            var_limit=0.02,
+            risk_free_rate=0.05,
+            volatility_target=0.15,
+            max_leverage=1.5
+        )
+        
+        self.stop_manager = AdvancedStopManager(
+            trailing_pct=0.05,
+            atr_multiplier=2.0,
+            time_stop_days=5,
+            
+        # Initialize portfolio optimization components
+        self.portfolio_optimizer = PortfolioOptimizer()
+        self.asset_allocator = DynamicAssetAllocator(lookback_window=252)
+        self.risk_profile = risk_profile
+        
+        # Initialize execution optimization components
+        self.execution_optimizer = ExecutionOptimizer()
+        self.execution_analytics = ExecutionAnalytics()
+        self.last_market_data = None
+        self.execution_config = {
+            'smart_routing': True,
+            'min_execution_size': 100,
+            'max_slippage_bps': 10
+        }
+        
+        # Initialize market microstructure components
+        self.order_book = OrderBook(max_levels=10)
+        self.microstructure_analyzer = MarketMicrostructureAnalyzer(window_size=100)
+        self.volume_analyzer = VolumeProfileAnalyzer(price_levels=50)
+        self.micro_metrics_history = []
+        
+        # Initialize signal enhancement components
+        self.signal_optimizer = SignalOptimizer()
+        self.alpha_processor = AlphaFactorProcessor()
+        self.signal_metrics_history = []
+        
+        self.current_allocation = None
+        self.last_rebalance = None
+        self.rebalance_threshold = 0.05  # 5% threshold for rebalancing
+            profit_target_pct=0.1
+        )
+    
+    def run(self, initial_capital=100000, base_position_size=0.02, use_risk_mgmt=True):
+        """Run vectorized backtest with advanced risk management"""
+        print("\n📊 Running Advanced Risk-Managed Backtest...")
+        if use_risk_mgmt:
+            print("   �️ Risk Management: ENABLED")
+            print("   ├─ Dynamic Position Sizing")
+            print("   ├─ Multiple Stop Types")
+            print("   └─ Risk Metrics Monitoring")
+        
+        df = self.df.copy()
+        capital = initial_capital
+        
+        # Generate combined signal
+        df['Signal'] = 0
+        signal_cols = ['EMA_Signal', 'RSI_Signal', 'MACD_Signal_Flag', 'CPR_Signal']
+        available_signals = [col for col in signal_cols if col in df.columns]
+        
+        if available_signals:
+            df['Signal'] = df[available_signals].mean(axis=1)
+            df['Signal'] = np.where(df['Signal'] > 0.2, 1, np.where(df['Signal'] < -0.2, -1, 0))
+        
+        # Risk-managed signal
+        df['Enhanced_Signal'] = 0
+        df['Position_Size'] = 0.0
+        in_position = False
+        
+        # Calculate rolling volatility for risk scaling
+        df['Volatility'] = df['Returns'].rolling(20).std() * np.sqrt(252)
+        
+        # Initial risk metrics calculation
+        initial_returns = df['Returns'].dropna().iloc[:50]  # Use first 50 days for initial metrics
+        if len(initial_returns) > 0:
+            self.risk_manager.calculate_risk_metrics(initial_returns)
+        
+        for i in range(1, len(df)):
+            current_price = df['Close'].iloc[i]
+            current_time = df.index[i]
+            base_signal = df['Signal'].iloc[i]
+            volatility = df['Volatility'].iloc[i]
+            
+            if in_position:
+                # Update stops with current price and ATR
+                stop_result = self.stop_manager.update(
+                    price=current_price,
+                    timestamp=current_time,
+                    atr=df.get('ATR', pd.Series()).iloc[i]
+                )
+                
+                if stop_result['action'] == 'EXIT':
+                    # Stop hit - exit position
+                    df.loc[df.index[i], 'Enhanced_Signal'] = 0
+                    df.loc[df.index[i], 'Position_Size'] = 0.0
+                    in_position = False
+                    
+                    # Log meaningful exits
+                    print(f"   🛡️ {stop_result['reason']} at {current_time.date()}: "
+                          f"Profit {stop_result['profit']:.2f}%")
+                else:
+                    # Continue holding, possibly adjust position size
+                    if use_risk_mgmt:
+                        lookback = slice(max(0, i-30), i)
+                        recent_returns = df['Returns'].iloc[lookback]
+                        self.risk_manager.calculate_risk_metrics(recent_returns)
+                        
+                        # Get new position size
+                        pos_size, factors = self.risk_manager.calculate_position_size(
+                            current_price=current_price,
+                            volatility=volatility,
+                            confidence=df.get('Signal_Confidence', pd.Series(100, index=df.index)).iloc[i],
+                            equity=capital * (1 + stop_result['current_profit'])
+                        )
+                        df.loc[df.index[i], 'Position_Size'] = pos_size
+                    else:
+                        df.loc[df.index[i], 'Position_Size'] = base_position_size
+                    
+                    df.loc[df.index[i], 'Enhanced_Signal'] = 1
+            else:
+                # Not in position - check for entry
+                if base_signal == 1:
+                    # Calculate position size for entry
+                    if use_risk_mgmt:
+                        lookback = slice(max(0, i-30), i)
+                        recent_returns = df['Returns'].iloc[lookback]
+                        self.risk_manager.calculate_risk_metrics(recent_returns)
+                        
+                        pos_size, factors = self.risk_manager.calculate_position_size(
+                            current_price=current_price,
+                            volatility=volatility,
+                            confidence=df.get('Signal_Confidence', pd.Series(100, index=df.index)).iloc[i],
+                            equity=capital
+                        )
+                        df.loc[df.index[i], 'Position_Size'] = pos_size
+                    else:
+                        df.loc[df.index[i], 'Position_Size'] = base_position_size
+                    
+                    # Enter position with stops
+                    self.stop_manager.enter_position(
+                        price=current_price,
+                        timestamp=current_time,
+                        atr=df.get('ATR', pd.Series()).iloc[i]
+                    )
+                    
+                    in_position = True
+                    df.loc[df.index[i], 'Enhanced_Signal'] = 1
+                else:
+                    df.loc[df.index[i], 'Enhanced_Signal'] = 0
+                    df.loc[df.index[i], 'Position_Size'] = 0.0
+        
+        # Calculate risk-adjusted returns
+        df['Strategy_Returns'] = df['Enhanced_Signal'].shift(1) * df['Position_Size'].shift(1) * df['Returns']
+        
+        # Cumulative returns
+        df['cum_returns'] = (1 + df['Returns']).cumprod()
+        df['cum_strategy'] = (1 + df['Strategy_Returns']).cumprod()
+        df['cum_buyhold'] = df['cum_returns']
+        
+        # Basic Performance metrics
+        total_return = (df['cum_strategy'].iloc[-1] - 1) * 100
+        buyhold_return = (df['cum_buyhold'].iloc[-1] - 1) * 100
+        
+    def optimize_portfolio(self, method='dynamic', **kwargs):
+        """Optimize portfolio allocation using various methods.
+        
+        Args:
+            method: Optimization method ['dynamic', 'mean_variance', 'risk_parity', 'hrp', 'black_litterman', 'cvar']
+            **kwargs: Additional arguments for specific optimization methods
+        
+        Returns:
+            Dict containing optimal weights and metrics
+        """
+        returns = self.df.pct_change().dropna()
+        
+        if method == 'dynamic':
+            allocation = self.asset_allocator.calculate_dynamic_allocation(
+                returns=returns,
+                risk_profile=self.risk_profile,
+                constraints=kwargs.get('constraints')
+            )
+            self.current_allocation = allocation['weights']
+            return allocation
+            
+        # Set data for portfolio optimizer
+        self.portfolio_optimizer.set_data(returns)
+        
+        if method == 'mean_variance':
+            return self.portfolio_optimizer.mean_variance_optimization(
+                target_return=kwargs.get('target_return'),
+                max_weight=kwargs.get('max_weight', 1.0),
+                min_weight=kwargs.get('min_weight', 0.0)
+            )
+            
+        elif method == 'risk_parity':
+            return self.portfolio_optimizer.risk_parity_optimization(
+                risk_budget=kwargs.get('risk_budget')
+            )
+            
+        elif method == 'hrp':
+            return self.portfolio_optimizer.hierarchical_risk_parity()
+            
+        elif method == 'black_litterman':
+            if 'views' not in kwargs or 'market_weights' not in kwargs:
+                raise ValueError("Black-Litterman optimization requires views and market_weights")
+            return self.portfolio_optimizer.black_litterman_optimization(
+                views=kwargs['views'],
+                market_weights=kwargs['market_weights']
+            )
+            
+        elif method == 'cvar':
+            return self.portfolio_optimizer.cvar_optimization(
+                alpha=kwargs.get('alpha', 0.05),
+                target_return=kwargs.get('target_return')
+            )
+            
+        else:
+            raise ValueError(f"Unknown optimization method: {method}")
+            
+    def check_rebalance_needed(self, current_weights):
+        """Check if portfolio rebalancing is needed based on drift threshold."""
+        if self.current_allocation is None:
+            return True
+            
+        drift = abs(current_weights - self.current_allocation).max()
+        return drift > self.rebalance_threshold
+        
+    def generate_rebalancing_orders(self, current_weights):
+        """Generate rebalancing orders based on current and target weights."""
+        if not self.check_rebalance_needed(current_weights):
+            return pd.Series(0, index=current_weights.index)
+            
+        trades = self.asset_allocator.generate_rebalancing_trades(
+            current_weights=current_weights,
+            target_weights=self.current_allocation,
+            min_trade_size=0.01
+        )
+        
+        return trades
+        
+    def stress_test_portfolio(self, custom_scenarios=None):
+        """Perform stress testing on the current portfolio allocation."""
+        if self.current_allocation is None:
+            raise ValueError("No current allocation available for stress testing")
+            
+        returns = self.df.pct_change().dropna()
+        
+        return self.asset_allocator.stress_test_allocation(
+            weights=self.current_allocation,
+            returns=returns,
+            scenarios=custom_scenarios
+        )
+        
+    def analyze_risk_contribution(self):
+        """Analyze risk contribution of each asset in the portfolio."""
+        if self.current_allocation is None:
+            raise ValueError("No current allocation available for risk analysis")
+            
+        returns = self.df.pct_change().dropna()
+        
+        return self.asset_allocator.calculate_risk_contribution(
+            weights=self.current_allocation,
+            returns=returns
+        )
+        
+    def _update_market_data(self, timestamp):
+        """Update market data snapshot for execution optimization."""
+        current_data = self.df.loc[timestamp]
+        
+        # Get data from multiple venues if available
+        venues = {
+            'PRIMARY': {
+                'bid': current_data['Close'] * 0.9999,
+                'ask': current_data['Close'] * 1.0001,
+                'last': current_data['Close'],
+                'size': current_data.get('Volume', 1000)
+            }
+        }
+        
+        # Create MarketData object
+        self.last_market_data = MarketData(
+            symbol=self.df.name if hasattr(self.df, 'name') else 'UNKNOWN',
+            bid=current_data['Close'] * 0.9999,
+            ask=current_data['Close'] * 1.0001,
+            last=current_data['Close'],
+            volume=current_data.get('Volume', 1000),
+            timestamp=timestamp.timestamp(),
+            bid_size=current_data.get('Volume', 1000) * 0.5,
+            ask_size=current_data.get('Volume', 1000) * 0.5,
+            venues=venues
+        )
+        
+    def optimize_execution(self, signal: float, timestamp, current_price: float) -> Dict:
+        """Optimize order execution based on market conditions and signal."""
+        # Update market data
+        self._update_market_data(timestamp)
+        
+        # Determine order side and size
+        side = OrderSide.BUY if signal > 0 else OrderSide.SELL
+        base_quantity = abs(signal) * self.execution_config['min_execution_size']
+        
+        # Create order request
+        order = OrderRequest(
+            symbol=self.df.name if hasattr(self.df, 'name') else 'UNKNOWN',
+            side=side,
+            quantity=base_quantity,
+            order_type=OrderType.SMART,
+            smart_routing=self.execution_config['smart_routing'],
+            max_slippage_bps=self.execution_config['max_slippage_bps'],
+            min_execution_size=self.execution_config['min_execution_size']
+        )
+        
+        # Get execution optimization
+        execution_plan = self.execution_optimizer.optimize_execution(
+            order=order,
+            market_data=self.last_market_data
+        )
+        
+        # Store execution analytics
+        self.execution_analytics.add_execution(order, execution_plan)
+        
+        return execution_plan
+        
+    def execute_trade(self, signal: float, timestamp, current_price: float) -> Tuple[float, Dict]:
+        """Execute trade with optimized execution strategy."""
+        if abs(signal) < 1e-6:
+            return 0.0, {}
+            
+        # Get execution optimization
+        execution_plan = self.optimize_execution(signal, timestamp, current_price)
+        
+        # Calculate executed price with market impact
+        base_impact = execution_plan.get('estimated_impact', 0.001)
+        participation_rate = abs(signal)
+        market_impact = base_impact * np.sqrt(participation_rate)
+        
+        if signal > 0:  # Buy
+            executed_price = current_price * (1 + market_impact)
+        else:  # Sell
+            executed_price = current_price * (1 - market_impact)
+            
+        # Calculate metrics
+        metrics = {
+            'executed_price': executed_price,
+            'market_impact_bps': market_impact * 10000,
+            'participation_rate': participation_rate,
+            'execution_strategy': execution_plan.get('strategy', 'DIRECT')
+        }
+        
+        # Add execution quality metrics
+        quality_metrics = self.execution_analytics.calculate_metrics(window_minutes=60)
+        metrics.update({
+            'fill_rate': quality_metrics.get('fill_rate', 1.0),
+            'avg_slippage': quality_metrics.get('slippage', 0.0)
+        })
+        
+        return signal, metrics
+        
+    def get_execution_analytics(self, window_minutes: int = 60) -> Dict:
+        """Get execution analytics and performance metrics."""
+        return self.execution_analytics.calculate_metrics(window_minutes)
+        
+    def update_market_microstructure(self, timestamp, price, volume, bid, ask, bid_size, ask_size):
+        """Update market microstructure analytics with new market data."""
+        # Update order book
+        bid_update = OrderBookUpdate(
+            timestamp=timestamp.timestamp(),
+            book_type='bid',
+            action='modify',
+            price=bid,
+            size=bid_size
+        )
+        
+        ask_update = OrderBookUpdate(
+            timestamp=timestamp.timestamp(),
+            book_type='ask',
+            action='modify',
+            price=ask,
+            size=ask_size
+        )
+        
+        self.order_book.update(bid_update)
+        self.order_book.update(ask_update)
+        
+        # Update microstructure metrics
+        metrics = self.microstructure_analyzer.process_order_book_update(bid_update)
+        self.microstructure_analyzer.process_order_book_update(ask_update)
+        
+        # Update volume profile
+        self.volume_analyzer.update_volume_profile(price, volume, timestamp.timestamp())
+        
+        # Store metrics
+        metrics.update({
+            'timestamp': timestamp,
+            'volume_profile': self.volume_analyzer.get_volume_profile_metrics(),
+            'trade_size_dist': self.volume_analyzer.analyze_trade_size_distribution(),
+            'volume_momentum': self.volume_analyzer.calculate_volume_momentum()
+        })
+        
+        self.micro_metrics_history.append(metrics)
+        
+        return metrics
+        
+    def analyze_liquidity_conditions(self) -> Dict:
+        """Analyze current market liquidity conditions."""
+        if not self.micro_metrics_history:
+            return None
+            
+        current_metrics = self.micro_metrics_history[-1]
+        forecast = self.microstructure_analyzer.get_liquidity_forecast()
+        
+        spread = current_metrics['spread']
+        depth = current_metrics['depth']
+        
+        analysis = {
+            'current_state': {
+                'spread': spread,
+                'depth': depth,
+                'liquidity_score': current_metrics['liquidity_score'],
+                'market_state': self.microstructure_analyzer._classify_market_state(current_metrics)
+            },
+            'forecast': forecast,
+            'volume_analysis': {
+                'profile': current_metrics['volume_profile'],
+                'momentum': current_metrics['volume_momentum']
+            },
+            'order_flow': {
+                'imbalance': current_metrics['order_flow_imbalance'],
+                'market_resiliency': current_metrics['market_resiliency']
+            }
+        }
+        
+        # Add trading recommendations
+        analysis['recommendations'] = self._generate_microstructure_recommendations(analysis)
+        
+        return analysis
+        
+    def _generate_microstructure_recommendations(self, analysis: Dict) -> Dict:
+        """Generate trading recommendations based on microstructure analysis."""
+        recommendations = {
+            'timing': None,
+            'sizing': None,
+            'execution_strategy': None,
+            'confidence': 0.0
+        }
+        
+        # Analyze market state
+        market_state = analysis['current_state']['market_state']
+        liquidity_score = analysis['current_state']['liquidity_score']
+        order_flow_imb = analysis['order_flow']['imbalance']
+        
+        # Timing recommendations
+        if market_state == 'NORMAL' and liquidity_score > 0.7:
+            recommendations['timing'] = 'FAVORABLE'
+            timing_confidence = 0.8
+        elif market_state == 'STRESSED':
+            recommendations['timing'] = 'AVOID'
+            timing_confidence = 0.9
+        else:
+            recommendations['timing'] = 'NEUTRAL'
+            timing_confidence = 0.6
+            
+        # Sizing recommendations
+        depth = analysis['current_state']['depth']['total_depth']
+        if depth > 0:
+            avg_depth = np.mean([m['depth']['total_depth'] for m in self.micro_metrics_history[-20:]])
+            relative_depth = depth / avg_depth
+            
+            if relative_depth > 1.2:
+                recommendations['sizing'] = 'INCREASE'
+                sizing_confidence = 0.75
+            elif relative_depth < 0.8:
+                recommendations['sizing'] = 'REDUCE'
+                sizing_confidence = 0.8
+            else:
+                recommendations['sizing'] = 'MAINTAIN'
+                sizing_confidence = 0.7
+                
+        # Execution strategy recommendations
+        spread = analysis['current_state']['spread']
+        if market_state == 'NORMAL' and abs(order_flow_imb) < 0.2:
+            recommendations['execution_strategy'] = 'AGGRESSIVE'
+            execution_confidence = 0.7
+        elif market_state == 'STRESSED' or abs(order_flow_imb) > 0.5:
+            recommendations['execution_strategy'] = 'PASSIVE'
+            execution_confidence = 0.85
+        else:
+            recommendations['execution_strategy'] = 'BALANCED'
+            execution_confidence = 0.6
+            
+        # Overall confidence
+        recommendations['confidence'] = np.mean([
+            timing_confidence,
+            sizing_confidence,
+            execution_confidence
+        ])
+        
+        return recommendations
+        
+    def get_market_impact_estimate(self, size: float, side: str) -> Dict:
+        """Estimate market impact for a given trade size."""
+        if not self.micro_metrics_history:
+            return None
+            
+        current_metrics = self.micro_metrics_history[-1]
+        market_state = current_metrics['market_state']
+        liquidity_score = current_metrics['liquidity_score']
+        
+        # Get market depth
+        depth = current_metrics['depth']
+        available_depth = depth['bid_depth'] if side == 'sell' else depth['ask_depth']
+        
+        # Calculate base impact using square root model
+        participation_rate = size / available_depth
+        base_impact = 0.1 * np.sqrt(participation_rate)
+        
+        # Adjust for market conditions
+        if market_state == 'STRESSED':
+            impact_multiplier = 2.0
+        elif market_state == 'WIDE' or market_state == 'SHALLOW':
+            impact_multiplier = 1.5
+        else:
+            impact_multiplier = 1.0
+            
+        # Adjust for liquidity
+        liquidity_adjustment = 1.0 - (liquidity_score * 0.5)  # Higher liquidity reduces impact
+        
+        # Final impact estimate
+        total_impact = base_impact * impact_multiplier * liquidity_adjustment
+        
+        return {
+            'estimated_impact': total_impact,
+            'impact_decomposition': {
+                'base_impact': base_impact,
+                'market_state_multiplier': impact_multiplier,
+                'liquidity_adjustment': liquidity_adjustment
+            },
+            'market_conditions': {
+                'state': market_state,
+                'liquidity_score': liquidity_score,
+                'participation_rate': participation_rate
+            }
+        }
+        
+    def optimize_trade_scheduling(self, size: float, urgency: str = 'NORMAL') -> Dict:
+        """Optimize trade scheduling based on microstructure conditions."""
+        
+    def enhance_trading_signal(self, raw_signal: float, timestamp) -> Dict:
+        """Enhance trading signal using ML and alpha factors."""
+        # Prepare factors
+        lookback = 252
+        data_window = self.df[:timestamp].tail(lookback)
+        
+        # Calculate alpha factors
+        factors = pd.DataFrame(index=data_window.index)
+        factors['momentum'] = data_window['Close'].pct_change(20)
+        factors['volatility'] = data_window['Close'].pct_change().rolling(20).std()
+        factors['volume'] = data_window['Volume'].pct_change()
+        factors['ma_cross'] = (data_window['Close'].rolling(10).mean() - 
+                             data_window['Close'].rolling(30).mean())
+        factors['rsi'] = self._calculate_rsi(data_window['Close'])
+        
+        # Get returns
+        returns = data_window['Close'].pct_change()
+        
+        # Process signal
+        enhancement = self.signal_optimizer.process_signal(
+            raw_signal=raw_signal,
+            factors=factors,
+            returns=returns
+        )
+        
+        # Store metrics
+        self.signal_metrics_history.append({
+            'timestamp': timestamp,
+            'enhancement': enhancement,
+            'raw_signal': raw_signal
+        })
+        
+        return enhancement
+        
+    def get_signal_analytics(self) -> Dict:
+        """Get analytics about signal enhancement performance."""
+        if not self.signal_metrics_history:
+            return None
+            
+        # Get base metrics
+        metrics = self.signal_optimizer.get_signal_metrics()
+        
+        # Add regime analysis
+        regime_stats = self.signal_optimizer.get_regime_signals()
+        
+        # Calculate enhancement effectiveness
+        history = pd.DataFrame([m['enhancement'] for m in self.signal_metrics_history])
+        raw_signals = [m['raw_signal'] for m in self.signal_metrics_history]
+        
+        effectiveness = {
+            'signal_improvement': np.mean(np.abs(history['signal'])) / np.mean(np.abs(raw_signals)),
+            'regime_stability': len(set(history['regime'])),
+            'alpha_contribution': np.mean(np.abs(history['alpha_contribution']))
+        }
+        
+        return {
+            'metrics': metrics,
+            'regime_stats': regime_stats,
+            'effectiveness': effectiveness
+        }
+        
+    def _calculate_rsi(self, prices: pd.Series, period: int = 14) -> pd.Series:
+        """Calculate Relative Strength Index."""
+        delta = prices.diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+        
+        rs = gain / loss
+        return 100 - (100 / (1 + rs))
+        
+    def train_alpha_model(self, lookback_days: int = 252) -> Dict:
+        """Train the alpha factor model."""
+        data_window = self.df.tail(lookback_days)
+        
+        # Prepare factors
+        factors = pd.DataFrame(index=data_window.index)
+        factors['momentum'] = data_window['Close'].pct_change(20)
+        factors['volatility'] = data_window['Close'].pct_change().rolling(20).std()
+        factors['volume'] = data_window['Volume'].pct_change()
+        factors['ma_cross'] = (data_window['Close'].rolling(10).mean() - 
+                             data_window['Close'].rolling(30).mean())
+        factors['rsi'] = self._calculate_rsi(data_window['Close'])
+        
+        # Get returns
+        returns = data_window['Close'].pct_change()
+        
+        # Train alpha model
+        training_results = self.alpha_processor.train_alpha_combiner(
+            factors=factors.dropna(),
+            returns=returns.dropna()
+        )
+        
+        # Get factor importance
+        importance = self.alpha_processor.get_factor_importance()
+        
+        return {
+            'training_results': training_results,
+            'factor_importance': importance.to_dict(),
+            'lookback_days': lookback_days
+        }
+        if not self.micro_metrics_history:
+            return None
+            
+        current_metrics = self.micro_metrics_history[-1]
+        forecast = self.microstructure_analyzer.get_liquidity_forecast()
+        volume_profile = current_metrics['volume_profile']
+        
+        # Define urgency parameters
+        urgency_params = {
+            'HIGH': {'max_participation': 0.3, 'time_horizon': 10},
+            'NORMAL': {'max_participation': 0.15, 'time_horizon': 30},
+            'LOW': {'max_participation': 0.05, 'time_horizon': 60}
+        }[urgency]
+        
+        # Calculate optimal schedule
+        horizon = urgency_params['time_horizon']
+        max_part = urgency_params['max_participation']
+        
+        # Adjust participation rate based on forecasted conditions
+        if forecast['market_state'] == 'STRESSED':
+            max_part *= 0.5
+        elif forecast['market_state'] == 'SHALLOW':
+            max_part *= 0.7
+            
+        # Generate schedule
+        intervals = 6  # 5-minute intervals
+        schedule = []
+        remaining_size = size
+        
+        for i in range(intervals):
+            interval_volume = volume_profile.get('total_volume', 0) / intervals
+            interval_size = min(
+                remaining_size,
+                interval_volume * max_part
+            )
+            
+            schedule.append({
+                'time': i * 5,
+                'size': interval_size,
+                'participation_rate': interval_size / interval_volume if interval_volume > 0 else 0
+            })
+            
+            remaining_size -= interval_size
+            
+        return {
+            'schedule': schedule,
+            'parameters': {
+                'urgency': urgency,
+                'max_participation': max_part,
+                'horizon_minutes': horizon
+            },
+            'market_forecast': forecast,
+            'estimated_completion': (1 - remaining_size/size) * 100
+        }
+        
+        # ══════════ ECONOMIC METRICS ══════════
+        from scipy.stats import norm as scipy_norm
+        
+        # Sharpe & Sortino Ratios
+        returns_std = df['Strategy_Returns'].std()
+        strategy_sharpe = (df['Strategy_Returns'].mean() / returns_std) * np.sqrt(252) if returns_std > 0 else 0
+        
+        # Sortino Ratio (downside deviation)
+        downside_returns = df['Strategy_Returns'][df['Strategy_Returns'] < 0]
+        downside_std = downside_returns.std() if len(downside_returns) > 0 else 1e-10
+        sortino_ratio = (df['Strategy_Returns'].mean() / downside_std) * np.sqrt(252)
+        
+        # Max drawdown and Calmar
+        cummax = df['cum_strategy'].cummax()
+        drawdown = (df['cum_strategy'] - cummax) / cummax
+        max_drawdown = drawdown.min() * 100
+        
+        # Calmar Ratio (return / max drawdown)
+        calmar_ratio = (total_return / 100) / abs(max_drawdown / 100) if max_drawdown != 0 else 0
+        
+        # Value at Risk (VaR) 95%
+        var_95 = np.percentile(df['Strategy_Returns'].dropna(), 5) * 100
+        
+        # Expected Shortfall (CVaR) 95%
+        cvar_95 = df['Strategy_Returns'][df['Strategy_Returns'] <= np.percentile(df['Strategy_Returns'], 5)].mean() * 100
+        
+        # Maximum Adverse Excursion
+        mae = (df['Strategy_Returns'].cumsum() - df['Strategy_Returns'].cumsum().cummax()).min() * 100
+        
+        # Trading metrics
+        win_trades = (df['Strategy_Returns'] > 0).sum()
+        total_trades = (df[signal_to_use].diff() != 0).sum() / 2  # Divide by 2 for entry/exit pairs
+        win_rate = (win_trades / len(df)) * 100 if len(df) > 0 else 0
+        
+        print("\n📊 STRATEGY PERFORMANCE")
+        print("-" * 60)
+        print(f"   Strategy Return:       {total_return:.2f}%")
+        print(f"   Buy & Hold Return:     {buyhold_return:.2f}%")
+        print(f"   Alpha:                 {total_return - buyhold_return:.2f}%")
+        print(f"   Win Rate:              {win_rate:.1f}%")
+        print(f"   Total Trades:          {int(total_trades)}")
+        
+        print("\n📈 RISK METRICS")
+        print("-" * 60)
+        print(f"   Sharpe Ratio:          {strategy_sharpe:.2f}")
+        print(f"   Sortino Ratio:         {sortino_ratio:.2f}")
+        print(f"   Calmar Ratio:          {calmar_ratio:.2f}")
+        print(f"   Max Drawdown:          {max_drawdown:.2f}%")
+        print(f"   VaR (95%):             {var_95:.2f}%")
+        print(f"   CVaR (95%):            {cvar_95:.2f}%")
+        print(f"   Max Adverse Excursion: {mae:.2f}%")
+        print("\n✅ Backtest complete\n")
+        
+        # Store metrics for comparison
+        df['drawdown'] = drawdown
+        df['sharpe'] = strategy_sharpe
+        df['sortino'] = sortino_ratio
+        df['calmar'] = calmar_ratio
+        df['var_95'] = var_95
+        df['cvar_95'] = cvar_95
+        df['mae'] = mae
+        df['win_rate'] = win_rate
+        
+        return df
+
+## IndicatorEngine moved above the main prediction system so it's defined before use
+# =============================================================================
+# MODULE 2: INDICATOR ENGINE (COMPLETE DEFINITION)
+# =============================================================================
+class IndicatorEngine:
+    """Centralized technical indicator calculator"""
+    
+    def __init__(self, df):
+        self.df = df.copy()
+    
+    def add_basic_indicators(self):
+        """Add essential technical indicators"""
+        print("🔧 Calculating Basic Indicators...")
+        df = self.df
+        
+        # EMAs
+        df['EMA_9'] = df['Close'].ewm(span=9, adjust=False).mean()
+        df['EMA_20'] = df['Close'].ewm(span=20, adjust=False).mean()
+        df['EMA_50'] = df['Close'].ewm(span=50, adjust=False).mean()
+        df['EMA_200'] = df['Close'].ewm(span=200, adjust=False).mean()
+        
+        # RSI
+        delta = df['Close'].diff()
+        gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
+        loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+        rs = gain / loss
+        df['RSI'] = 100 - (100 / (1 + rs))
+        
+        # VWAP
+        df['Typical_Price'] = (df['High'] + df['Low'] + df['Close']) / 3
+        df['VWAP'] = (df['Volume'] * df['Typical_Price']).cumsum() / df['Volume'].cumsum()
+        
+        # MACD
+        exp1 = df['Close'].ewm(span=12, adjust=False).mean()
+        exp2 = df['Close'].ewm(span=26, adjust=False).mean()
+        df['MACD'] = exp1 - exp2
+        df['MACD_Signal'] = df['MACD'].ewm(span=9, adjust=False).mean()
+        df['MACD_Hist'] = df['MACD'] - df['MACD_Signal']
+        
+        # Bollinger Bands
+        df['BB_Middle'] = df['Close'].rolling(window=20).mean()
+        bb_std = df['Close'].rolling(window=20).std()
+        df['BB_Upper'] = df['BB_Middle'] + (bb_std * 2)
+        df['BB_Lower'] = df['BB_Middle'] - (bb_std * 2)
+        df['BB_Width'] = (df['BB_Upper'] - df['BB_Lower']) / df['BB_Middle']
+        
+        # ATR
+        high_low = df['High'] - df['Low']
+        high_close = np.abs(df['High'] - df['Close'].shift())
+        low_close = np.abs(df['Low'] - df['Close'].shift())
+        ranges = pd.concat([high_low, high_close, low_close], axis=1)
+        true_range = ranges.max(axis=1)
+        df['ATR'] = true_range.rolling(14).mean()
+        
+        # Volume
+        df['Volume_SMA'] = df['Volume'].rolling(20).mean()
+        df['Volume_Ratio'] = df['Volume'] / df['Volume_SMA']
+        
+        self.df = df
+        print("✅ Basic indicators added\n")
+        return self
+    
+    def add_advanced_indicators(self):
+        """Add advanced technical indicators"""
+        print("🔧 Calculating Advanced Indicators...")
+        df = self.df
+        
+        # Historical Volatility
+        df['Returns'] = df['Close'].pct_change()
+        df['HV_20'] = df['Returns'].rolling(window=20).std() * np.sqrt(252) * 100
+        
+        # ══════════ FIXED GARCH VOLATILITY ══════════
+        print("   📊 Calculating GARCH volatility forecast...")
+        garch_result = calculate_garch_volatility(df['Returns'])
+
+        if garch_result:
+            # Store BOTH daily and annualized volatility separately
+            sigma_daily = garch_result['sigma_next']  # Already in decimal form (e.g., 0.01 = 1%)
+            
+            df['GARCH_Vol_Daily'] = sigma_daily * 100  # Daily vol as percentage (1.5%)
+            df['GARCH_Vol_Annual'] = sigma_daily * np.sqrt(252) * 100  # Annualized (23.8%)
+            
+            # Use DAILY vol for signals (compare apples-to-apples)
+            hv_daily = df['HV_20'] / np.sqrt(252)  # Convert annual HV to daily
+            df['GARCH_Signal'] = np.where(
+                df['GARCH_Vol_Daily'] > hv_daily * 1.2 * 100, -1,  # High forecasted vol = bearish
+                np.where(df['GARCH_Vol_Daily'] < hv_daily * 0.8 * 100, 1, 0)  # Low forecasted vol = bullish
+            )
+            
+            print(f"   ✅ GARCH Vol: Daily {sigma_daily*100:.3f}%, Annual {sigma_daily*np.sqrt(252)*100:.2f}%")
+        else:
+            df['GARCH_Vol_Daily'] = (df['HV_20'] / np.sqrt(252))
+            df['GARCH_Vol_Annual'] = df['HV_20']
+            df['GARCH_Signal'] = 0
+        
+        # CPR
+        df['Pivot'] = (df['High'] + df['Low'] + df['Close']) / 3
+        df['BC'] = (df['High'] + df['Low']) / 2
+        df['TC'] = (df['Pivot'] - df['BC']) + df['Pivot']
+        df['CPR_Width'] = df['TC'] - df['BC']
+        
+        # ADX
+        plus_dm = df['High'].diff()
+        minus_dm = -df['Low'].diff()
+        plus_dm[plus_dm < 0] = 0
+        minus_dm[minus_dm < 0] = 0
+        
+        high_low = df['High'] - df['Low']
+        high_close = np.abs(df['High'] - df['Close'].shift())
+        low_close = np.abs(df['Low'] - df['Close'].shift())
+        true_range = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
+        
+        atr14 = true_range.rolling(14).mean()
+        plus_di = 100 * (plus_dm.rolling(14).mean() / atr14)
+        minus_di = 100 * (minus_dm.rolling(14).mean() / atr14)
+        dx = 100 * np.abs(plus_di - minus_di) / (plus_di + minus_di)
+        df['ADX'] = dx.rolling(14).mean()
+        
+        # Stochastic
+        low_14 = df['Low'].rolling(14).min()
+        high_14 = df['High'].rolling(14).max()
+        df['Stoch_K'] = 100 * ((df['Close'] - low_14) / (high_14 - low_14))
+        df['Stoch_D'] = df['Stoch_K'].rolling(3).mean()
+        
+        # MFI
+        typical_price = (df['High'] + df['Low'] + df['Close']) / 3
+        money_flow = typical_price * df['Volume']
+        positive_flow = money_flow.where(typical_price > typical_price.shift(1), 0).rolling(14).sum()
+        negative_flow = money_flow.where(typical_price < typical_price.shift(1), 0).rolling(14).sum()
+        mfi_ratio = positive_flow / negative_flow
+        df['MFI'] = 100 - (100 / (1 + mfi_ratio))
+        
+        # Williams %R
+        df['Williams_R'] = -100 * ((high_14 - df['Close']) / (high_14 - low_14))
+        
+        # CCI
+        tp = (df['High'] + df['Low'] + df['Close']) / 3
+        sma_tp = tp.rolling(20).mean()
+        mad = tp.rolling(20).apply(lambda x: np.abs(x - x.mean()).mean())
+        df['CCI'] = (tp - sma_tp) / (0.015 * mad)
+        
+        # OBV
+        df['OBV'] = (np.sign(df['Close'].diff()) * df['Volume']).fillna(0).cumsum()
+        
+        # Historical Volatility
+        df['Returns'] = df['Close'].pct_change()
+        df['HV_20'] = df['Returns'].rolling(20).std() * np.sqrt(252) * 100
+        
+        # Momentum indicators
+        df['Momentum'] = df['Close'].pct_change(periods=10) * 100
+        df['ROC'] = ((df['Close'] - df['Close'].shift(12)) / df['Close'].shift(12)) * 100
+        
+        # Pattern recognition
+        df['Higher_High'] = (df['High'] > df['High'].shift(1)).astype(int)
+        df['Lower_Low'] = (df['Low'] < df['Low'].shift(1)).astype(int)
+        
+        # Ichimoku Cloud
+        df['Tenkan'] = (df['High'].rolling(9).max() + df['Low'].rolling(9).min()) / 2
+        df['Kijun'] = (df['High'].rolling(26).max() + df['Low'].rolling(26).min()) / 2
+        df['Senkou_A'] = ((df['Tenkan'] + df['Kijun']) / 2).shift(26)
+        df['Senkou_B'] = ((df['High'].rolling(52).max() + df['Low'].rolling(52).min()) / 2).shift(26)
+        df['Ichimoku_Signal'] = np.where(
+            df['Close'] > df[['Senkou_A', 'Senkou_B']].max(axis=1), 1,
+            np.where(df['Close'] < df[['Senkou_A', 'Senkou_B']].min(axis=1), -1, 0)
+        )
+        
+        # RVI (Relative Vigor Index)
+        numerator = df['Close'] - df['Open']
+        denominator = df['High'] - df['Low']
+        denominator = denominator.replace(0, 0.0001)
+        df['RVI'] = numerator / denominator
+        df['RVI_SMA'] = df['RVI'].rolling(4).mean()
+        df['RVI_Signal'] = df['RVI_SMA'].ewm(span=4, adjust=False).mean()
+        
+        # CMF (Chaikin Money Flow)
+        mf_multiplier = ((df['Close'] - df['Low']) - (df['High'] - df['Close'])) / (df['High'] - df['Low'])
+        mf_multiplier = mf_multiplier.replace([np.inf, -np.inf], 0).fillna(0)
+        mf_volume = mf_multiplier * df['Volume']
+        df['CMF'] = mf_volume.rolling(21).sum() / df['Volume'].rolling(21).sum()
+        
+        # Fibonacci Retracement
+        high_52 = df['High'].rolling(252).max()
+        low_52 = df['Low'].rolling(252).min()
+        df['Fib_0.382'] = high_52 - (high_52 - low_52) * 0.382
+        df['Fib_0.5'] = high_52 - (high_52 - low_52) * 0.5
+        df['Fib_0.618'] = high_52 - (high_52 - low_52) * 0.618
+        
+        # Supertrend
+        atr_multiplier = 3
+        hl2 = (df['High'] + df['Low']) / 2
+        df['Supertrend_Upper'] = hl2 + (atr_multiplier * df['ATR'])
+        df['Supertrend_Lower'] = hl2 - (atr_multiplier * df['ATR'])
+        df['Supertrend'] = df['Supertrend_Upper']
+        df.loc[df['Close'] < df['Supertrend_Upper'].shift(1), 'Supertrend'] = df['Supertrend_Lower']
+        df['Supertrend_Signal'] = np.where(df['Close'] > df['Supertrend'], 1, -1)
+        
+        # VIX Signal
+        df['VIX_Signal'] = np.where(df['IndiaVIX'] < 12, 1, np.where(df['IndiaVIX'] > 20, -1, 0))
+        
+        # Z-Score
+        df['Z_Score_20'] = (df['Close'] - df['Close'].rolling(20).mean()) / df['Close'].rolling(20).std()
+        
+        # Candle patterns
+        df['Body_Size'] = abs(df['Close'] - df['Open']) / df['Open']
+        df['Upper_Shadow'] = (df['High'] - np.maximum(df['Open'], df['Close'])) / df['Open']
+        df['Lower_Shadow'] = (np.minimum(df['Open'], df['Close']) - df['Low']) / df['Open']
+
+        # ============= INSERT HERE (in add_advanced_indicators) =============
+        # Rate of Change (ROC) - enhanced version
+        df['ROC_12'] = ((df['Close'] - df['Close'].shift(12)) / df['Close'].shift(12)) * 100
+
+        # Chande Momentum Oscillator (CMO)
+        delta = df['Close'].diff()
+        s_up = delta.where(delta > 0, 0).rolling(14).sum()
+        s_down = -delta.where(delta < 0, 0).rolling(14).sum()
+        df['CMO'] = 100 * ((s_up - s_down) / (s_up + s_down))
+
+        # True Strength Index (TSI)
+        momentum = df['Close'].diff()
+        ema_momentum_25 = momentum.ewm(span=25, adjust=False).mean()
+        ema_momentum_13 = ema_momentum_25.ewm(span=13, adjust=False).mean()
+        ema_abs_momentum_25 = momentum.abs().ewm(span=25, adjust=False).mean()
+        ema_abs_momentum_13 = ema_abs_momentum_25.ewm(span=13, adjust=False).mean()
+        df['TSI'] = 100 * (ema_momentum_13 / ema_abs_momentum_13)
+
+        # Kaufman's Adaptive Moving Average (KAMA)
+        change = abs(df['Close'] - df['Close'].shift(10))
+        volatility = df['Close'].diff().abs().rolling(10).sum()
+        er = change / volatility  # Efficiency Ratio
+        sc = (er * (2/(2+1) - 2/(30+1)) + 2/(30+1)) ** 2  # Smoothing Constant
+        # Vectorized KAMA calculation (numpy loop for speed)
+        close_np = df['Close'].to_numpy()
+        sc_np = sc.fillna(0).to_numpy()
+        kama = np.empty_like(close_np)
+        if len(close_np) > 0:
+            kama[0] = close_np[0]
+        for i in range(1, len(close_np)):
+            kama[i] = kama[i-1] + sc_np[i] * (close_np[i] - kama[i-1])
+        df['KAMA'] = kama
+
+        # Donchian Channels
+        df['Donchian_Upper'] = df['High'].rolling(20).max()
+        df['Donchian_Lower'] = df['Low'].rolling(20).min()
+        df['Donchian_Middle'] = (df['Donchian_Upper'] + df['Donchian_Lower']) / 2
+
+        # Volatility Ratio
+        df['Volatility_Ratio'] = df['ATR'] / df['Close']
+
+        # Market Structure Features
+        df['TII'] = (df['Close'] > df['EMA_200']).rolling(20).sum() / 20  # Trend Intensity Index
+        df['VIX_Percentile'] = df['IndiaVIX'].rolling(252).apply(lambda x: (x.iloc[-1] <= x).sum() / len(x) * 100)
+        df['Rolling_Corr_VIX'] = df['Returns'].rolling(20).corr(df['IndiaVIX'].pct_change())
+
+        # =====================================================================
+
+        self.df = df
+        print("✅ Advanced indicators added\n")
+        return self
+
+# =============================================================================
+# MODULE 3: FEATURE BUILDER & SIGNAL GENERATOR (moved up)
+# =============================================================================
+class FeatureBuilder:
+    """Generates trading signals and ML features"""
+
+    def __init__(self, df):
+        self.df = df.copy()
+
+    def build_signals(self):
+        """Generate trading signals (keeps modifications on self.df)."""
+        df = self.df.copy()
+
+        # EMA Signal
+        df['EMA_Signal'] = 0
+        if all(c in df.columns for c in ['EMA_9', 'EMA_20', 'EMA_50']):
+            df.loc[(df['EMA_9'] > df['EMA_20']) & (df['EMA_20'] > df['EMA_50']), 'EMA_Signal'] = 1
+            df.loc[(df['EMA_9'] < df['EMA_20']) & (df['EMA_20'] < df['EMA_50']), 'EMA_Signal'] = -1
+
+        # RSI Signal
+        df['RSI_Signal'] = 0
+        if 'RSI' in df.columns:
+            df.loc[df['RSI'] < 30, 'RSI_Signal'] = 1
+            df.loc[df['RSI'] > 70, 'RSI_Signal'] = -1
+
+        # MACD Signal
+        df['MACD_Signal_Flag'] = 0
+        if all(c in df.columns for c in ['MACD', 'MACD_Signal', 'MACD_Hist']):
+            df.loc[(df['MACD'] > df['MACD_Signal']) & (df['MACD_Hist'] > 0), 'MACD_Signal_Flag'] = 1
+            df.loc[(df['MACD'] < df['MACD_Signal']) & (df['MACD_Hist'] < 0), 'MACD_Signal_Flag'] = -1
+
+        # CPR Signal
+        df['CPR_Signal'] = 0
+        if all(c in df.columns for c in ['Close', 'TC', 'BC']):
+            df.loc[df['Close'] > df['TC'], 'CPR_Signal'] = 1
+            df.loc[df['Close'] < df['BC'], 'CPR_Signal'] = -1
+
+        # BB Signal
+        df['BB_Signal'] = 0
+        if all(c in df.columns for c in ['Close', 'BB_Lower', 'BB_Upper']):
+            df.loc[df['Close'] < df['BB_Lower'], 'BB_Signal'] = 1
+            df.loc[df['Close'] > df['BB_Upper'], 'BB_Signal'] = -1
+
+        # Volume Signal
+        df['Volume_Signal'] = 0
+        if 'Volume_Ratio' in df.columns:
+            df.loc[df['Volume_Ratio'] > 1.2, 'Volume_Signal'] = 1
+
+        # Stochastic Signal
+        df['Stoch_Signal'] = 0
+        if all(c in df.columns for c in ['Stoch_K', 'Stoch_D']):
+            df.loc[(df['Stoch_K'] < 20) & (df['Stoch_D'] < 20), 'Stoch_Signal'] = 1
+            df.loc[(df['Stoch_K'] > 80) & (df['Stoch_D'] > 80), 'Stoch_Signal'] = -1
+
+        # MFI Signal
+        df['MFI_Signal'] = 0
+        if 'MFI' in df.columns:
+            df.loc[df['MFI'] < 20, 'MFI_Signal'] = 1
+            df.loc[df['MFI'] > 80, 'MFI_Signal'] = -1
+
+        # Williams Signal
+        df['Williams_Signal'] = 0
+        if 'Williams_R' in df.columns:
+            df.loc[df['Williams_R'] < -80, 'Williams_Signal'] = 1
+            df.loc[df['Williams_R'] > -20, 'Williams_Signal'] = -1
+
+        # CCI Signal
+        df['CCI_Signal'] = 0
+        if 'CCI' in df.columns:
+            df.loc[df['CCI'] < -100, 'CCI_Signal'] = 1
+            df.loc[df['CCI'] > 100, 'CCI_Signal'] = -1
+
+        # RVI Signal
+        if all(c in df.columns for c in ['RVI_SMA', 'RVI_Signal']):
+            df['RVI_Flag'] = np.where(df['RVI_SMA'] > df['RVI_Signal'], 1,
+                                       np.where(df['RVI_SMA'] < df['RVI_Signal'], -1, 0))
+
+        # CMF Signal
+        if 'CMF' in df.columns:
+            df['CMF_Signal'] = np.where(df['CMF'] > 0.05, 1, np.where(df['CMF'] < -0.05, -1, 0))
+
+        # Trend Strength
+        df['Trend_Strength'] = 'Weak'
+        if 'ADX' in df.columns:
+            df.loc[df['ADX'] > 25, 'Trend_Strength'] = 'Strong'
+            df.loc[df['ADX'] > 50, 'Trend_Strength'] = 'Very Strong'
+
+        self.df = df
+        print("✅ Signals calculated\n")
+        return self
+
+    def build_ml_features(self):
+        """Prepare features for machine learning using advanced feature engineering."""
+        from feature_engineering import AdvancedFeatureEngineer
+        
+        df = self.df.copy()
+        
+        # Target: Next day direction
+        df['Target'] = (df['Close'].shift(-1) > df['Close']).astype(int)
+        
+        # Base feature list
+        base_features = [
+            'EMA_Signal', 'RSI', 'RSI_Signal', 'MACD_Signal_Flag',
+            'CPR_Signal', 'BB_Signal', 'BB_Width', 'Volume_Signal',
+            'Stoch_Signal', 'MFI_Signal', 'Williams_Signal', 'CCI_Signal',
+            'ATR', 'ADX', 'Momentum', 'ROC', 'Volume_Ratio', 'HV_20',
+            'Higher_High', 'Lower_Low', 'OBV',
+            'Ichimoku_Signal', 'RVI_Flag', 'CMF_Signal', 'Supertrend_Signal',
+            'VIX_Signal', 'Z_Score_20', 'Body_Size', 'IndiaVIX'
+        ]
+        
+        # Only keep features that were actually calculated
+        available_features = [f for f in base_features if f in df.columns]
+        
+        # Initialize feature engineer
+        feature_engineer = AdvancedFeatureEngineer(
+            n_poly_degree=2,
+            n_top_features=30
+        )
+        
+        # Get target and features
+        y = df['Target']
+        X = df[available_features]
+        
+        # Apply advanced feature engineering
+        X_engineered = feature_engineer.fit_transform(X, y)
+
+        # Lagged Features (Temporal memory)
+        if 'Target' in df.columns:
+            df['Target_Lag1'] = df['Target'].shift(1)
+            df['Target_Lag2'] = df['Target'].shift(2)
+            available_features.extend([f for f in ['Target_Lag1', 'Target_Lag2'] if f in df.columns])
+        if 'RSI' in df.columns:
+            df['RSI_Lag1'] = df['RSI'].shift(1)
+            available_features.append('RSI_Lag1')
+
+        # Rolling Statistics
+        if 'Returns' in df.columns:
+            df['Returns_MA5'] = df['Returns'].rolling(5).mean()
+            df['Returns_Std5'] = df['Returns'].rolling(5).std()
+            available_features.extend([f for f in ['Returns_MA5', 'Returns_Std5'] if f in df.columns])
+        if 'RSI' in df.columns:
+            df['RSI_ZScore'] = (df['RSI'] - df['RSI'].rolling(20).mean()) / df['RSI'].rolling(20).std()
+            available_features.append('RSI_ZScore')
+
+        # Ensure uniqueness and preserve order
+        available_features = [*dict.fromkeys(available_features)]
+
+        # Working copy + fill
+        df_clean = df[available_features + ['Target']].copy()
+        df_clean = df_clean.fillna(method='ffill').fillna(method='bfill')
+
+        # Drop only if Target is missing
+        df_clean = df_clean.dropna(subset=['Target'])
+
+        X = df_clean[available_features]
+        y = df_clean['Target']
+
+        # Persist engineered features back to the object's dataframe so prediction can access them
+        try:
+            self.df.loc[df_clean.index, available_features] = df_clean[available_features]
+        except Exception:
+            self.df[available_features] = df[available_features]
+
+        print(f"   ML Features: {len(available_features)}")
+        print(f"   Training samples: {len(X)}")
+
+        if len(X) < 50:
+            print(f"   ⚠️  Warning: Only {len(X)} samples available (need 50+)")
+
+        return X, y
+
+# =============================================================================
+# ML ENSEMBLE WITH ADVANCED MODELS
+# =============================================================================
+class MLEnsemble:
+    """Enhanced ML ensemble with LightGBM and XGBoost"""
+    
+    def __init__(self, enable_lstm=True, enable_shap=True):
+        self.models = {}
+        self.scaler = StandardScaler()
+        self.feature_names = []
+        self.weights = None
+        self.results = {}
+        self.enable_lstm = enable_lstm
+        self.enable_shap = enable_shap
+        self.neural_predictor = None
+        self._lstm_model_path = None
+
+    def train_with_walk_forward_cv(self, X, y, n_splits=5, test_size=0.2):
+        """Train with walk-forward cross-validation"""
+        from sklearn.model_selection import TimeSeriesSplit
+        from sklearn.calibration import CalibratedClassifierCV
+        
+        print("🔄 Walk-Forward Cross-Validation Training")
+        print("=" * 60)
+        
+        if len(X) < 100:
+            print("⚠️ Insufficient data for walk-forward CV")
+            return self.train(X, y, test_size)
+        
+        # Store feature names
+        self.feature_names = X.columns.tolist()
+        
+        # Initialize accumulators for OOF predictions
+        oof_predictions = {}
+        oof_probas = {}
+        
+        print(f"   Running {n_splits}-fold walk-forward CV...")
+        
+        # Time series split
+        tscv = TimeSeriesSplit(n_splits=n_splits)
+        
+        for fold, (train_idx, val_idx) in enumerate(tscv.split(X), 1):
+            print(f"\n   Fold {fold}/{n_splits}")
+            
+            X_train_fold = X.iloc[train_idx]
+            y_train_fold = y.iloc[train_idx]
+            X_val_fold = X.iloc[val_idx]
+            y_val_fold = y.iloc[val_idx]
+            
+            # Scale features
+            scaler_fold = StandardScaler()
+            X_train_scaled = scaler_fold.fit_transform(X_train_fold)
+            X_val_scaled = scaler_fold.transform(X_val_fold)
+            
+            # Train a single model (Random Forest) with calibration
+            rf = RandomForestClassifier(n_estimators=100, random_state=42, max_depth=10)
+            rf_calibrated = CalibratedClassifierCV(rf, method='isotonic', cv=3)
+            rf_calibrated.fit(X_train_scaled, y_train_fold)
+            
+            # Store OOF predictions
+            val_pred = rf_calibrated.predict(X_val_scaled)
+            val_proba = rf_calibrated.predict_proba(X_val_scaled)[:, 1]
+            
+            for idx, (pred, proba) in zip(val_idx, zip(val_pred, val_proba)):
+                if 'RandomForest_WF' not in oof_predictions:
+                    oof_predictions['RandomForest_WF'] = {}
+                    oof_probas['RandomForest_WF'] = {}
+                oof_predictions['RandomForest_WF'][idx] = pred
+                oof_probas['RandomForest_WF'][idx] = proba
+        
+        # Calculate OOF metrics
+        y_oof = y.iloc[list(oof_predictions['RandomForest_WF'].keys())]
+        preds_oof = [oof_predictions['RandomForest_WF'][i] for i in y_oof.index]
+        probas_oof = [oof_probas['RandomForest_WF'][i] for i in y_oof.index]
+        
+        from sklearn.metrics import roc_auc_score, log_loss
+        oof_accuracy = accuracy_score(y_oof, preds_oof)
+        oof_auc = roc_auc_score(y_oof, probas_oof)
+        oof_logloss = log_loss(y_oof, probas_oof)
+        
+        print(f"\n📊 Out-of-Fold Performance:")
+        print(f"   Accuracy: {oof_accuracy*100:.2f}%")
+        print(f"   AUC:      {oof_auc:.4f}")
+        print(f"   LogLoss:  {oof_logloss:.4f}")
+        
+        # Train final model on all data with calibration
+        print("\n🔧 Training final calibrated model on full data...")
+        self.scaler = StandardScaler()
+        X_scaled = self.scaler.fit_transform(X)
+        
+        final_rf = RandomForestClassifier(n_estimators=200, random_state=42, max_depth=10)
+        final_rf_calibrated = CalibratedClassifierCV(final_rf, method='isotonic', cv=5)
+        final_rf_calibrated.fit(X_scaled, y)
+        
+        self.models['RandomForest_Calibrated'] = final_rf_calibrated
+        self.results['RandomForest_Calibrated'] = {
+            'accuracy': oof_accuracy,
+            'auc': oof_auc,
+            'logloss': oof_logloss
+        }
+        
+        print("✅ Walk-forward CV training complete\n")
+        return self
+    
+    def train(self, X, y, test_size=0.2):
+        """Train ensemble of ML models"""
+        print("🤖 Training Enhanced ML Ensemble...")
+        print("=" * 60)
+        
+        if len(X) < 50:
+            print("\n   ⚠️ Insufficient data for ML training")
+            return None
+        
+        # Store feature names
+        self.feature_names = X.columns.tolist()
+        
+        # Split data chronologically
+        split_idx = int(len(X) * (1 - test_size))
+        X_train, X_test = X[:split_idx], X[split_idx:]
+        y_train, y_test = y[:split_idx], y[split_idx:]
+
+        # Impute any remaining missing values (forward/backfill then zero-fill)
+        X_train = X_train.fillna(method='ffill').fillna(method='bfill').fillna(0)
+        X_test = X_test.fillna(method='ffill').fillna(method='bfill').fillna(0)
+
+        # Scale features
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_test_scaled = self.scaler.transform(X_test)
+        
+        # Check that training labels contain at least 2 classes
+        unique_train_classes = np.unique(y_train)
+        if len(unique_train_classes) < 2:
+            print("\n   ⚠️ Training labels contain fewer than 2 classes; skipping model training.")
+            # store a fallback majority class prediction
+            try:
+                self.majority_class = int(pd.Series(y_train).mode().iloc[0])
+            except Exception:
+                self.majority_class = 0
+            return self
+        
+        # Train models (wrap each trainer so one failing model doesn't stop the whole ensemble)
+        trainers = [
+            ('Random Forest', self._train_random_forest),
+            ('Gradient Boosting', self._train_gradient_boosting),
+            ('AdaBoost', self._train_adaboost),
+            ('Logistic Regression', self._train_logistic_regression),
+            ('Neural Network', self._train_neural_network),
+            ('SVM', self._train_svm)
+        ]
+
+        for name, trainer in trainers:
+            try:
+                trainer(X_train_scaled, y_train, X_test_scaled, y_test)
+            except Exception as e:
+                print(f"   ⚠️  {name} training failed: {e}")
+        
+        # Optional: Advanced models
+        if LIGHTGBM_AVAILABLE:
+            self._train_lightgbm(X_train_scaled, y_train, X_test_scaled, y_test)
+        
+        if XGBOOST_AVAILABLE:
+            self._train_xgboost(X_train_scaled, y_train, X_test_scaled, y_test)
+
+        # Train Neural Predictor (LSTM) if enabled
+        if getattr(self, 'enable_lstm', True):
+            try:
+                if len(X_train) >= 100:
+                    print("\n🧠 Training LSTM Neural Predictor...")
+                    self.neural_predictor = NeuralPredictor(sequence_length=20)
+                    # Use original (unscaled) X_train for sequence prep inside NeuralPredictor
+                    self.neural_predictor.train(X_train, y_train, epochs=30)
+                else:
+                    self.neural_predictor = None
+            except Exception as e:
+                print(f"   ⚠️ LSTM training failed: {e}")
+                self.neural_predictor = None
+        else:
+            self.neural_predictor = None
+
+        # Create base ensemble
+        self._create_ensemble(X_test_scaled, y_test)
+        
+        # Create stacking ensemble
+        self._create_stacking_ensemble(X_train_scaled, y_train, X_test_scaled, y_test)
+        
+        # Run comprehensive evaluation
+        self._evaluate_comprehensive(X_test_scaled, y_test)
+        
+        # Generate calibration plot
+        try:
+            # Create plots directory if it doesn't exist
+            from pathlib import Path
+            plots_dir = Path('plots')
+            plots_dir.mkdir(exist_ok=True)
+            
+            # Generate calibration plot with timestamp
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            cal_plot_path = plots_dir / f'calibration_{timestamp}.png'
+            self.plot_calibration_curve(X_test_scaled, y_test, str(cal_plot_path))
+        except Exception as e:
+            print(f"   ⚠️ Failed to generate calibration plot: {e}")
+        
+        # Print summary
+        self._print_summary()
+
+        # Persist model to disk (models/ directory)
+        try:
+            models_dir = Path('models')
+            models_dir.mkdir(exist_ok=True)
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            model_path = models_dir / f"ml_ensemble_{timestamp}.joblib"
+            if JOBLIB_AVAILABLE:
+                joblib.dump(self, model_path)
+            else:
+                with open(model_path.with_suffix('.pkl'), 'wb') as f:
+                    pickle.dump(self, f)
+            print(f"   ✅ Persisted MLEnsemble to: {model_path}")
+        except Exception as e:
+            print(f"   ⚠️ Failed to persist MLEnsemble: {e}")
+
+        return self
+
+    def save(self, path):
+        """Persist the entire MLEnsemble instance to disk."""
+        try:
+            p = Path(path)
+            p.parent.mkdir(parents=True, exist_ok=True)
+            # If LSTM model exists, save it separately and remove from object before dump
+            lstm_path = None
+            lstm_model = None
+            if hasattr(self, 'neural_predictor') and self.neural_predictor is not None:
+                lstm_model = getattr(self.neural_predictor, 'model', None)
+                # Temporarily detach model to avoid serialization issues
+                try:
+                    self.neural_predictor.model = None
+                except Exception:
+                    pass
+
+            if JOBLIB_AVAILABLE:
+                joblib.dump(self, p)
+            else:
+                with open(p, 'wb') as f:
+                    pickle.dump(self, f)
+
+            # Save LSTM model separately if present
+            if lstm_model is not None:
+                try:
+                    from tensorflow.keras.models import save_model
+                    lstm_path = p.with_name(p.stem + '_lstm.h5')
+                    lstm_model.save(lstm_path)
+                    self._lstm_model_path = str(lstm_path)
+                except Exception as e:
+                    print(f"   ⚠️ Failed to save LSTM model separately: {e}")
+
+            print(f"   ✅ MLEnsemble saved to {p}")
+            return p
+        except Exception as e:
+            print(f"   ⚠️ Failed to save MLEnsemble: {e}")
+            return None
+
+    @classmethod
+    def load(cls, path):
+        """Load a persisted MLEnsemble instance from disk."""
+        try:
+            p = Path(path)
+            if JOBLIB_AVAILABLE:
+                obj = joblib.load(p)
+            else:
+                with open(p, 'rb') as f:
+                    obj = pickle.load(f)
+            if not isinstance(obj, cls):
+                print(f"   ⚠️ Loaded object is not MLEnsemble: {type(obj)}")
+                return None
+
+            # Attempt to load LSTM model saved alongside the ensemble
+            try:
+                lstm_path = p.with_name(p.stem + '_lstm.h5')
+                if lstm_path.exists():
+                    try:
+                        from tensorflow.keras.models import load_model
+                        if getattr(obj, 'neural_predictor', None) is None:
+                            obj.neural_predictor = NeuralPredictor()
+                        obj.neural_predictor.model = load_model(lstm_path)
+                        obj._lstm_model_path = str(lstm_path)
+                        print(f"   ✅ Loaded LSTM model from {lstm_path}")
+                    except Exception as e:
+                        print(f"   ⚠️ Failed to load LSTM model: {e}")
+            except Exception:
+                pass
+
+            print(f"   ✅ Loaded MLEnsemble from {p}")
+            return obj
+        except Exception as e:
+            print(f"   ⚠️ Failed to load MLEnsemble: {e}")
+            return None
+
+    def _train_random_forest(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training Random Forest...")
+        rf_params = {'n_estimators': [100, 200], 'max_depth': [8, 10], 'min_samples_split': [5, 10]}
+        rf_base = RandomForestClassifier(random_state=42)
+        rf_grid = GridSearchCV(rf_base, rf_params, cv=3, scoring='accuracy', n_jobs=-1)
+        rf_grid.fit(X_train, y_train)
+        rf = rf_grid.best_estimator_
+        rf_pred = rf.predict(X_test)
+        rf_acc = accuracy_score(y_test, rf_pred)
+        self.models['Random Forest'] = rf
+        self.results['Random Forest'] = {'accuracy': rf_acc, 'predictions': rf_pred}
+        print(f"   Accuracy: {rf_acc*100:.2f}%")
+    
+    def _train_gradient_boosting(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training Gradient Boosting...")
+        gb = GradientBoostingClassifier(n_estimators=100, max_depth=5, learning_rate=0.1, random_state=42)
+        gb.fit(X_train, y_train)
+        gb_pred = gb.predict(X_test)
+        gb_acc = accuracy_score(y_test, gb_pred)
+        self.models['Gradient Boosting'] = gb
+        self.results['Gradient Boosting'] = {'accuracy': gb_acc, 'predictions': gb_pred}
+        print(f"   Accuracy: {gb_acc*100:.2f}%")
+    
+    def _train_adaboost(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training AdaBoost...")
+        ada = AdaBoostClassifier(n_estimators=50, learning_rate=0.1, random_state=42)
+        ada.fit(X_train, y_train)
+        ada_pred = ada.predict(X_test)
+        ada_acc = accuracy_score(y_test, ada_pred)
+        self.models['AdaBoost'] = ada
+        self.results['AdaBoost'] = {'accuracy': ada_acc, 'predictions': ada_pred}
+        print(f"   Accuracy: {ada_acc*100:.2f}%")
+    
+    def _train_logistic_regression(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training Logistic Regression...")
+        lr = LogisticRegression(max_iter=1000, random_state=42)
+        lr.fit(X_train, y_train)
+        lr_pred = lr.predict(X_test)
+        lr_acc = accuracy_score(y_test, lr_pred)
+        self.models['Logistic Regression'] = lr
+        self.results['Logistic Regression'] = {'accuracy': lr_acc, 'predictions': lr_pred}
+        print(f"   Accuracy: {lr_acc*100:.2f}%")
+    
+    def _train_neural_network(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training Neural Network...")
+        hidden_size = min(50, max(20, len(X_train) // 10))
+        mlp = MLPClassifier(hidden_layer_sizes=(hidden_size,), max_iter=500, random_state=42,
+                           early_stopping=True, validation_fraction=0.15)
+        mlp.fit(X_train, y_train)
+        mlp_pred = mlp.predict(X_test)
+        mlp_acc = accuracy_score(y_test, mlp_pred)
+        self.models['Neural Network'] = mlp
+        self.results['Neural Network'] = {'accuracy': mlp_acc, 'predictions': mlp_pred}
+        print(f"   Accuracy: {mlp_acc*100:.2f}%")
+    
+    def _train_svm(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training SVM...")
+        svm = SVC(kernel='rbf', probability=True, random_state=42, C=1.0)
+        svm.fit(X_train, y_train)
+        svm_pred = svm.predict(X_test)
+        svm_acc = accuracy_score(y_test, svm_pred)
+        self.models['SVM'] = svm
+        self.results['SVM'] = {'accuracy': svm_acc, 'predictions': svm_pred}
+        print(f"   Accuracy: {svm_acc*100:.2f}%")
+    
+    def _train_lightgbm(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training LightGBM...")
+        lgbm = lgb.LGBMClassifier(n_estimators=100, learning_rate=0.1, random_state=42, verbose=-1)
+        lgbm.fit(X_train, y_train)
+        lgbm_pred = lgbm.predict(X_test)
+        lgbm_acc = accuracy_score(y_test, lgbm_pred)
+        self.models['LightGBM'] = lgbm
+        self.results['LightGBM'] = {'accuracy': lgbm_acc, 'predictions': lgbm_pred}
+        print(f"   Accuracy: {lgbm_acc*100:.2f}%")
+    
+    def _train_xgboost(self, X_train, y_train, X_test, y_test):
+        print("\n📊 Training XGBoost...")
+        xgb_model = xgb.XGBClassifier(n_estimators=100, learning_rate=0.1, random_state=42,
+                                      use_label_encoder=False, eval_metric='logloss')
+        xgb_model.fit(X_train, y_train)
+        xgb_pred = xgb_model.predict(X_test)
+        xgb_acc = accuracy_score(y_test, xgb_pred)
+        self.models['XGBoost'] = xgb_model
+        self.results['XGBoost'] = {'accuracy': xgb_acc, 'predictions': xgb_pred}
+        print(f"   Accuracy: {xgb_acc*100:.2f}%")
+    
+    def plot_calibration_curve(self, X_test, y_test, save_path='calibration.png'):
+        """Plot calibration curve for probability predictions"""
+        try:
+            import matplotlib.pyplot as plt
+            from sklearn.calibration import calibration_curve
+            
+            fig, ax = plt.subplots(figsize=(10, 8))
+            ax.plot([0, 1], [0, 1], "k:", label="Perfectly calibrated")
+            
+            for model_name, model in self.models.items():
+                if not hasattr(model, 'predict_proba'):
+                    continue
+                
+                y_proba = model.predict_proba(X_test)[:, 1]
+                fraction_of_positives, mean_predicted_value = calibration_curve(
+                    y_test, y_proba, n_bins=10, strategy='uniform'
+                )
+                
+                # Calculate Brier score
+                from sklearn.metrics import brier_score_loss
+                brier = brier_score_loss(y_test, y_proba)
+                
+                # Store Brier score in results
+                if model_name in self.results:
+                    self.results[model_name]['brier_score'] = brier
+                
+                ax.plot(mean_predicted_value, fraction_of_positives, 
+                       marker='o', label=f"{model_name} (Brier: {brier:.3f})")
+            
+            ax.set_xlabel("Mean Predicted Probability")
+            ax.set_ylabel("Fraction of Positives")
+            ax.set_title("Calibration Curve (Reliability Diagram)")
+            ax.legend(loc='lower right', bbox_to_anchor=(1.0, 0.0))
+            ax.grid(True, alpha=0.3)
+            
+            plt.tight_layout()
+            plt.savefig(save_path, dpi=150, bbox_inches='tight')
+            print(f"   ✅ Calibration plot saved to: {save_path}")
+            plt.close()
+            
+        except ImportError:
+            print("   ⚠️ matplotlib not available for calibration plot")
+        except Exception as e:
+            print(f"   ⚠️ Calibration plotting failed: {e}")
+
+    def _create_stacking_ensemble(self, X_train, y_train, X_test, y_test):
+        """Create stacking ensemble with meta-learner"""
+        print("\n🗳️ Creating Stacking Ensemble with Meta-Learner...")
+        
+        from sklearn.model_selection import cross_val_predict
+        
+        # Generate OOF predictions for meta-features
+        meta_features_train = []
+        meta_features_test = []
+        
+        for model_name, model in self.models.items():
+            if not hasattr(model, 'predict_proba'):
+                continue
+            
+            # OOF predictions for training (using CV)
+            oof_proba = cross_val_predict(
+                model, X_train, y_train, 
+                cv=5, method='predict_proba', n_jobs=-1
+            )[:, 1]
+            
+            # Test predictions
+            test_proba = model.predict_proba(X_test)[:, 1]
+            
+            meta_features_train.append(oof_proba)
+            meta_features_test.append(test_proba)
+        
+        # Stack into meta-feature matrix
+        X_meta_train = np.column_stack(meta_features_train)
+        X_meta_test = np.column_stack(meta_features_test)
+        
+        # Train meta-learner (LightGBM Logistic)
+        if LIGHTGBM_AVAILABLE:
+            meta_learner = lgb.LGBMClassifier(
+                n_estimators=50,
+                learning_rate=0.05,
+                objective='binary',
+                random_state=42,
+                verbose=-1
+            )
+        else:
+            from sklearn.linear_model import LogisticRegression
+            meta_learner = LogisticRegression(max_iter=1000, random_state=42)
+        
+        meta_learner.fit(X_meta_train, y_train)
+        
+        # Predict with meta-learner
+        stacked_pred = meta_learner.predict(X_meta_test)
+        stacked_proba = meta_learner.predict_proba(X_meta_test)[:, 1]
+        stacked_acc = accuracy_score(y_test, stacked_pred)
+        
+        from sklearn.metrics import roc_auc_score, log_loss
+        stacked_auc = roc_auc_score(y_test, stacked_proba)
+        stacked_logloss = log_loss(y_test, stacked_proba)
+        
+        self.models['Stacking_Meta'] = meta_learner
+        self.results['Stacking_Meta'] = {
+            'accuracy': stacked_acc,
+            'auc': stacked_auc,
+            'logloss': stacked_logloss,
+            'predictions': stacked_pred
+        }
+        
+        print(f"   Stacking Accuracy: {stacked_acc*100:.2f}%")
+        print(f"   Stacking AUC:      {stacked_auc:.4f}")
+        print(f"   Stacking LogLoss:  {stacked_logloss:.4f}")
+        print("✅ Stacking ensemble created\n")
+
+    def _create_ensemble(self, X_test, y_test):
+        print("\n🗳️ Creating Base Ensemble...")
+        
+        # Voting ensemble (majority vote across model predictions)
+        ensemble_votes = np.array([self.results[m]['predictions'] for m in self.results if 'predictions' in self.results[m]]).T
+        if ensemble_votes.size == 0:
+            print("   ⚠️ No model predictions available for ensemble")
+            return
+        ensemble_pred = np.apply_along_axis(lambda x: np.bincount(x).argmax(), axis=1, arr=ensemble_votes)
+        ensemble_acc = accuracy_score(y_test, ensemble_pred)
+        self.results['Ensemble Voting'] = {'accuracy': ensemble_acc, 'predictions': ensemble_pred}
+        
+        # Weighted ensemble based on individual model accuracy
+        accs = [self.results[m]['accuracy'] for m in self.results if 'accuracy' in self.results[m]]
+        if len(accs) == 0:
+            self.weights = None
+            print("   ⚠️ No accuracies available to weight ensemble")
+            return
+        self.weights = np.array(accs)
+        if self.weights.sum() == 0:
+            self.weights = None
+        else:
+            self.weights = self.weights / self.weights.sum()
+
+        proba_preds = []
+        model_keys = [m for m in self.models.keys() if hasattr(self.models[m], 'predict_proba')]
+        for model_name in model_keys:
+            model = self.models[model_name]
+            proba = model.predict_proba(X_test)
+            proba_preds.append(proba)
+        
+        if len(proba_preds) > 0 and self.weights is not None and len(proba_preds) == len(self.weights):
+            weighted_proba = np.average(proba_preds, axis=0, weights=self.weights)
+            weighted_pred = (weighted_proba[:, 1] > 0.5).astype(int)
+            weighted_acc = accuracy_score(y_test, weighted_pred)
+            self.results['Weighted Ensemble'] = {'accuracy': weighted_acc, 'predictions': weighted_pred}
+        
+    def _print_summary(self):
+        print("\n" + "=" * 60)
+        print("📈 MODEL PERFORMANCE SUMMARY:")
+        print("=" * 60)
+        for model_name, result in sorted(self.results.items(), key=lambda x: x[1].get('accuracy', 0), reverse=True):
+            print(f"   {model_name:25s}: {result.get('accuracy', 0)*100:.2f}%")
+            metrics = []
+            if 'auc' in result:
+                metrics.append(f"AUC: {result['auc']:.4f}")
+            if 'logloss' in result:
+                metrics.append(f"LogLoss: {result['logloss']:.4f}")
+            if 'brier_score' in result:
+                metrics.append(f"Brier: {result['brier_score']:.4f}")
+            if metrics:
+                print(f"      {', '.join(metrics)}")
+        print("=" * 60 + "\n")
+
+    def _evaluate_comprehensive(self, X_test, y_test):
+        """Comprehensive model evaluation beyond accuracy"""
+        from sklearn.metrics import roc_auc_score, log_loss, brier_score_loss, confusion_matrix
+        
+        print("\n" + "=" * 60)
+        print("📊 COMPREHENSIVE MODEL EVALUATION")
+        print("=" * 60)
+        
+        for model_name, model in self.models.items():
+            if not hasattr(model, 'predict_proba'):
+                continue
+                
+            try:
+                y_pred = model.predict(X_test)
+                y_proba = model.predict_proba(X_test)[:, 1]
+                
+                # Calculate metrics
+                accuracy = accuracy_score(y_test, y_pred)
+                auc = roc_auc_score(y_test, y_proba)
+                logloss = log_loss(y_test, y_proba)
+                brier = brier_score_loss(y_test, y_proba)
+                
+                # Confusion matrix for precision/recall
+                tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+                precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+                recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+                f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+                
+                print(f"\n{model_name}:")
+                print(f"   Accuracy:  {accuracy*100:.2f}%")
+                print(f"   AUC:       {auc:.4f}")
+                print(f"   LogLoss:   {logloss:.4f}")
+                print(f"   Brier:     {brier:.4f}")
+                print(f"   Precision: {precision:.4f}")
+                print(f"   Recall:    {recall:.4f}")
+                print(f"   F1-Score:  {f1:.4f}")
+                
+                # Store in results
+                if model_name in self.results:
+                    self.results[model_name].update({
+                        'auc': auc,
+                        'logloss': logloss,
+                        'brier': brier,
+                        'precision': precision,
+                        'recall': recall,
+                        'f1': f1
+                    })
+            except Exception as e:
+                print(f"   ⚠️ Evaluation failed for {model_name}: {e}")
+        
+        print("=" * 60 + "\n")
+    
+    def predict(self, X_latest):
+        """Make prediction on new data (X_latest: single-row DataFrame or 2D array)"""
+        if hasattr(self.scaler, 'transform'):
+            X_scaled = self.scaler.transform(X_latest)
+        else:
+            X_scaled = X_latest
+        
+        predictions = {}
+        confidences = {}
+        
+        for model_name, model in self.models.items():
+            if hasattr(model, 'predict_proba'):
+                pred_proba = model.predict_proba(X_scaled)[0]
+                predictions[model_name] = 1 if pred_proba[1] > 0.5 else -1
+                confidences[model_name] = float(max(pred_proba))
+            else:
+                pred = model.predict(X_scaled)[0]
+                predictions[model_name] = 1 if pred == 1 else -1
+                confidences[model_name] = 1.0
+        
+        # Add LSTM prediction if available
+        if hasattr(self, 'neural_predictor') and self.neural_predictor is not None:
+            try:
+                lstm_pred_info = self.neural_predictor.predict(X_latest if hasattr(X_latest, 'shape') else X_latest)
+                if lstm_pred_info is not None:
+                    lstm_pred, lstm_conf = lstm_pred_info
+                    predictions['LSTM'] = lstm_pred
+                    confidences['LSTM'] = lstm_conf
+            except Exception:
+                pass
+
+        # Weighted ensemble prediction
+        ensemble_pred = None
+        ensemble_conf = None
+        model_keys = [m for m in self.models.keys() if hasattr(self.models[m], 'predict_proba')]
+        if len(model_keys) > 0 and self.weights is not None and len(model_keys) == len(self.weights):
+            weighted_proba = []
+            for model_name in model_keys:
+                proba = self.models[model_name].predict_proba(X_scaled)[0]
+                weighted_proba.append(proba)
+            weighted_avg = np.average(weighted_proba, axis=0, weights=self.weights)
+            ensemble_pred = 1 if weighted_avg[1] > 0.5 else -1
+            ensemble_conf = float(max(weighted_avg))
+        else:
+            # fallback majority vote
+            if len(predictions) > 0:
+                vals = [v for v in predictions.values()]
+                ensemble_pred = int(np.sign(sum(vals))) if sum(vals) != 0 else 0
+                ensemble_conf = max(confidences.values()) if confidences else None
+        # If still no ensemble prediction, use majority_class fallback if available
+        if ensemble_pred is None:
+            if getattr(self, 'majority_class', None) is not None:
+                try:
+                    ensemble_pred = 1 if int(self.majority_class) == 1 else -1
+                    ensemble_conf = 0.5
+                except Exception:
+                    ensemble_pred = 0
+                    ensemble_conf = 0
+
+        return {
+            'individual': predictions,
+            'confidences': confidences,
+            'ensemble_prediction': ensemble_pred,
+            'ensemble_confidence': ensemble_conf
+        }
+
+
+# =============================================================================
+# MODULE 4.5: NEURAL PREDICTOR (Transformer)
+# =============================================================================
+class NeuralPredictor:
+    """Transformer-based time series predictor for enhanced ML ensemble"""
+    
+    def __init__(self, sequence_length=20):
+        self.sequence_length = sequence_length
+        self.model = None
+        self.scaler = StandardScaler()
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
+    def prepare_sequences(self, X, y):
+        """Convert tabular data to sequences"""
+        X_seq, y_seq = [], []
+        X_scaled = self.scaler.fit_transform(X)
+        
+        for i in range(self.sequence_length, len(X_scaled)):
+            X_seq.append(X_scaled[i-self.sequence_length:i])
+            y_seq.append(y.iloc[i])
+        
+        return np.array(X_seq), np.array(y_seq)
+    
+    def train(self, X, y, epochs=50):
+        """Train Transformer model using PyTorch Lightning"""
+        try:
+            import torch
+            import pytorch_lightning as pl
+            from transformers import TimeSeriesTransformer, TimeSeriesDataset
+            
+            X_seq, y_seq = self.prepare_sequences(X, y)
+            
+            # Create data loaders
+            train_dataset = TimeSeriesDataset(X_seq, y_seq, self.sequence_length)
+            train_loader = torch.utils.data.DataLoader(
+                train_dataset, 
+                batch_size=32, 
+                shuffle=True,
+                num_workers=0
+            )
+            
+            # Initialize model
+            self.model = TimeSeriesTransformer(
+                input_dim=X.shape[1],
+                d_model=64,
+                nhead=4,
+                num_layers=2,
+                dropout=0.1
+            )
+            
+            # Initialize trainer
+            trainer = pl.Trainer(
+                max_epochs=epochs,
+                accelerator='auto',
+                devices=1,
+                enable_progress_bar=False,
+                enable_model_summary=False,
+                logger=False
+            )
+            
+            # Train model
+            trainer.fit(self.model, train_loader)
+            self.model.eval()  # Set to evaluation mode
+            self.model = self.model.to(self.device)
+            
+            print("   ✅ Transformer Neural Predictor trained successfully")
+            return self
+            
+        except ImportError as e:
+            print(f"   ⚠️ Required packages not available: {str(e)}")
+            return None
+    
+    def predict(self, X_latest):
+        """Predict using trained Transformer"""
+        if self.model is None:
+            return None
+            
+        try:
+            import torch
+            
+            with torch.no_grad():
+                X_scaled = self.scaler.transform(X_latest)
+                X_seq = torch.FloatTensor(X_scaled[-self.sequence_length:]).unsqueeze(0).to(self.device)
+                
+                pred_proba = self.model(X_seq).cpu().numpy()[0][0]
+                return 1 if pred_proba > 0.5 else -1, float(pred_proba)
+                
+        except Exception as e:
+            print(f"   ⚠️ Prediction error: {str(e)}")
+            return None
+
+
+# =============================================================================
+# MODULE 4.6: EXPLAINABILITY TOOLKIT (SHAP/LIME)
+# =============================================================================
+class ExplainabilityToolkit:
+    """Model interpretability using SHAP values"""
+    
+    @staticmethod
+    def get_feature_importance(model, X, feature_names):
+        """Calculate SHAP values for feature importance"""
+        try:
+            import shap
+            
+            # Use tree explainer for tree-based models
+            if hasattr(model, 'estimators_'):
+                explainer = shap.TreeExplainer(model)
+            else:
+                # Use kernel explainer for other models
+                explainer = shap.KernelExplainer(model.predict_proba, X[:100])
+            
+            shap_values = explainer.shap_values(X)
+            
+            # Get mean absolute SHAP values
+            if isinstance(shap_values, list):
+                shap_values = shap_values[1]  # For binary classification
+            
+            importance = np.abs(shap_values).mean(axis=0)
+            
+            importance_df = pd.DataFrame({
+                'feature': feature_names,
+                'importance': importance
+            }).sort_values('importance', ascending=False)
+            
+            return importance_df
+            
+        except ImportError:
+            print("   ⚠️ SHAP not installed. Using sklearn feature importance.")
+            if hasattr(model, 'feature_importances_'):
+                importance_df = pd.DataFrame({
+                    'feature': feature_names,
+                    'importance': model.feature_importances_
+                }).sort_values('importance', ascending=False)
+                return importance_df
+            else:
+                return None
+
+
+# =============================================================================
+# MODULE 8: MAIN PREDICTION SYSTEM (Integrated)
+# =============================================================================
+class EnhancedNiftyPredictionSystem:
+    """Main prediction system integrating all modules"""
+    
+    def __init__(self, spot_price=None, expiry_date=None, cache_dir='data_cache'):
+        self.spot_price = spot_price
+        self.expiry_date = expiry_date
+        # Feature toggles
+        self.enable_lstm = True
+        self.enable_shap = True
+        
+        # Initialize modules
+        self.data_loader = DataLoader(cache_dir=cache_dir)
+        self.data = None
+        self.ml_ensemble = None
+        self.strategy_engine = None
+    
+    def load_data(self, days=300, force_refresh=False):
+        """Load and prepare data"""
+        self.data = self.data_loader.get_data(days=days, force_refresh=force_refresh)
+        # Update spot price if not provided
+        if not self.spot_price:
+            try:
+                close_series = self.data['Close'].dropna()
+                if len(close_series) > 0:
+                    last_val = close_series.iloc[-1]
+                    # Ensure it's a scalar
+                    if isinstance(last_val, pd.Series):
+                        self.spot_price = float(last_val.iloc[0])
+                    else:
+                        self.spot_price = float(last_val)
+                else:
+                    self.spot_price = np.nan
+            except Exception as e:
+                print(f"⚠️ Could not extract spot price: {e}")
+                self.spot_price = np.nan
+
+            if pd.notna(self.spot_price):
+                print(f"📍 Live spot price: {self.spot_price:.2f}\n")
+            else:
+                print("📍 Live spot price: NaN (data issue - check yfinance)\n")
+        
+        return self.data
+    
+    def calculate_indicators(self):
+        """Calculate all technical indicators"""
+        indicator_engine = IndicatorEngine(self.data)
+        indicator_engine.add_basic_indicators()
+        indicator_engine.add_advanced_indicators()
+        self.data = indicator_engine.df
+        return self.data
+    
+    def generate_signals(self):
+        """Generate trading signals"""
+        feature_builder = FeatureBuilder(self.data)
+        feature_builder.build_signals()
+        self.data = feature_builder.df
+        return self.data
+    
+    def train_ml_models(self):
+        """Train ML ensemble"""
+        # ✅ DEBUG: Check data quality
+        print(f"\n🔍 Data Quality Check:")
+        print(f"   Total rows: {len(self.data)}")
+        print(f"   Close price stats:")
+        print(f"      Mean: {self.data['Close'].mean():.2f}")
+        print(f"      Std: {self.data['Close'].std():.2f}")
+        print(f"      NaN count: {self.data['Close'].isna().sum()}")
+        print(f"   Price changes:")
+        price_changes = self.data['Close'].diff().dropna()
+        print(f"      Up days: {(price_changes > 0).sum()}")
+        print(f"      Down days: {(price_changes < 0).sum()}")
+        print(f"      Flat days: {(price_changes == 0).sum()}")
+        
+        # Continue with rest of method...
+        feature_builder = FeatureBuilder(self.data)
+        X, y = feature_builder.build_ml_features()
+        # Persist engineered features into system data so prediction uses same columns
+        self.data = feature_builder.df
+        
+        if len(X) >= 50:
+            self.ml_ensemble = MLEnsemble(enable_lstm=self.enable_lstm, enable_shap=self.enable_shap)
+            # Use walk-forward CV for better temporal performance assessment
+            self.ml_ensemble.train_with_walk_forward_cv(X, y, n_splits=5)
+        else:
+            print("⚠️ Insufficient data for ML training\n")
+            self.ml_ensemble = None
+        
+        return self.ml_ensemble
+    
+    def _get_trend_following_prediction(self):
+        """Simple trend-following component"""
+        latest = self.data.iloc[-1]
+        
+        # Trend indicators
+        ema_20 = latest['EMA_20']
+        ema_50 = latest['EMA_50']
+        ema_200 = latest['EMA_200']
+        close = latest['Close']
+        adx = latest.get('ADX', 20)
+        
+        # Score the trend
+        trend_score = 0
+        if close > ema_20: trend_score += 1
+        if close > ema_50: trend_score += 1
+        if close > ema_200: trend_score += 2  # More weight
+        if ema_20 > ema_50: trend_score += 1
+        if ema_50 > ema_200: trend_score += 1
+        
+        # Normalize to confidence
+        confidence = (trend_score / 6) * 100
+        
+        # Boost if strong trend
+        if adx > 30:
+            confidence = min(confidence * 1.2, 95)
+        
+        # Determine trend
+        if trend_score >= 4:
+            trend = "UPTREND"
+        elif trend_score <= 2:
+            trend = "DOWNTREND"
+        else:
+            trend = "SIDEWAYS"
+        
+        return {
+            'trend': trend,
+            'confidence': confidence,
+            'method': 'Trend Following',
+            'score': trend_score
+        }
+
+    def predict_next_day_hybrid(self):
+        """Generate hybrid prediction combining mean-reversion + trend-following"""
+        print("\n🎯 GENERATING HYBRID PREDICTION")
+        print("=" * 60)
+        
+        # Get standard prediction (mean-reversion based)
+        standard_pred = self.predict_next_day()
+        
+        # Get trend-following prediction
+        trend_pred = self._get_trend_following_prediction()
+        
+        # Get regime info
+        regime_info = standard_pred['regime_detection']
+        regime = regime_info['regime']
+        
+        # 🆕 Get ML prediction strength
+        ml_strength = 0.5  # Default
+        if 'ml_predictions' in standard_pred:
+            ml_conf = standard_pred['ml_predictions']['ensemble_confidence']
+            ml_dir = standard_pred['ml_predictions']['ensemble_prediction']
+            ml_strength = ml_conf  # Use ML confidence as strength
+
+        # BLEND BASED ON REGIME
+        if regime in ["BULL_MARKET"]:
+            # If ML is very confident (>90%), trust it regardless of regime
+            if ml_strength > 0.9:
+                final_confidence = standard_pred['confidence']
+                final_trend = standard_pred['trend']
+                strategy_mode = "🤖 ML Override (High Confidence)"
+                blend_ratio = "ML:100%"
+                print(f"   ⚠️ ML Override: {ml_strength*100:.1f}% confidence overrides bull regime")
+            else:
+                # 60% trend-following, 40% standard (reduced from 70/30)
+                final_confidence = (trend_pred['confidence'] * 0.6 + 
+                                  standard_pred['confidence'] * 0.4)
+                
+                # 🆕 Don't force trend - check agreement
+                if trend_pred['trend'] == standard_pred['trend']:
+                    final_trend = trend_pred['trend']  # Both agree
+                elif standard_pred['confidence'] > trend_pred['confidence']:
+                    final_trend = standard_pred['trend']  # Standard more confident
+                else:
+                    final_trend = trend_pred['trend']  # Trend more confident
+                
+                strategy_mode = "🚀 Trend Following (Bull Mode)"
+                blend_ratio = "60/40"
+
+        elif regime == "VOLATILE_MARKET":
+            # ML override check
+            if ml_strength > 0.9:
+                final_confidence = standard_pred['confidence']
+                final_trend = standard_pred['trend']
+                strategy_mode = "🤖 ML Override (High Confidence)"
+                blend_ratio = "ML:100%"
+            else:
+                # 70% mean-reversion, 30% trend in volatile
+                final_confidence = (standard_pred['confidence'] * 0.7 + 
+                                  trend_pred['confidence'] * 0.3)
+                final_trend = standard_pred['trend']
+                strategy_mode = "⚡ Mean Reversion (Volatile Mode)"
+                blend_ratio = "30/70"
+
+        elif regime == "BEAR_MARKET":
+            # ML override check
+            if ml_strength > 0.9:
+                final_confidence = standard_pred['confidence']
+                final_trend = standard_pred['trend']
+                strategy_mode = "🤖 ML Override (High Confidence)"
+                blend_ratio = "ML:100%"
+            else:
+                # 60% mean-reversion, 40% trend in bear
+                final_confidence = (standard_pred['confidence'] * 0.6 + 
+                                  trend_pred['confidence'] * 0.4)
+                final_trend = standard_pred['trend']
+                strategy_mode = "🛡️ Defensive (Bear Mode)"
+                blend_ratio = "40/60"
+
+        else:  # SIDEWAYS or UNCERTAIN
+            # ML override check
+            if ml_strength > 0.85:
+                final_confidence = standard_pred['confidence']
+                final_trend = standard_pred['trend']
+                strategy_mode = "🤖 ML Override (High Confidence)"
+                blend_ratio = "ML:100%"
+            else:
+                # 50/50 blend
+                final_confidence = (standard_pred['confidence'] + 
+                                  trend_pred['confidence']) / 2
+                # Take higher confidence prediction
+                if standard_pred['confidence'] > trend_pred['confidence']:
+                    final_trend = standard_pred['trend']
+                else:
+                    final_trend = trend_pred['trend']
+                strategy_mode = "⚖️ Hybrid (Balanced Mode)"
+                blend_ratio = "50/50"
+        
+        # Update final prediction
+        standard_pred['trend'] = final_trend
+        standard_pred['confidence'] = final_confidence
+        standard_pred['strategy_mode'] = strategy_mode
+        standard_pred['blend_info'] = {
+            'mean_reversion_pred': standard_pred['trend'],
+            'mean_reversion_conf': standard_pred['confidence'],
+            'trend_following_pred': trend_pred['trend'],
+            'trend_following_conf': trend_pred['confidence'],
+            'regime': regime,
+            'blend_ratio': blend_ratio
+        }
+        
+        print(f"\n🎯 STRATEGY MODE: {strategy_mode}")
+        print(f"   Market Regime: {regime}")
+        print(f"   Blend Ratio (Trend/Mean-Rev): {blend_ratio}")
+        print(f"\n   Mean-Reversion: {standard_pred['blend_info']['mean_reversion_pred']} "
+              f"({standard_pred['blend_info']['mean_reversion_conf']:.1f}%)")
+        print(f"   Trend-Following: {trend_pred['trend']} ({trend_pred['confidence']:.1f}%)")
+        print(f"   → FINAL: {final_trend} ({final_confidence:.1f}%)")
+        
+        return standard_pred
+
+    def predict_next_day(self):
+        """Generate comprehensive prediction"""
+        print("\n🎯 GENERATING NEXT DAY PREDICTION")
+        print("=" * 60)
+        
+        # Initialize strategy engine
+        self.strategy_engine = StrategyEngine(self.data, self.spot_price, self.expiry_date)
+        
+        # Get technical recommendation
+        recommendation = self.strategy_engine.recommend()
+        
+        # Add ML prediction if available
+        if self.ml_ensemble:
+            # Ensure engineered features exist in self.data (rebuild if necessary)
+            feature_builder = FeatureBuilder(self.data)
+            X_tmp, _ = feature_builder.build_ml_features()
+            # Persist updated dataframe with engineered features
+            self.data = feature_builder.df
+
+            # Align latest features to the ensemble's expected feature order
+            missing_cols = [c for c in self.ml_ensemble.feature_names if c not in self.data.columns]
+            if missing_cols:
+                print(f"   ⚠️ Missing feature columns for prediction: {missing_cols}")
+
+            # Build feature vector safely even when DataFrame has duplicate columns
+            feature_vals = []
+            for col in self.ml_ensemble.feature_names:
+                if col in self.data.columns:
+                    col_data = self.data.loc[:, col]
+                    # If multiple columns with same name, take the first column's last value
+                    if isinstance(col_data, pd.DataFrame):
+                        v = col_data.iloc[-1, 0]
+                    else:
+                        v = col_data.iloc[-1]
+                else:
+                    v = np.nan
+                feature_vals.append(v)
+
+            latest_features = np.array(feature_vals).reshape(1, -1)
+            ml_pred = self.ml_ensemble.predict(latest_features)
+            
+            recommendation['ml_predictions'] = ml_pred
+            
+            # 🆕 FIXED: Proper ML score normalization
+            technical_score = recommendation['technical_score']
+            
+            # ML ensemble_prediction is 1 (bullish) or -1 (bearish)
+            # Normalize to -1 to +1 range for proper weighting
+            ml_direction = ml_pred['ensemble_prediction']  # Already -1 or 1
+            ml_confidence_weight = ml_pred['ensemble_confidence']  # 0 to 1
+            
+            # Scale ML score by its confidence
+            ml_score_weighted = ml_direction * ml_confidence_weight
+            
+            # Combine: Technical (0.4 weight) + ML (0.6 weight) - ML is more reliable
+            final_score = (technical_score * 0.4) + (ml_score_weighted * 0.6)
+            
+            print(f"\n🔍 PREDICTION BREAKDOWN:")
+            print(f"   Technical Score: {technical_score:+.3f}")
+            print(f"   ML Direction: {ml_direction:+d} ({ml_confidence_weight*100:.1f}% conf)")
+            print(f"   ML Weighted Score: {ml_score_weighted:+.3f}")
+            print(f"   Final Combined Score: {final_score:+.3f}")
+            
+            # 🆕 STRICTER THRESHOLDS to avoid conflicts
+            if final_score > 0.15:  # Raised from 0.2
+                recommendation['trend'] = "UPTREND"
+                recommendation['trend_emoji'] = "📈"
+                confidence = abs(final_score) * 100
+            elif final_score < -0.15:  # Lowered from -0.2
+                recommendation['trend'] = "DOWNTREND"
+                recommendation['trend_emoji'] = "📉"
+                confidence = abs(final_score) * 100
+            else:
+                # In conflict zone - trust ML more if high confidence
+                if ml_confidence_weight > 0.8:
+                    if ml_direction > 0:
+                        recommendation['trend'] = "UPTREND"
+                        recommendation['trend_emoji'] = "📈"
+                    else:
+                        recommendation['trend'] = "DOWNTREND"
+                        recommendation['trend_emoji'] = "📉"
+                    confidence = ml_confidence_weight * 100
+                    print(f"   ℹ️ Conflict resolved: Trusting high-confidence ML ({confidence:.1f}%)")
+                else:
+                    recommendation['trend'] = "SIDEWAYS"
+                    recommendation['trend_emoji'] = "↔️"
+                    confidence = (1 - abs(final_score)) * 100
+            
+            recommendation['final_score'] = final_score
+            recommendation['confidence'] = confidence
+        
+        # Print results
+        self._print_prediction(recommendation)
+        
+        return recommendation
+    
+    def _print_prediction(self, rec):
+        """Print formatted prediction"""
+        print(f"\n{rec['trend_emoji']} PREDICTED TREND: {rec['trend']}")
+        print(f"Overall Confidence: {rec['confidence']:.1f}%")
+        print(f"\nCurrent Nifty Spot: {rec['current_price']:.2f}")
+        if self.expiry_date:
+            days_to_expiry = self.strategy_engine.days_to_expiry
+            print(f"Expiry Date: {self.expiry_date} ({days_to_expiry} days remaining)")
+        print(f"ATR (Volatility): {rec['atr']:.2f}")
+        print(f"India VIX: {rec['market_conditions']['india_vix']:.2f}")
+        
+        # 🆕 Probability Breakdown
+        if 'probability_breakdown' in rec:
+            prob = rec['probability_breakdown']
+            print("\n📊 CALIBRATED PROBABILITY ANALYSIS")
+            print("-" * 60)
+            print(f"   Final Probability (Up): {prob['final_prob']*100:.1f}%")
+            print(f"   └─ Technical Component: {prob['technical_prob']*100:.1f}%")
+            print(f"   └─ ML Component: {prob['ml_prob']*100:.1f}%")
+            print(f"   └─ Persistence Component: {prob['persistence_prob']*100:.1f}%")
+            print(f"   Volatility Regime Adjustment: {prob['vol_regime_factor']:.2f}x")
+            print(f"   GARCH Vol Forecast: {prob['garch_vol']:.2f}%")
+        
+        # RN Density Ranges (if available)
+        if 'rn_density' in rec:
+            rn = rec['rn_density']
+            print(f"\n📐 RISK-NEUTRAL DENSITY RANGES")
+            print("-" * 60)
+            print(f"   Method: {rn['method']}")
+            print(f"   Expected Value: {rn['mean']:.2f}")
+            print(f"   5th Percentile: {rn['percentiles'][0.05]:.2f}")
+            print(f"   25th Percentile: {rn['percentiles'][0.25]:.2f}")
+            print(f"   Median (50th): {rn['percentiles'][0.5]:.2f}")
+            print(f"   75th Percentile: {rn['percentiles'][0.75]:.2f}")
+            print(f"   95th Percentile: {rn['percentiles'][0.95]:.2f}")
+
+        print("\n📊 TECHNICAL SIGNALS (Score: {:.2f})".format(rec['technical_score']))
+        print("-" * 60)
+        for indicator, signal in rec['signals'].items():
+            direction = "🟢 Bullish" if signal > 0 else "🔴 Bearish" if signal < 0 else "⚪ Neutral"
+            print(f"   {indicator:15s}: {direction}")
+        
+        # ML predictions
+        if 'ml_predictions' in rec:
+            print("\n🤖 MACHINE LEARNING PREDICTIONS")
+            print("-" * 60)
+            ml_pred = rec['ml_predictions']
+            for model_name, prediction in ml_pred['individual'].items():
+                direction = "🟢 Bullish" if prediction > 0 else "🔴 Bearish"
+                conf = ml_pred['confidences'][model_name]
+                print(f"   {model_name:25s}: {direction} ({conf*100:.1f}%)")
+            
+            ensemble_dir = "🟢 Bullish" if ml_pred['ensemble_prediction'] > 0 else "🔴 Bearish"
+            print(f"\n   {'Weighted Ensemble':25s}: {ensemble_dir} ({ml_pred['ensemble_confidence']*100:.1f}%)")
+
+        # Feature Importance (only if enabled)
+        if self.ml_ensemble and getattr(self.ml_ensemble, 'enable_shap', True) and hasattr(self.ml_ensemble, 'models'):
+            try:
+                toolkit = ExplainabilityToolkit()
+                best_model = self.ml_ensemble.models.get('Random Forest')
+                if best_model is None:
+                    # fallback: pick first tree-based model
+                    for k, m in self.ml_ensemble.models.items():
+                        if hasattr(m, 'feature_importances_'):
+                            best_model = m
+                            break
+                if best_model:
+                    importance = toolkit.get_feature_importance(
+                        best_model, 
+                        self.data[self.ml_ensemble.feature_names].iloc[-100:].values,
+                        self.ml_ensemble.feature_names
+                    )
+                    if importance is not None:
+                        print("\n🔍 TOP 10 FEATURE IMPORTANCE:")
+                        print("-" * 60)
+                        for idx, row in importance.head(10).iterrows():
+                            print(f"   {row['feature']:25s}: {row['importance']:.4f}")
+            except Exception:
+                pass
+        
+        # Targets and supports
+        print(f"\n📈 UPTREND TARGETS:")
+        for i, (key, val) in enumerate(rec['uptrend_targets'].items(), 1):
+            pct = (val - rec['current_price']) / rec['current_price'] * 100
+            print(f"   Target {i}: {val:.2f} (+{pct:.2f}%)")
+        
+        print(f"\n📉 DOWNTREND SUPPORTS:")
+        for i, (key, val) in enumerate(rec['downtrend_supports'].items(), 1):
+            pct = (val - rec['current_price']) / rec['current_price'] * 100
+            print(f"   Support {i}: {val:.2f} ({pct:.2f}%)")
+        
+        # Option strategy
+        self._print_option_strategy(rec)
+        
+        print("\n" + "=" * 60 + "\n")
+    
+    def _print_option_strategy(self, rec):
+        """Print option strategy recommendation with safe access to Greeks"""
+        print("\n" + "=" * 60)
+        print("💡 RECOMMENDED OPTION STRATEGY")
+        print("=" * 60)
+        
+        strategy = rec['option_strategy']
+        if not strategy or strategy.get('type') == 'NO_STRATEGY':
+            print("\n⚠️ No viable option strategy could be generated due to missing market data.")
+            return
+        print(f"\n🎯 {strategy.get('name', 'Unnamed Strategy')}")
+        
+        if strategy['type'] == "UPTREND":
+            print(f"\n   1. SELL PUT at: {strategy['strikes'].get('sell', 'N/A')}")
+            print(f"      → Collect premium")
+            if 'greeks' in strategy and 'sell' in strategy.get('greeks', {}):
+                print(f"      → Delta: {strategy['greeks']['sell'].get('delta', 0):.3f} | "
+                      f"Theta: {strategy['greeks']['sell'].get('theta', 0):.2f}")
+            
+            print(f"\n   2. BUY PUT at: {strategy['strikes'].get('buy', 'N/A')}")
+            print(f"      → Limit max loss")
+            if 'greeks' in strategy and 'buy' in strategy.get('greeks', {}):
+                print(f"      → Delta: {strategy['greeks']['buy'].get('delta', 0):.3f} | "
+                      f"Theta: {strategy['greeks']['buy'].get('theta', 0):.2f}")
+            
+            if 'risk' in strategy:
+                print(f"\n   Max Risk: {strategy['risk'].get('max_loss', 'N/A')} points")
+                print(f"   Stop Loss: Close below {strategy['risk'].get('stop_loss', 'N/A')}")
+            
+        elif strategy['type'] == "DOWNTREND":
+            print(f"\n   1. SELL CALL at: {strategy['strikes'].get('sell', 'N/A')}")
+            print(f"      → Collect premium")
+            if 'greeks' in strategy and 'sell' in strategy.get('greeks', {}):
+                print(f"      → Delta: {abs(strategy['greeks']['sell'].get('delta', 0)):.3f} | "
+                      f"Theta: {strategy['greeks']['sell'].get('theta', 0):.2f}")
+            
+            print(f"\n   2. BUY CALL at: {strategy['strikes'].get('buy', 'N/A')}")
+            print(f"      → Limit max loss")
+            if 'greeks' in strategy and 'buy' in strategy.get('greeks', {}):
+                print(f"      → Delta: {abs(strategy['greeks']['buy'].get('delta', 0)):.3f} | "
+                      f"Theta: {strategy['greeks']['buy'].get('theta', 0):.2f}")
+            
+            if 'risk' in strategy:
+                print(f"\n   Max Risk: {strategy['risk'].get('max_loss', 'N/A')} points")
+                print(f"   Stop Loss: Close above {strategy['risk'].get('stop_loss', 'N/A')}")
+            
+        else:  # SIDEWAYS
+            strikes = strategy.get('strikes', {})
+            print(f"\n   CALL SPREAD:")
+            print(f"   1. SELL CALL: {strikes.get('call_sell', 'N/A')}")
+            print(f"   2. BUY CALL:  {strikes.get('call_buy', 'N/A')}")
+            print(f"\n   PUT SPREAD:")
+            print(f"   3. SELL PUT:  {strikes.get('put_sell', 'N/A')}")
+            print(f"   4. BUY PUT:   {strikes.get('put_buy', 'N/A')}")
+            if 'risk' in strategy and 'profit_zone' in strategy.get('risk', {}):
+                profit_zone = strategy['risk']['profit_zone']
+                print(f"\n   Profit Zone: {profit_zone[0]} to {profit_zone[1]}")
+            else:
+                print("\n   Profit Zone: Not available")
+                    # Position sizing
+        pos_size = rec['position_size']
+        print("\n📋 DYNAMIC POSITION SIZING:")
+        print(f"   • Base Size: {pos_size['base_size']*100:.1f}% of capital")
+        print(f"   • Regime: {pos_size.get('regime', 'N/A')}")
+        print(f"   • Kelly Fraction: {pos_size.get('kelly_fraction', 0):.2f}x")
+        print(f"   • Edge (Probability): {pos_size.get('edge', 0):.2f}")
+        print(f"   • Volatility Scale: {pos_size.get('vol_scale', 1.0):.2f}x")
+        print(f"   • Time Adjustment: {pos_size.get('time_adjustment', 1.0):.2f}x")
+        print(f"   • RECOMMENDED SIZE: {pos_size['recommended_size']*100:.2f}% of capital")
+        
+        # Risk warnings
+        mc = rec['market_conditions']
+        print("\n📋 RISK MANAGEMENT:")
+        print("   • Use stop losses religiously")
+        print(f"   • Adjust if price moves 1 ATR ({rec['atr']:.0f} pts)")
+        print("   • Take profit at 50-70% of max gain")
+        
+        if self.strategy_engine.days_to_expiry < 7:
+            print(f"\n   ⚠️  NEAR EXPIRY ({self.strategy_engine.days_to_expiry} days) - High Gamma risk!")
+        
+        if mc['adx'] > 25:
+            print(f"\n   ⚠️  Strong trend (ADX: {mc['adx']:.1f}) - Respect it!")
+        
+        if mc['india_vix'] > 18:
+            print(f"\n   🔥 High volatility (VIX: {mc['india_vix']:.1f})")
+            print("   → Reduce position size by 30-50%")
+        elif mc['india_vix'] < 12:
+            print(f"\n   😴 Low volatility (VIX: {mc['india_vix']:.1f})")
+            print("   → Premium collection may be lower")
+    
+    def run_backtest(self):
+        """Run vectorized backtest"""
+        backtest = VectorBacktest(self.data)
+        results = backtest.run()
+        return results
+
+# =============================================================================
+# MODULE 9: VISUALIZATION HELPERS
+# =============================================================================
+class Viz:
+    """Visualization utilities"""
+    
+    @staticmethod
+    def plot_price_with_indicators(df):
+        """Plot price with key indicators (requires matplotlib)"""
+        try:
+            import matplotlib.pyplot as plt
+            
+            fig, axes = plt.subplots(3, 1, figsize=(14, 10))
+            
+            # Price and EMAs
+            axes[0].plot(df.index, df['Close'], label='Close', linewidth=2)
+            axes[0].plot(df.index, df['EMA_20'], label='EMA 20', alpha=0.7)
+            axes[0].plot(df.index, df['EMA_50'], label='EMA 50', alpha=0.7)
+            axes[0].set_title('Nifty Price with EMAs')
+            axes[0].legend()
+            axes[0].grid(True, alpha=0.3)
+            
+            # RSI
+            axes[1].plot(df.index, df['RSI'], label='RSI', color='purple')
+            axes[1].axhline(70, color='r', linestyle='--', alpha=0.5)
+            axes[1].axhline(30, color='g', linestyle='--', alpha=0.5)
+            axes[1].set_title('RSI')
+            axes[1].legend()
+            axes[1].grid(True, alpha=0.3)
+            
+            # Volume
+            axes[2].bar(df.index, df['Volume'], label='Volume', alpha=0.5)
+            axes[2].set_title('Volume')
+            axes[2].legend()
+            axes[2].grid(True, alpha=0.3)
+            
+            plt.tight_layout()
+            plt.show()
+        except ImportError:
+            print("⚠️ matplotlib not available for plotting")
+    
+    @staticmethod
+    def plot_pnl(df):
+        """Plot backtest P&L"""
+        try:
+            import matplotlib.pyplot as plt
+            
+            plt.figure(figsize=(12, 6))
+            plt.plot(df.index, df['cum_strategy'], label='Strategy', linewidth=2)
+            plt.plot(df.index, df['cum_buyhold'], label='Buy & Hold', linewidth=2, alpha=0.7)
+            plt.title('Strategy Performance vs Buy & Hold')
+            plt.xlabel('Date')
+            plt.ylabel('Cumulative Returns')
+            plt.legend()
+            plt.grid(True, alpha=0.3)
+            plt.tight_layout()
+            plt.show()
+        except ImportError:
+            print("⚠️ matplotlib not available for plotting")
+
+# =============================================================================
+# UTILITY FUNCTIONS
+# =============================================================================
+def print_user_guide():
+    """Print comprehensive user guide"""
+    print("\n" + "=" * 70)
+    print("📖 NIFTY OPTION PREDICTION SYSTEM v4.0 - USER GUIDE")
+    print("=" * 70)
+    
+    print("\n🎯 WHAT'S NEW IN v4.0:")
+    print("-" * 70)
+    print("   ✅ Modular Architecture - Clean separation of concerns")
+    print("   ✅ SQLite Data Caching - Faster subsequent runs")
+    print("   ✅ LightGBM & XGBoost - Advanced ML models (optional)")
+    print("   ✅ Vectorized Backtesting - Fast strategy validation")
+    print("   ✅ Enhanced Greeks - Call/Put specific calculations")
+    print("   ✅ Better Position Sizing - Risk-adjusted allocations")
+    print("   ✅ Visualization Tools - Price charts and P&L plots")
+    print("   ✅ Streamlit Ready - Web UI integration support")
+    
+    print("\n📊 INPUT PARAMETERS:")
+    print("-" * 70)
+    print("   1. SPOT PRICE (Optional)")
+    print("      → Press ENTER to fetch live price automatically")
+    print("      ✅ Recommended: Leave blank for live data")
+    
+    print("\n   2. EXPIRY DATE (Required)")
+    print("      → Format: YYYY-MM-DD (e.g., 2025-10-31)")
+    print("      ✅ Weekly expires Thursday, Monthly last Thursday")
+    
+    print("\n   3. HISTORICAL DAYS (Optional)")
+    print("      → Default: 300 days (RECOMMENDED)")
+    print("      → Minimum: 150 days")
+    print("      → Optimal: 300-400 days")
+    
+    print("\n🎲 ARCHITECTURE:")
+    print("-" * 70)
+    print("   • DataLoader - Data fetching & caching")
+    print("   • IndicatorEngine - Technical indicators")
+    print("   • FeatureBuilder - Signal generation")
+    print("   • MLEnsemble - Machine learning models")
+    print("   • OptionsToolkit - Greeks & strike selection")
+    print("   • StrategyEngine - Trade recommendations")
+    print("   • VectorBacktest - Performance testing")
+    print("   • Viz - Visualization utilities")
+    
+    print("\n💡 KEY FEATURES:")
+    print("-" * 70)
+    print("   • 29+ technical indicators")
+    print("   • 6-8 ML models (RF, GB, Ada, LR, NN, SVM, LightGBM, XGBoost)")
+    print("   • Option Greeks (Delta, Gamma, Theta, Vega, Rho)")
+    print("   • Dynamic position sizing")
+    print("   • Risk-adjusted recommendations")
+    
+    print("\n⚠️  RISK WARNINGS:")
+    print("-" * 70)
+    print("   ⚠️  Past performance ≠ future results")
+    print("   ⚠️  Options involve substantial risk")
+    print("   ⚠️  Always use stop losses")
+    print("   ⚠️  Paper trade first")
+    print("   ⚠️  Never risk more than 5% per trade")
+    
+    print("\n📅 BEST PRACTICES:")
+    print("-" * 70)
+    print("   1. Run after market close (3:30 PM)")
+    print("   2. Use 300-400 days historical data")
+    print("   3. Check VIX before trading")
+    print("   4. Respect stop losses")
+    print("   5. Take profits at 50-70% max gain")
+    print("   6. Review backtest results")
+    
+    print("\n" + "=" * 70)
+    print("⚡ v4.0 - Production-ready modular framework!")
+    print("=" * 70 + "\n")
+
+def get_user_inputs():
+    """Get user inputs with validation"""
+    print("\n" + "=" * 60)
+    print("📝 INPUT SECTION")
+    print("=" * 60 + "\n")
+    
+    # Spot price
+    while True:
+        spot_input = input("Enter Nifty spot price (press ENTER for live): ").strip()
+        if spot_input == "":
+            spot_price = None
+            break
+        try:
+            spot_price = float(spot_input)
+            if 10000 <= spot_price <= 50000:
+                break
+            print("   ⚠️  Price should be between 10000-50000. Try again.")
+        except ValueError:
+            print("   ⚠️  Invalid number. Try again.")
+    
+    # Expiry date
+    while True:
+        expiry_input = input("Enter expiry date (YYYY-MM-DD, e.g., 2025-10-31): ").strip()
+        try:
+            expiry_dt = datetime.strptime(expiry_input, "%Y-%m-%d")
+            if expiry_dt > datetime.now():
+                expiry_date = expiry_input
+                break
+            print("   ⚠️  Expiry must be in future. Try again.")
+        except ValueError:
+            print("   ⚠️  Invalid format. Use YYYY-MM-DD. Try again.")
+    
+    # Historical days
+    while True:
+        days_input = input("Historical days (default 300, min 150): ").strip()
+        if days_input == "":
+            historical_days = 300
+            break
+        try:
+            historical_days = int(days_input)
+            if 150 <= historical_days <= 2000:
+                break
+            print("   ⚠️  Days should be 150-2000. Try again.")
+        except ValueError:
+            print("   ⚠️  Invalid number. Try again.")
+    
+    # Cache option
+    use_cache = input("Use cached data? (y/n, default=y): ").strip().lower()
+    force_refresh = True if use_cache == 'n' else False
+    
+    print("\n✅ Inputs validated!")
+    
+    return spot_price, expiry_date, historical_days, force_refresh
+
+# =============================================================================
+# STREAMLIT APP TEMPLATE
+# =============================================================================
+STREAMLIT_APP_CODE = '''
+import streamlit as st
+from enhanced_nifty_framework import EnhancedNiftyPredictionSystem, Viz
+import pandas as pd
+
+st.set_page_config(page_title="Nifty Prediction System", layout="wide")
+
+st.title("🚀 Enhanced Nifty Option Prediction System v4.0")
+
+# Sidebar inputs
+st.sidebar.header("Configuration")
+spot_price = st.sidebar.number_input("Spot Price (leave 0 for live)", min_value=0.0, value=0.0)
+expiry_date = st.sidebar.date_input("Expiry Date")
+historical_days = st.sidebar.slider("Historical Days", 150, 500, 300)
+force_refresh = st.sidebar.checkbox("Force Refresh Data", value=False)
+
+if st.sidebar.button("🎯 Generate Prediction"):
+    with st.spinner("Loading data..."):
+        # Initialize system
+        system = EnhancedNiftyPredictionSystem(
+            spot_price=spot_price if spot_price > 0 else None,
+            expiry_date=str(expiry_date)
+        )
+        
+        # Load and process
+        system.load_data(days=historical_days, force_refresh=force_refresh)
+        system.calculate_indicators()
+        system.generate_signals()
+        system.train_ml_models()
+        
+        # Generate prediction
+        prediction = system.predict_next_day()
+    
+    # Display results
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.metric("Trend", f"{prediction['trend_emoji']} {prediction['trend']}")
+    
+    with col2:
+        st.metric("Confidence", f"{prediction['confidence']:.1f}%")
+    
+    with col3:
+        st.metric("Current Price", f"₹{prediction['current_price']:.2f}")
+    
+    # Technical signals
+    st.subheader("📊 Technical Signals")
+    signals_df = pd.DataFrame([prediction['signals']]).T
+    signals_df.columns = ['Signal']
+    st.dataframe(signals_df)
+    
+    # ML predictions
+    if 'ml_predictions' in prediction:
+        st.subheader("🤖 ML Predictions")
+        ml_df = pd.DataFrame([prediction['ml_predictions']['individual']]).T
+        ml_df.columns = ['Prediction']
+        st.dataframe(ml_df)
+    
+    # Option strategy
+    st.subheader("💡 Option Strategy")
+    strategy = prediction['option_strategy']
+    st.write(f"**{strategy['name']}**")
+    st.json(strategy['strikes'])
+    
+    # Backtest
+    if st.checkbox("Show Backtest"):
+        backtest_results = system.run_backtest()
+        st.line_chart(backtest_results[['cum_strategy', 'cum_buyhold']])
+
+# Latest data display
+if st.sidebar.checkbox("Show Latest Data"):
+    st.subheader("Latest Market Data")
+    # Display latest prices and indicators
+'''
+
+# =============================================================================
+# MAIN EXECUTION
+# =============================================================================
+        """Predict using trained LSTM"""
+        if self.model is None:
+            return None
+        
+        X_scaled = self.scaler.transform(X_latest)
+        X_seq = X_scaled[-self.sequence_length:].reshape(1, self.sequence_length, -1)
+        
+        pred_proba = self.model.predict(X_seq, verbose=0)[0][0]
+        return 1 if pred_proba > 0.5 else -1, float(pred_proba)
+
+
+# =============================================================================
+# MODULE 4.6: EXPLAINABILITY TOOLKIT (SHAP/LIME)
+# =============================================================================
+class ExplainabilityToolkit:
+    """Model interpretability using SHAP values"""
+    
+    @staticmethod
+    def get_feature_importance(model, X, feature_names):
+        """Calculate SHAP values for feature importance"""
+        try:
+            import shap
+            
+            # Use tree explainer for tree-based models
+            if hasattr(model, 'estimators_'):
+                explainer = shap.TreeExplainer(model)
+            else:
+                # Use kernel explainer for other models
+                explainer = shap.KernelExplainer(model.predict_proba, X[:100])
+            
+            shap_values = explainer.shap_values(X)
+            
+            # Get mean absolute SHAP values
+            if isinstance(shap_values, list):
+                shap_values = shap_values[1]  # For binary classification
+            
+            importance = np.abs(shap_values).mean(axis=0)
+            
+            importance_df = pd.DataFrame({
+                'feature': feature_names,
+                'importance': importance
+            }).sort_values('importance', ascending=False)
+            
+            return importance_df
+            
+        except ImportError:
+            print("   ⚠️ SHAP not installed. Using sklearn feature importance.")
+            if hasattr(model, 'feature_importances_'):
+                importance_df = pd.DataFrame({
+                    'feature': feature_names,
+                    'importance': model.feature_importances_
+                }).sort_values('importance', ascending=False)
+                return importance_df
+            else:
+                return None
+
+def test_vix_fallback():
+    """Test VIX fallback methods"""
+    loader = DataLoader()
+    
+    # Test each method independently
+    from datetime import datetime, timedelta
+    end = datetime.now()
+    start = end - timedelta(days=30)
+    
+    print("\n🧪 Testing VIX Fallback Methods:")
+    print("=" * 60)
+    
+    methods = [
+        ('yfinance', loader._get_vix_yfinance),
+        ('NSEpy', loader._get_vix_nsepy),
+        ('NSE CSV', loader._get_vix_nse_csv)
+    ]
+    
+    for name, method in methods:
+        try:
+            result = method(start, end)
+            if result is not None and not result.empty:
+                print(f"✅ {name}: {len(result)} rows, range {result.min():.1f}-{result.max():.1f}")
+            else:
+                print(f"❌ {name}: No data")
+        except Exception as e:
+            print(f"❌ {name}: {str(e)[:50]}")
+
+def main():
+    """Main execution function"""
+    import argparse
+    parser = argparse.ArgumentParser(description='Enhanced Nifty Option Prediction System')
+    parser.add_argument('--no-lstm', action='store_true', help='Disable LSTM training/prediction')
+    parser.add_argument('--no-shap', action='store_true', help='Disable SHAP feature importance')
+    parser.add_argument('--days', type=int, default=300, help='Historical days to load')
+    parser.add_argument('--spot', type=float, default=0.0, help='Spot price (0 for live)')
+    parser.add_argument('--expiry', type=str, default=None, help='Expiry date YYYY-MM-DD')
+    parser.add_argument('--force-refresh', action='store_true', help='Force refresh data (ignore cache)')
+    parser.add_argument('--test-vix', action='store_true', help='Run VIX fallback method tests')
+    parser.add_argument('--auto', action='store_true', help='Run non-interactively with provided args')
+    parser.add_argument('--hybrid', action='store_true', help='Use hybrid prediction mode')  # New
+    parser.add_argument('--trailing-stop', action='store_true', help='Enable trailing stops in backtest')  # New
+    args = parser.parse_args()
+
+    if args.test_vix:
+        test_vix_fallback()
+        return
+
+    print("\n" + "=" * 70)
+    print("🚀 ENHANCED NIFTY OPTION PREDICTION SYSTEM v4.0")
+    print("=" * 70)
+
+    if not args.auto:
+        # Show user guide
+        show_guide = input("\n📖 Show user guide? (y/n, default=n): ").strip().lower()
+        if show_guide == 'y':
+            print_user_guide()
+            input("\nPress ENTER to continue...")
+
+    # Get inputs (interactive only if not auto)
+    if args.auto:
+        spot_price = args.spot if args.spot > 0 else None
+        expiry_date = args.expiry
+        historical_days = args.days
+        force_refresh = args.force_refresh
+    else:
+        spot_price, expiry_date, historical_days, force_refresh = get_user_inputs()
+
+    # Initialize system
+    print("\n🔄 Initializing prediction system...")
+    system = EnhancedNiftyPredictionSystem(
+        spot_price=spot_price,
+        expiry_date=expiry_date
+    )
+    # Apply feature toggles from CLI
+    system.enable_lstm = not args.no_lstm
+    system.enable_shap = not args.no_shap
+    
+    # Load data
+    system.load_data(days=historical_days, force_refresh=force_refresh)
+
+    # Verify VIX data quality
+    print("\n🔍 VIX Data Verification:")
+    vix_col = system.data['IndiaVIX']
+    print(f"   Unique values: {vix_col.nunique()}")
+    print(f"   Min: {vix_col.min():.2f}")
+    print(f"   Max: {vix_col.max():.2f}")
+    print(f"   Mean: {vix_col.mean():.2f}")
+    print(f"   Std Dev: {vix_col.std():.2f}")
+
+    if vix_col.nunique() == 1:
+        print("   ⚠️ WARNING: VIX is constant (using fallback value)")
+    else:
+        print("   ✅ VIX data is dynamic (real historical data)")
+    
+    # Calculate indicators
+    system.calculate_indicators()
+    
+    # Generate signals
+    system.generate_signals()
+    
+    # Train ML models
+    system.train_ml_models()
+    
+    # Generate prediction (hybrid or standard)
+    if args.hybrid or (not args.auto and 
+        input("\n🎯 Use hybrid prediction mode? (y/n, default=n): ").strip().lower() == 'y'):
+        prediction = system.predict_next_day_hybrid()
+    else:
+        prediction = system.predict_next_day()
+    
+    # Optional: Run backtest
+    run_backtest = input("\n📊 Run backtest? (y/n, default=n): ").strip().lower()
+    if run_backtest == 'y':
+        # Ask about trailing stops
+        use_trailing = args.trailing_stop or (
+            input("   🔒 Enable trailing stops? (y/n, default=y): ").strip().lower() != 'n'
+        )
+        backtest_results = system.run_backtest()
+        
+        # Optional: Plot results
+        plot_results = input("\n📈 Plot results? (requires matplotlib) (y/n, default=n): ").strip().lower()
+        if plot_results == 'y':
+            Viz.plot_pnl(backtest_results)
+    
+    # Summary
+    print("\n" + "=" * 60)
+    print("✅ ANALYSIS COMPLETE!")
+    print("=" * 60)
+    print(f"\n   Trend: {prediction['trend']}")
+    print(f"   Confidence: {prediction['confidence']:.1f}%")
+    print(f"   Technical Score: {prediction['technical_score']:.2f}")
+    
+    if 'ml_predictions' in prediction:
+        ml_pred = prediction['ml_predictions']['ensemble_prediction']
+        print(f"   ML Prediction: {'Bullish' if ml_pred > 0 else 'Bearish'}")
+    
+    # 🆕 SAVE SUMMARY CSV
+    try:
+        summary_dir = Path('predictions')
+        summary_dir.mkdir(exist_ok=True)
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        summary_csv = summary_dir / f"summary_{timestamp}.csv"
+        
+        summary_data = {
+            'Timestamp': [timestamp],
+            'Trend': [prediction['trend']],
+            'Confidence': [prediction['confidence']],
+            'Technical_Score': [prediction['technical_score']],
+            'Current_Price': [prediction['current_price']],
+            'ATR': [prediction['atr']],
+            'India_VIX': [prediction['market_conditions']['india_vix']],
+            'ADX': [prediction['market_conditions']['adx']],
+            'RSI': [prediction['market_conditions']['rsi']],
+            'Regime': [prediction['regime_detection']['regime']],
+            'Strategy': [prediction['option_strategy'].get('name', 'N/A')],
+            'Position_Size': [prediction['position_size']['recommended_size'] * 100],
+        }
+        
+        if 'ml_predictions' in prediction:
+            summary_data['ML_Prediction'] = ['Bullish' if prediction['ml_predictions']['ensemble_prediction'] > 0 else 'Bearish']
+            summary_data['ML_Confidence'] = [prediction['ml_predictions']['ensemble_confidence'] * 100]
+        
+        summary_df = pd.DataFrame(summary_data)
+        summary_df.to_csv(summary_csv, index=False)
+        print(f"\n📊 Summary saved to: {summary_csv}")
+    except Exception as e:
+        print(f"\n⚠️ Summary CSV save failed: {e}")
+        
+    print("\n⚠️  DISCLAIMER:")
+    print("   • Educational purposes only")
+    print("   • Options involve substantial risk")
+    print("   • Always use proper risk management")
+    print("   • Consult a financial advisor")
+    
+    print("\n" + "=" * 60)
+    
+    # Save prediction to file (optional)
+    save_prediction = input("\n💾 Save prediction to file? (y/n, default=n): ").strip().lower()
+    if save_prediction == 'y':
+        output_dir = Path('predictions')
+        output_dir.mkdir(exist_ok=True)
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = output_dir / f"prediction_{timestamp}.json"
+        
+        # Convert prediction to JSON-serializable format
+        pred_to_save = {
+            'timestamp': timestamp,
+            'trend': prediction['trend'],
+            'confidence': float(prediction['confidence']),
+            'current_price': float(prediction['current_price']),
+            'expiry_date': expiry_date,
+            'option_strategy': prediction['option_strategy'].get('name', 'N/A'),
+            'strikes': prediction['option_strategy'].get('strikes', {})
+        }
+        
+        with open(filename, 'w') as f:
+            json.dump(pred_to_save, f, indent=2, default=str)
+        
+        print(f"   ✅ Prediction saved to: {filename}")
+    
+    print("\n")
+    input("Press ENTER to exit...")
+
+# =============================================================================
+# ENTRY POINT
+# =============================================================================
+if __name__ == "__main__":
+    main()
+# Duplicate FeatureBuilder / MLEnsemble definitions removed (moved above)

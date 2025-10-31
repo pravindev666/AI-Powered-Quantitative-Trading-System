@@ -1,0 +1,238 @@
+    def update_market_microstructure(self, timestamp, price, volume, bid, ask, bid_size, ask_size):
+        """Update market microstructure analytics with new market data."""
+        # Update order book
+        bid_update = OrderBookUpdate(
+            timestamp=timestamp.timestamp(),
+            book_type='bid',
+            action='modify',
+            price=bid,
+            size=bid_size
+        )
+        
+        ask_update = OrderBookUpdate(
+            timestamp=timestamp.timestamp(),
+            book_type='ask',
+            action='modify',
+            price=ask,
+            size=ask_size
+        )
+        
+        self.order_book.update(bid_update)
+        self.order_book.update(ask_update)
+        
+        # Update microstructure metrics
+        metrics = self.microstructure_analyzer.process_order_book_update(bid_update)
+        self.microstructure_analyzer.process_order_book_update(ask_update)
+        
+        # Update volume profile
+        self.volume_analyzer.update_volume_profile(price, volume, timestamp.timestamp())
+        
+        # Store metrics
+        metrics.update({
+            'timestamp': timestamp,
+            'volume_profile': self.volume_analyzer.get_volume_profile_metrics(),
+            'trade_size_dist': self.volume_analyzer.analyze_trade_size_distribution(),
+            'volume_momentum': self.volume_analyzer.calculate_volume_momentum()
+        })
+        
+        self.micro_metrics_history.append(metrics)
+        
+        return metrics
+        
+    def analyze_liquidity_conditions(self) -> Dict:
+        """Analyze current market liquidity conditions."""
+        if not self.micro_metrics_history:
+            return None
+            
+        current_metrics = self.micro_metrics_history[-1]
+        forecast = self.microstructure_analyzer.get_liquidity_forecast()
+        
+        spread = current_metrics['spread']
+        depth = current_metrics['depth']
+        
+        analysis = {
+            'current_state': {
+                'spread': spread,
+                'depth': depth,
+                'liquidity_score': current_metrics['liquidity_score'],
+                'market_state': self.microstructure_analyzer._classify_market_state(current_metrics)
+            },
+            'forecast': forecast,
+            'volume_analysis': {
+                'profile': current_metrics['volume_profile'],
+                'momentum': current_metrics['volume_momentum']
+            },
+            'order_flow': {
+                'imbalance': current_metrics['order_flow_imbalance'],
+                'market_resiliency': current_metrics['market_resiliency']
+            }
+        }
+        
+        # Add trading recommendations
+        analysis['recommendations'] = self._generate_microstructure_recommendations(analysis)
+        
+        return analysis
+        
+    def _generate_microstructure_recommendations(self, analysis: Dict) -> Dict:
+        """Generate trading recommendations based on microstructure analysis."""
+        recommendations = {
+            'timing': None,
+            'sizing': None,
+            'execution_strategy': None,
+            'confidence': 0.0
+        }
+        
+        # Analyze market state
+        market_state = analysis['current_state']['market_state']
+        liquidity_score = analysis['current_state']['liquidity_score']
+        order_flow_imb = analysis['order_flow']['imbalance']
+        
+        # Timing recommendations
+        if market_state == 'NORMAL' and liquidity_score > 0.7:
+            recommendations['timing'] = 'FAVORABLE'
+            timing_confidence = 0.8
+        elif market_state == 'STRESSED':
+            recommendations['timing'] = 'AVOID'
+            timing_confidence = 0.9
+        else:
+            recommendations['timing'] = 'NEUTRAL'
+            timing_confidence = 0.6
+            
+        # Sizing recommendations
+        depth = analysis['current_state']['depth']['total_depth']
+        if depth > 0:
+            avg_depth = np.mean([m['depth']['total_depth'] for m in self.micro_metrics_history[-20:]])
+            relative_depth = depth / avg_depth
+            
+            if relative_depth > 1.2:
+                recommendations['sizing'] = 'INCREASE'
+                sizing_confidence = 0.75
+            elif relative_depth < 0.8:
+                recommendations['sizing'] = 'REDUCE'
+                sizing_confidence = 0.8
+            else:
+                recommendations['sizing'] = 'MAINTAIN'
+                sizing_confidence = 0.7
+                
+        # Execution strategy recommendations
+        spread = analysis['current_state']['spread']
+        if market_state == 'NORMAL' and abs(order_flow_imb) < 0.2:
+            recommendations['execution_strategy'] = 'AGGRESSIVE'
+            execution_confidence = 0.7
+        elif market_state == 'STRESSED' or abs(order_flow_imb) > 0.5:
+            recommendations['execution_strategy'] = 'PASSIVE'
+            execution_confidence = 0.85
+        else:
+            recommendations['execution_strategy'] = 'BALANCED'
+            execution_confidence = 0.6
+            
+        # Overall confidence
+        recommendations['confidence'] = np.mean([
+            timing_confidence,
+            sizing_confidence,
+            execution_confidence
+        ])
+        
+        return recommendations
+        
+    def get_market_impact_estimate(self, size: float, side: str) -> Dict:
+        """Estimate market impact for a given trade size."""
+        if not self.micro_metrics_history:
+            return None
+            
+        current_metrics = self.micro_metrics_history[-1]
+        market_state = current_metrics['market_state']
+        liquidity_score = current_metrics['liquidity_score']
+        
+        # Get market depth
+        depth = current_metrics['depth']
+        available_depth = depth['bid_depth'] if side == 'sell' else depth['ask_depth']
+        
+        # Calculate base impact using square root model
+        participation_rate = size / available_depth
+        base_impact = 0.1 * np.sqrt(participation_rate)
+        
+        # Adjust for market conditions
+        if market_state == 'STRESSED':
+            impact_multiplier = 2.0
+        elif market_state == 'WIDE' or market_state == 'SHALLOW':
+            impact_multiplier = 1.5
+        else:
+            impact_multiplier = 1.0
+            
+        # Adjust for liquidity
+        liquidity_adjustment = 1.0 - (liquidity_score * 0.5)  # Higher liquidity reduces impact
+        
+        # Final impact estimate
+        total_impact = base_impact * impact_multiplier * liquidity_adjustment
+        
+        return {
+            'estimated_impact': total_impact,
+            'impact_decomposition': {
+                'base_impact': base_impact,
+                'market_state_multiplier': impact_multiplier,
+                'liquidity_adjustment': liquidity_adjustment
+            },
+            'market_conditions': {
+                'state': market_state,
+                'liquidity_score': liquidity_score,
+                'participation_rate': participation_rate
+            }
+        }
+        
+    def optimize_trade_scheduling(self, size: float, urgency: str = 'NORMAL') -> Dict:
+        """Optimize trade scheduling based on microstructure conditions."""
+        if not self.micro_metrics_history:
+            return None
+            
+        current_metrics = self.micro_metrics_history[-1]
+        forecast = self.microstructure_analyzer.get_liquidity_forecast()
+        volume_profile = current_metrics['volume_profile']
+        
+        # Define urgency parameters
+        urgency_params = {
+            'HIGH': {'max_participation': 0.3, 'time_horizon': 10},
+            'NORMAL': {'max_participation': 0.15, 'time_horizon': 30},
+            'LOW': {'max_participation': 0.05, 'time_horizon': 60}
+        }[urgency]
+        
+        # Calculate optimal schedule
+        horizon = urgency_params['time_horizon']
+        max_part = urgency_params['max_participation']
+        
+        # Adjust participation rate based on forecasted conditions
+        if forecast['market_state'] == 'STRESSED':
+            max_part *= 0.5
+        elif forecast['market_state'] == 'SHALLOW':
+            max_part *= 0.7
+            
+        # Generate schedule
+        intervals = 6  # 5-minute intervals
+        schedule = []
+        remaining_size = size
+        
+        for i in range(intervals):
+            interval_volume = volume_profile.get('total_volume', 0) / intervals
+            interval_size = min(
+                remaining_size,
+                interval_volume * max_part
+            )
+            
+            schedule.append({
+                'time': i * 5,
+                'size': interval_size,
+                'participation_rate': interval_size / interval_volume if interval_volume > 0 else 0
+            })
+            
+            remaining_size -= interval_size
+            
+        return {
+            'schedule': schedule,
+            'parameters': {
+                'urgency': urgency,
+                'max_participation': max_part,
+                'horizon_minutes': horizon
+            },
+            'market_forecast': forecast,
+            'estimated_completion': (1 - remaining_size/size) * 100
+        }

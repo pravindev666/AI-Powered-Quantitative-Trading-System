@@ -1,0 +1,545 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Enhanced Nifty Option Prediction System Documentation</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            h1 {
+                color: #2c3e50;
+                border-bottom: 3px solid #3498db;
+                padding-bottom: 10px;
+            }
+            h2 {
+                color: #34495e;
+                border-bottom: 2px solid #ecf0f1;
+                padding-bottom: 5px;
+                margin-top: 30px;
+            }
+            h3 {
+                color: #7f8c8d;
+                margin-top: 25px;
+            }
+            table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 20px 0;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 12px;
+                text-align: left;
+            }
+            th {
+                background-color: #3498db;
+                color: white;
+            }
+            tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+            code {
+                background-color: #f4f4f4;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: 'Courier New', monospace;
+            }
+            pre {
+                background-color: #f4f4f4;
+                padding: 15px;
+                border-radius: 5px;
+                overflow-x: auto;
+            }
+            blockquote {
+                border-left: 4px solid #3498db;
+                margin: 20px 0;
+                padding: 10px 20px;
+                background-color: #f8f9fa;
+            }
+            .emoji {
+                font-size: 1.2em;
+            }
+            @media print {
+                body {
+                    font-size: 12px;
+                }
+                h1 {
+                    page-break-before: always;
+                }
+                h1:first-child {
+                    page-break-before: avoid;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1 id="technical-documentation">Technical Documentation</h1>
+<h2 id="enhanced-nifty-option-prediction-system-v100">Enhanced Nifty Option Prediction System v1.0.0</h2>
+<p><strong>Developer Guide &amp; Technical Reference</strong></p>
+<hr />
+<h2 id="architecture-overview">Architecture Overview</h2>
+<h3 id="system-components">System Components</h3>
+<div class="codehilite"><pre><span></span><code>┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Data Layer    │    │  Model Layer    │    │  Strategy Layer │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ • yfinance API  │    │ • TFT Model     │    │ • Option Calc   │
+│ • Data Cache    │    │ • HAR-RV Model  │    │ • Risk Mgmt     │
+│ • Preprocessing │    │ • ML Ensemble   │    │ • Position Size │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌─────────────────┐
+                    │  Application    │
+                    │  Layer          │
+                    ├─────────────────┤
+                    │ • Streamlit UI  │
+                    │ • API Endpoints │
+                    │ • Backtesting   │
+                    └─────────────────┘
+</code></pre></div>
+
+<h3 id="file-structure">File Structure</h3>
+<div class="codehilite"><pre><span></span><code>project/
+├── app.py                    # Main application logic
+├── streamlit_app.py         # Web UI interface
+├── models/
+│   ├── tft_model.py         # Temporal Fusion Transformer
+│   ├── har_rv.py           # HAR-RV volatility model
+│   ├── data_preparer.py    # Data preparation utilities
+│   └── saved/              # Trained model files
+├── tests/
+│   ├── test_system.py      # End-to-end tests
+│   ├── test_features.py    # Feature engineering tests
+│   ├── test_streamlit.py   # UI component tests
+│   └── test_streamlit_integration.py
+├── data_cache/             # Cached market data
+└── requirements.txt        # Dependencies
+</code></pre></div>
+
+<hr />
+<h2 id="model-specifications">Model Specifications</h2>
+<h3 id="1-temporal-fusion-transformer-tft">1. Temporal Fusion Transformer (TFT)</h3>
+<p><strong>File</strong>: <code>models/tft_model.py</code></p>
+<p><strong>Architecture</strong>:
+- Input: Time series data with static and dynamic features
+- Encoder: LSTM-based sequence encoder
+- Attention: Multi-head attention mechanism
+- Decoder: Quantile regression decoder
+- Output: Multi-horizon forecasts with uncertainty</p>
+<p><strong>Key Parameters</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="s1">&#39;hidden_size&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="s1">&#39;lstm_layers&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;attention_head_size&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s1">&#39;dropout&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="s1">&#39;max_epochs&#39;</span><span class="p">:</span> <span class="mi">100</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>Input Features</strong>:
+- Price data (OHLCV)
+- Technical indicators (11 indicators)
+- Time features (day of week, month)
+- Static features (VIX level, market regime)</p>
+<p><strong>Output</strong>:
+- Point forecasts for next 1-5 days
+- Quantile forecasts (10th, 50th, 90th percentiles)
+- Attention weights for interpretability</p>
+<h3 id="2-har-rv-model">2. HAR-RV Model</h3>
+<p><strong>File</strong>: <code>models/har_rv.py</code></p>
+<p><strong>Architecture</strong>:
+- Realized Volatility computation using multiple estimators
+- Regime detection using Gaussian Mixture Models
+- Jump detection using threshold methods
+- HAR regression for volatility forecasting</p>
+<p><strong>Volatility Estimators</strong>:
+1. <strong>Parkinson</strong>: Uses high-low prices
+2. <strong>Garman-Klass</strong>: Uses OHLC prices
+3. <strong>Rogers-Satchell</strong>: Accounts for opening gaps
+4. <strong>Yang-Zhang</strong>: Combines multiple estimators</p>
+<p><strong>Regime Detection</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="s1">&#39;n_components&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="c1"># Bull, Bear, Sideways</span>
+    <span class="s1">&#39;covariance_type&#39;</span><span class="p">:</span> <span class="s1">&#39;full&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;random_state&#39;</span><span class="p">:</span> <span class="mi">42</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>HAR Regression</strong>:
+- Daily volatility (RV_t)
+- Weekly volatility (RV_t^w)
+- Monthly volatility (RV_t^m)
+- Jump component (J_t)</p>
+<h3 id="3-ml-ensemble">3. ML Ensemble</h3>
+<p><strong>File</strong>: <code>app.py</code> (in <code>_generate_signals</code> method)</p>
+<p><strong>Architecture</strong>:
+- Random Forest Classifier
+- Input: Technical signals + Sentiment + Volatility
+- Output: Combined signal strength and direction</p>
+<p><strong>Features</strong>:
+- MACD signal (-1, 0, 1)
+- RSI signal (-1, 0, 1)
+- Moving average cross signal (-1, 0, 1)
+- Sentiment score (0-1)
+- Volatility forecast (0-1)
+- VIX level (normalized)</p>
+<hr />
+<h2 id="data-pipeline">Data Pipeline</h2>
+<h3 id="1-data-fetching">1. Data Fetching</h3>
+<p><strong>Source</strong>: Yahoo Finance API via <code>yfinance</code></p>
+<p><strong>Symbols</strong>:
+- Nifty 50: <code>^NSEI</code>
+- India VIX: <code>^INDIAVIX</code></p>
+<p><strong>Data Fields</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+    <span class="s1">&#39;Open&#39;</span><span class="p">:</span> <span class="s1">&#39;Opening price&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;High&#39;</span><span class="p">:</span> <span class="s1">&#39;Highest price&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Low&#39;</span><span class="p">:</span> <span class="s1">&#39;Lowest price&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Close&#39;</span><span class="p">:</span> <span class="s1">&#39;Closing price&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Volume&#39;</span><span class="p">:</span> <span class="s1">&#39;Trading volume&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Adj Close&#39;</span><span class="p">:</span> <span class="s1">&#39;Adjusted closing price&#39;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="2-data-preprocessing">2. Data Preprocessing</h3>
+<p><strong>Steps</strong>:
+1. <strong>Missing Value Handling</strong>: Forward fill, then interpolation
+2. <strong>Outlier Detection</strong>: Isolation Forest for extreme values
+3. <strong>Feature Engineering</strong>: Technical indicators calculation
+4. <strong>Normalization</strong>: Min-max scaling for model inputs
+5. <strong>Time Indexing</strong>: Proper datetime indexing for time series</p>
+<p><strong>Technical Indicators</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">indicators</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;SMA_20&#39;</span><span class="p">:</span> <span class="s1">&#39;Simple Moving Average (20 periods)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SMA_50&#39;</span><span class="p">:</span> <span class="s1">&#39;Simple Moving Average (50 periods)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EMA_12&#39;</span><span class="p">:</span> <span class="s1">&#39;Exponential Moving Average (12 periods)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EMA_26&#39;</span><span class="p">:</span> <span class="s1">&#39;Exponential Moving Average (26 periods)&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MACD&#39;</span><span class="p">:</span> <span class="s1">&#39;MACD Line&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MACD_Signal&#39;</span><span class="p">:</span> <span class="s1">&#39;MACD Signal Line&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MACD_Histogram&#39;</span><span class="p">:</span> <span class="s1">&#39;MACD Histogram&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;RSI&#39;</span><span class="p">:</span> <span class="s1">&#39;Relative Strength Index&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BB_Upper&#39;</span><span class="p">:</span> <span class="s1">&#39;Bollinger Bands Upper&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BB_Lower&#39;</span><span class="p">:</span> <span class="s1">&#39;Bollinger Bands Lower&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BB_Middle&#39;</span><span class="p">:</span> <span class="s1">&#39;Bollinger Bands Middle&#39;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="3-data-caching">3. Data Caching</h3>
+<p><strong>Cache Strategy</strong>:
+- File-based caching using Parquet format
+- Cache duration: 1 hour
+- Automatic refresh on data staleness
+- Manual refresh option available</p>
+<p><strong>Cache Files</strong>:</p>
+<div class="codehilite"><pre><span></span><code>data_cache/
+├── nifty_data_90d.parquet
+├── nifty_data_365d.parquet
+└── vix_data.parquet
+</code></pre></div>
+
+<hr />
+<h2 id="api-reference">API Reference</h2>
+<h3 id="enhancedniftypredictionsystem-class">EnhancedNiftyPredictionSystem Class</h3>
+<p><strong>File</strong>: <code>app.py</code></p>
+<h4 id="constructor">Constructor</h4>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_period_days</span><span class="o">=</span><span class="mi">90</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize the prediction system</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        data_period_days (int): Historical data period in days</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+
+<h4 id="key-methods">Key Methods</h4>
+<h5 id="load_dataforce_refreshfalse"><code>load_data(force_refresh=False)</code></h5>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_refresh</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load market data from cache or API</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        force_refresh (bool): Force refresh from API</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Data loading status and statistics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+
+<h5 id="train_ml_models"><code>train_ml_models()</code></h5>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">train_ml_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Train all ML models on current data</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Training results for each model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+
+<h5 id="predict_next_daydays_to_expiry1"><code>predict_next_day(days_to_expiry=1)</code></h5>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">predict_next_day</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">days_to_expiry</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate prediction for next trading day</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        days_to_expiry (int): Days until option expiry</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Prediction results with confidence and strategy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+
+<h5 id="run_backteststrategy_name-initial_capital100000"><code>run_backtest(strategy_name, initial_capital=100000)</code></h5>
+<div class="codehilite"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">run_backtest</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy_name</span><span class="p">,</span> <span class="n">initial_capital</span><span class="o">=</span><span class="mi">100000</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run backtest for specified strategy</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        strategy_name (str): Name of strategy to backtest</span>
+<span class="sd">        initial_capital (float): Starting capital</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Backtest results and performance metrics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2 id="configuration">Configuration</h2>
+<h3 id="model-configuration">Model Configuration</h3>
+<p><strong>TFT Model</strong> (<code>models/tft_model.py</code>):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">TFT_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;hidden_size&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="s1">&#39;lstm_layers&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;attention_head_size&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="s1">&#39;dropout&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="s1">&#39;learning_rate&#39;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+    <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="s1">&#39;max_epochs&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s1">&#39;early_stopping_patience&#39;</span><span class="p">:</span> <span class="mi">10</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p><strong>HAR-RV Model</strong> (<code>models/har_rv.py</code>):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">HAR_RV_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;min_data_points&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="s1">&#39;volatility_window&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="s1">&#39;regime_components&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="s1">&#39;jump_threshold&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="s1">&#39;bias_correction&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="risk-management-configuration">Risk Management Configuration</h3>
+<p><strong>Position Sizing</strong> (<code>app.py</code>):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">RISK_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;max_position_size&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># 10% of capital</span>
+    <span class="s1">&#39;stop_loss_pct&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>       <span class="c1"># 50% of premium</span>
+    <span class="s1">&#39;target_profit_pct&#39;</span><span class="p">:</span> <span class="mf">0.75</span><span class="p">,</span>  <span class="c1"># 75% of premium</span>
+    <span class="s1">&#39;max_drawdown&#39;</span><span class="p">:</span> <span class="mf">0.15</span>       <span class="c1"># 15% maximum drawdown</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="testing-framework">Testing Framework</h2>
+<h3 id="test-structure">Test Structure</h3>
+<p><strong>Unit Tests</strong> (<code>tests/</code>):
+- <code>test_system.py</code>: End-to-end system tests
+- <code>test_features.py</code>: Feature engineering tests
+- <code>test_streamlit.py</code>: UI component tests
+- <code>test_streamlit_integration.py</code>: Integration tests</p>
+<h3 id="running-tests">Running Tests</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Run all tests</span>
+python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/
+
+<span class="c1"># Run specific test file</span>
+python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/test_system.py
+
+<span class="c1"># Run with coverage</span>
+python<span class="w"> </span>-m<span class="w"> </span>pytest<span class="w"> </span>tests/<span class="w"> </span>--cov<span class="o">=</span>app<span class="w"> </span>--cov-report<span class="o">=</span>html
+</code></pre></div>
+
+<h3 id="test-categories">Test Categories</h3>
+<ol>
+<li><strong>Data Tests</strong>: Data loading, preprocessing, caching</li>
+<li><strong>Model Tests</strong>: Model training, prediction, persistence</li>
+<li><strong>Strategy Tests</strong>: Option strategy generation, backtesting</li>
+<li><strong>UI Tests</strong>: Streamlit interface, user interactions</li>
+<li><strong>Integration Tests</strong>: End-to-end workflow validation</li>
+</ol>
+<hr />
+<h2 id="performance-optimization">Performance Optimization</h2>
+<h3 id="model-optimization">Model Optimization</h3>
+<p><strong>TFT Model</strong>:
+- Use GPU acceleration when available
+- Implement model quantization for faster inference
+- Cache model predictions for repeated queries</p>
+<p><strong>HAR-RV Model</strong>:
+- Optimize volatility computation using vectorized operations
+- Implement incremental learning for regime detection
+- Cache volatility forecasts</p>
+<h3 id="data-optimization">Data Optimization</h3>
+<p><strong>Caching Strategy</strong>:
+- Implement Redis for distributed caching
+- Use compression for large datasets
+- Implement data versioning</p>
+<p><strong>API Optimization</strong>:
+- Implement request batching
+- Use connection pooling
+- Implement retry logic with exponential backoff</p>
+<hr />
+<h2 id="deployment">Deployment</h2>
+<h3 id="local-deployment">Local Deployment</h3>
+<p><strong>Requirements</strong>:
+- Python 3.8+
+- 4GB RAM minimum
+- 2GB disk space</p>
+<p><strong>Setup</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Install dependencies</span>
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="c1"># Run Streamlit app</span>
+streamlit<span class="w"> </span>run<span class="w"> </span>streamlit_app.py<span class="w"> </span>--server.port<span class="w"> </span><span class="m">8501</span>
+</code></pre></div>
+
+<h3 id="production-deployment">Production Deployment</h3>
+<p><strong>Docker Setup</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">FROM</span><span class="w"> </span><span class="s">python:3.9-slim</span>
+
+<span class="k">WORKDIR</span><span class="w"> </span><span class="s">/app</span>
+<span class="k">COPY</span><span class="w"> </span>requirements.txt<span class="w"> </span>.
+<span class="k">RUN</span><span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+
+<span class="k">COPY</span><span class="w"> </span>.<span class="w"> </span>.
+<span class="k">EXPOSE</span><span class="w"> </span><span class="s">8501</span>
+
+<span class="k">CMD</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;streamlit&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;run&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;streamlit_app.py&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--server.port=8501&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;--server.address=0.0.0.0&quot;</span><span class="p">]</span>
+</code></pre></div>
+
+<p><strong>Environment Variables</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Data configuration</span>
+<span class="nv">DATA_CACHE_DIR</span><span class="o">=</span>/app/data_cache
+<span class="nv">MODEL_SAVE_DIR</span><span class="o">=</span>/app/models/saved
+
+<span class="c1"># API configuration</span>
+<span class="nv">YAHOO_FINANCE_TIMEOUT</span><span class="o">=</span><span class="m">30</span>
+<span class="nv">CACHE_DURATION_HOURS</span><span class="o">=</span><span class="m">1</span>
+
+<span class="c1"># Model configuration</span>
+<span class="nv">TFT_MODEL_PATH</span><span class="o">=</span>/app/models/saved/tft_model.safetensors
+<span class="nv">HAR_RV_MODEL_PATH</span><span class="o">=</span>/app/models/saved/har_rv_model.joblib
+</code></pre></div>
+
+<hr />
+<h2 id="monitoring-logging">Monitoring &amp; Logging</h2>
+<h3 id="logging-configuration">Logging Configuration</h3>
+<p><strong>Log Levels</strong>:
+- <code>DEBUG</code>: Detailed diagnostic information
+- <code>INFO</code>: General information about program execution
+- <code>WARNING</code>: Something unexpected happened
+- <code>ERROR</code>: Serious problem occurred
+- <code>CRITICAL</code>: Very serious error occurred</p>
+<p><strong>Log Files</strong>:</p>
+<div class="codehilite"><pre><span></span><code>logs/
+├── app.log              # Main application logs
+├── model_training.log   # Model training logs
+├── prediction.log       # Prediction logs
+└── error.log           # Error logs
+</code></pre></div>
+
+<h3 id="performance-monitoring">Performance Monitoring</h3>
+<p><strong>Metrics to Track</strong>:
+- Model training time
+- Prediction latency
+- Data fetch time
+- Cache hit rate
+- Memory usage
+- CPU utilization</p>
+<p><strong>Monitoring Tools</strong>:
+- Prometheus for metrics collection
+- Grafana for visualization
+- ELK stack for log analysis</p>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<h4 id="1-model-training-failures">1. Model Training Failures</h4>
+<p><strong>Symptoms</strong>:
+- "Insufficient data for training"
+- "Model training failed"</p>
+<p><strong>Solutions</strong>:
+- Increase historical data period
+- Check data quality and completeness
+- Verify model parameters
+- Check system resources (RAM, disk space)</p>
+<h4 id="2-prediction-errors">2. Prediction Errors</h4>
+<p><strong>Symptoms</strong>:
+- Low confidence predictions
+- Inconsistent results</p>
+<p><strong>Solutions</strong>:
+- Retrain models with fresh data
+- Check feature engineering pipeline
+- Verify model persistence/loading
+- Review prediction logic</p>
+<h4 id="3-data-issues">3. Data Issues</h4>
+<p><strong>Symptoms</strong>:
+- Missing data errors
+- Stale data warnings</p>
+<p><strong>Solutions</strong>:
+- Force refresh data
+- Check API connectivity
+- Verify data cache integrity
+- Review data preprocessing pipeline</p>
+<h3 id="debug-mode">Debug Mode</h3>
+<p><strong>Enable Debug Logging</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>Debug Flags</strong>:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">DEBUG_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;verbose_logging&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;save_intermediate_data&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;model_debug_mode&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;prediction_debug&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<hr />
+<h2 id="contributing">Contributing</h2>
+<h3 id="development-setup">Development Setup</h3>
+<ol>
+<li>Fork the repository</li>
+<li>Create feature branch</li>
+<li>Install development dependencies</li>
+<li>Run tests before committing</li>
+<li>Submit pull request</li>
+</ol>
+<h3 id="code-standards">Code Standards</h3>
+<p><strong>Python Style</strong>:
+- Follow PEP 8 guidelines
+- Use type hints
+- Write docstrings for all functions
+- Maintain test coverage &gt; 80%</p>
+<p><strong>Git Workflow</strong>:
+- Use descriptive commit messages
+- Create feature branches
+- Squash commits before merging
+- Update documentation for new features</p>
+<hr />
+<h2 id="license">License</h2>
+<p>This project is licensed under the MIT License. See LICENSE file for details.</p>
+<hr />
+<p><strong>Version</strong>: 1.0.0<br />
+<strong>Last Updated</strong>: October 2025<br />
+<strong>Author</strong>: Pravin A Mathew</p>
+    </body>
+    </html>
+    
